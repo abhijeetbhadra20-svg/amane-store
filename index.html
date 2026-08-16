@@ -7,11 +7,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans pb-32">
+<body class="bg-slate-100 text-slate-800 font-sans pb-32">
 
     <!-- Header / Navbar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <header class="glass-nav border-b border-slate-200/50 sticky top-0 z-30 shadow-xs">
         <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <h1 class="text-base font-black tracking-tight text-slate-900">AMANE <span class="text-rose-600">STORE</span></h1>
@@ -20,6 +28,11 @@
                 <a href="admin.html" class="text-xs text-slate-500 font-bold hover:text-rose-600 transition">
                     <i class="fa-solid fa-lock text-[10px] mr-0.5"></i> Admin
                 </a>
+                <!-- Wishlist Icon -->
+                <button onclick="alert('Wishlist feature coming soon!')" class="relative bg-white/80 border border-slate-200 text-slate-700 p-2 rounded-xl text-xs font-bold flex items-center justify-center shadow-xs cursor-pointer">
+                    <i class="fa-regular fa-heart text-sm text-rose-600"></i>
+                </button>
+                <!-- Cart Icon -->
                 <button onclick="openCartDrawer()" class="relative bg-slate-900 text-white p-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer">
                     <i class="fa-solid fa-bag-shopping text-sm"></i>
                     <span id="cartItemCount" class="bg-rose-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
@@ -46,6 +59,32 @@
             <p class="text-xs text-slate-400 col-span-2 text-center py-10">Loading products...</p>
         </div>
     </main>
+
+    <!-- Glassmorphism Bottom Navigation Bar -->
+    <div class="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40">
+        <nav class="glass-nav rounded-2xl shadow-xl px-4 py-2.5 flex items-center justify-around border border-white/40">
+            <!-- Home -->
+            <a href="index.html" class="flex flex-col items-center text-rose-600 text-[10px] font-bold gap-0.5 cursor-pointer">
+                <i class="fa-solid fa-house text-base"></i>
+                <span>Home</span>
+            </a>
+            <!-- Categories -->
+            <button onclick="scrollToCategories()" class="flex flex-col items-center text-slate-600 hover:text-rose-600 text-[10px] font-bold gap-0.5 cursor-pointer">
+                <i class="fa-solid fa-layer-group text-base"></i>
+                <span>Categories</span>
+            </button>
+            <!-- Shop -->
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-slate-600 hover:text-rose-600 text-[10px] font-bold gap-0.5 cursor-pointer">
+                <i class="fa-solid fa-shop text-base"></i>
+                <span>Shop</span>
+            </button>
+            <!-- Filters -->
+            <button onclick="scrollToCategories()" class="flex flex-col items-center text-slate-600 hover:text-rose-600 text-[10px] font-bold gap-0.5 cursor-pointer">
+                <i class="fa-solid fa-sliders text-base"></i>
+                <span>Filters</span>
+            </button>
+        </nav>
+    </div>
 
     <!-- Cart Drawer Modal -->
     <div id="cartDrawer" class="fixed inset-0 z-50 bg-black/50 hidden flex justify-end transition-opacity">
@@ -115,9 +154,16 @@
                     <label class="block font-bold text-slate-700 mb-1">City & State</label>
                     <input type="text" id="custCityState" required placeholder="City, State" class="w-full p-2.5 border border-slate-200 rounded-xl outline-none focus:border-rose-600">
                 </div>
+                <!-- Payment Mode Selection -->
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Payment Mode</label>
+                    <select id="custPaymentMode" class="w-full p-2.5 border border-slate-200 rounded-xl outline-none focus:border-rose-600 font-bold text-rose-600">
+                        <option value="COD">Cash on Delivery (COD)</option>
+                        <option value="Online / UPI">Online Payment / UPI</option>
+                    </select>
+                </div>
                 <div class="bg-slate-50 p-3 rounded-xl border text-[11px] space-y-1">
-                    <div class="flex justify-between"><span>Payment Mode:</span><strong class="text-rose-600">Cash on Delivery (COD)</strong></div>
-                    <div class="flex justify-between font-bold text-slate-900 pt-1 border-t"><span>Total Amount:</span><span id="checkoutTotalAmount">₹0</span></div>
+                    <div class="flex justify-between font-bold text-slate-900"><span>Total Amount:</span><span id="checkoutTotalAmount">₹0</span></div>
                 </div>
                 <button type="submit" id="placeOrderBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl shadow-md transition cursor-pointer">
                     Place Order Now
@@ -157,12 +203,16 @@
             return JSON.parse(localStorage.getItem('store_products')) || [];
         }
 
+        function scrollToCategories() {
+            const el = document.getElementById('categoryFilters');
+            if(el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
         function renderStoreProducts(filter = 'all') {
             currentFilter = filter;
             const products = getProducts();
             const grid = document.getElementById('storeProductsGrid');
 
-            // Render category buttons dynamically
             const categories = ['all', ...new Set(products.map(p => p.category))];
             const filterContainer = document.getElementById('categoryFilters');
             filterContainer.innerHTML = categories.map(cat => `
@@ -309,6 +359,7 @@
             const landmark = document.getElementById('custLandmark').value.trim();
             const pincode = document.getElementById('custPincode').value.trim();
             const cityState = document.getElementById('custCityState').value.trim();
+            const paymentMode = document.getElementById('custPaymentMode').value;
 
             let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             let itemsSummary = cart.map(i => `${i.title} (${i.code}) x ${i.qty} [Size: ${size}]`).join(', ');
@@ -323,7 +374,7 @@
                 city_state: cityState,
                 items: itemsSummary,
                 total_amount: totalAmount,
-                payment_mode: 'COD',
+                payment_mode: paymentMode,
                 status: 'Pending'
             };
 
@@ -342,5 +393,4 @@
         }
     </script>
 </body>
-    </html>
-    
+</html>
