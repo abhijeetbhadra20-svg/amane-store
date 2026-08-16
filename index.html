@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amane Store | Ethnic Wear & Kurtis</title>
+    <title>Amane Store | Ethnic Wear</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans pb-24">
 
-    <!-- TOP ANNOUNCEMENT BAR -->
+    <!-- ANNOUNCEMENT BAR -->
     <div class="bg-gradient-to-r from-amber-600 to-rose-600 text-white text-xs text-center py-2 px-4 font-medium shadow-md">
-        🔥 Manufacturer Direct Rates | Express Shipping All Over India!
+        🔥 Direct Manufacturer Rates | Express Shipping All Over India!
     </div>
 
     <!-- NAVBAR -->
@@ -27,27 +25,25 @@
                 <p class="text-[9px] text-slate-500 font-medium">100% Factory Quality</p>
             </div>
         </div>
+        
+        <!-- Cart & Placeholder Login Button -->
         <div class="flex items-center gap-3">
-            <!-- CART BUTTON -->
-            <button onclick="toggleCartDrawer()" class="relative text-slate-700 hover:text-rose-600 transition">
+            <button class="relative text-slate-700">
                 <i class="fa-solid fa-bag-shopping text-xl"></i>
-                <span id="cartCountBadge" class="absolute -top-2 -right-2 bg-rose-600 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                <span class="absolute -top-2 -right-2 bg-rose-600 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
             </button>
-            
-            <div id="authHeaderAction">
-                <button id="mainLoginBtn" onclick="openAuthModal()" class="text-xs bg-slate-900 text-white font-semibold px-3 py-1.5 rounded-full hover:bg-slate-800 transition flex items-center gap-1 cursor-pointer">
-                    <i class="fa-solid fa-user-lock text-[10px]"></i> Login
-                </button>
-            </div>
+            <button class="text-xs bg-slate-900 text-white font-semibold px-3 py-1.5 rounded-full flex items-center gap-1 opacity-80 cursor-not-allowed">
+                <i class="fa-solid fa-user-lock text-[10px]"></i> Login (Step 2)
+            </button>
         </div>
     </header>
 
     <!-- TRUST BADGES -->
-    <section class="max-w-6xl mx-auto px-4 my-3">
-        <div class="grid grid-cols-3 gap-2 bg-white p-2.5 rounded-xl border border-slate-200 text-center text-[10px]">
-            <div><i class="fa-solid fa-shield-halved text-rose-600 mb-0.5"></i><p class="font-bold">Quality Assured</p></div>
-            <div class="border-x border-slate-100"><i class="fa-solid fa-truck-fast text-rose-600 mb-0.5"></i><p class="font-bold">Fast Delivery</p></div>
-            <div><i class="fa-solid fa-rotate-left text-rose-600 mb-0.5"></i><p class="font-bold">Easy Verification</p></div>
+    <section class="max-w-6xl mx-auto px-4 my-4">
+        <div class="grid grid-cols-3 gap-2 bg-white p-3 rounded-xl border border-slate-200 text-center text-[11px]">
+            <div><i class="fa-solid fa-shield-halved text-rose-600 mb-1 text-sm"></i><p class="font-bold">Quality Assured</p></div>
+            <div class="border-x border-slate-100"><i class="fa-solid fa-truck-fast text-rose-600 mb-1 text-sm"></i><p class="font-bold">Fast Delivery</p></div>
+            <div><i class="fa-solid fa-rotate-left text-rose-600 mb-1 text-sm"></i><p class="font-bold">Easy Verification</p></div>
         </div>
     </section>
 
@@ -57,432 +53,56 @@
             <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
                 <i class="fa-solid fa-fire text-amber-500"></i> Trending Ethnic Catalog
             </h2>
-            <span id="productCount" class="text-[11px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-semibold">0 Items</span>
+            <span class="text-[11px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-semibold">Demo Items</span>
         </div>
 
-        <!-- PRODUCT GRID -->
-        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <div class="bg-white rounded-xl h-72 border border-slate-200 animate-pulse"></div>
-            <div class="bg-white rounded-xl h-72 border border-slate-200 animate-pulse"></div>
+        <!-- DEMO PRODUCTS GRID -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            
+            <!-- Sample Card 1 -->
+            <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="relative bg-slate-100 aspect-3/4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500" class="w-full h-full object-cover" loading="lazy">
+                        <span class="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded">D.NO-101</span>
+                    </div>
+                    <div class="p-2.5">
+                        <h3 class="font-bold text-xs text-slate-800 truncate">Designer Kurti Set</h3>
+                        <p class="text-[10px] text-slate-500 mb-1">Color: Pink</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-sm font-black text-rose-600">₹899</span>
+                            <span class="text-[10px] text-slate-400 line-through">₹1299</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2.5 pt-0">
+                    <button class="w-full bg-rose-600 text-white font-bold text-[11px] py-1.5 rounded-lg shadow-xs opacity-90">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Sample Card 2 -->
+            <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="relative bg-slate-100 aspect-3/4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500" class="w-full h-full object-cover" loading="lazy">
+                        <span class="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded">D.NO-102</span>
+                    </div>
+                    <div class="p-2.5">
+                        <h3 class="font-bold text-xs text-slate-800 truncate">Rayon Anarkali Suit</h3>
+                        <p class="text-[10px] text-slate-500 mb-1">Color: Maroon</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-sm font-black text-rose-600">₹1199</span>
+                            <span class="text-[10px] text-slate-400 line-through">₹1699</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2.5 pt-0">
+                    <button class="w-full bg-rose-600 text-white font-bold text-[11px] py-1.5 rounded-lg shadow-xs opacity-90">Add to Cart</button>
+                </div>
+            </div>
+
         </div>
     </main>
 
-    <!-- ADMIN FLOATING BUTTONS -->
-    <div id="adminControls" class="hidden fixed bottom-6 right-6 flex flex-col gap-2 z-40">
-        <button onclick="openOrdersModal()" class="bg-slate-900 text-white px-4 py-2.5 rounded-full shadow-lg font-bold text-xs flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-amber-400"></i> View Orders
-        </button>
-        <button onclick="openAddProductModal()" class="bg-rose-600 text-white p-3.5 rounded-full shadow-2xl hover:bg-rose-700 transition flex items-center justify-center self-end">
-            <i class="fa-solid fa-plus text-lg"></i>
-        </button>
-    </div>
-
-    <!-- CART DRAWER MODAL -->
-    <div id="cartDrawer" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex justify-end">
-        <div class="bg-white w-full max-w-md h-full flex flex-col justify-between shadow-2xl">
-            <div class="p-4 border-b border-slate-200 flex items-center justify-between">
-                <h3 class="font-bold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-bag-shopping text-rose-600"></i> Your Shopping Cart
-                </h3>
-                <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-slate-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <div id="cartItemsContainer" class="p-4 overflow-y-auto flex-1 space-y-3">
-                <p class="text-xs text-center text-slate-400 py-10">Your cart is empty.</p>
-            </div>
-
-            <div class="p-4 border-t border-slate-200 bg-slate-50">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-slate-600">Total Payable:</span>
-                    <span id="cartGrandTotal" class="text-lg font-black text-rose-600">₹0</span>
-                </div>
-                <button onclick="proceedToCheckout()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
-                    Proceed to Web Checkout <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CHECKOUT MODAL -->
-    <div id="checkoutModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="font-bold text-slate-900 text-base mb-1">Enter Shipping Address</h3>
-            <p class="text-xs text-slate-500 mb-4">Complete details for direct order dispatch.</p>
-
-            <form onsubmit="submitWebOrder(event)" class="space-y-3">
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Name</label>
-                    <input type="text" id="cName" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp Number</label>
-                    <input type="tel" id="cPhone" required placeholder="10 Digit Mobile Number" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Address</label>
-                    <textarea id="cAddress" rows="2" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Pincode</label>
-                        <input type="text" id="cPincode" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Payment Method</label>
-                        <select id="cPayment" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg font-bold">
-                            <option value="COD">Cash on Delivery (COD)</option>
-                            <option value="UPI / Online">UPI Scan / Online Pay</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs transition shadow mt-3">
-                    Confirm Order Now
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- AUTHENTICATION MODAL -->
-    <div id="authModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            <div class="text-center mb-5">
-                <div class="w-10 h-10 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-2 font-bold"><i class="fa-solid fa-user-check"></i></div>
-                <h3 class="font-bold text-slate-900 text-base">Customer / Admin Login</h3>
-                <p class="text-xs text-slate-500">Please verify identity to access panel or confirm order.</p>
-            </div>
-            <button onclick="loginWithGoogle()" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs mb-3">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google"> Continue with Google
-            </button>
-            <div class="text-center text-[10px] text-slate-400 my-2">OR EMAIL VERIFICATION</div>
-            <form onsubmit="handleEmailAuth(event)" class="space-y-2">
-                <input type="email" id="authEmail" required placeholder="Enter your email" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                <button type="submit" class="w-full bg-slate-900 text-white font-bold py-2 rounded-lg text-xs">Send Magic Login Link</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- ADD PRODUCT MODAL -->
-    <div id="productModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="font-bold text-slate-900 mb-3 text-sm">Add Product to Catalog</h3>
-            <form onsubmit="saveProduct(event)" class="space-y-3">
-                <input type="text" id="pCode" required placeholder="Design Code (e.g. D.NO-10065)" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                <input type="text" id="pTitle" required placeholder="Product Title" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="number" id="pPrice" required placeholder="Price (₹)" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                    <input type="text" id="pColor" placeholder="Color Variant" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                </div>
-                <input type="text" id="pSizes" value="M, L, XL, XXL" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                <input type="url" id="pImg" required placeholder="Direct Image URL" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
-                <button type="submit" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs mt-2">Publish Product</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- ORDERS DASHBOARD MODAL -->
-    <div id="ordersModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-2xl rounded-2xl p-6 shadow-2xl relative max-h-[85vh] overflow-y-auto">
-            <button onclick="closeOrdersModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="font-bold text-slate-900 mb-4 text-base flex items-center gap-2">
-                <i class="fa-solid fa-boxes-stacked text-rose-600"></i> Store Web Orders Dashboard
-            </h3>
-            <div id="adminOrdersList" class="space-y-3">
-                <p class="text-xs text-slate-400 text-center py-6">Loading customer orders...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        const SUPABASE_URL = "https://mthkwrtfruhgcjmuwjih.supabase.co";
-        const SUPABASE_KEY = "Sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc";
-        
-        let db = null;
-        try {
-            if (window.supabase) {
-                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            }
-        } catch(err) {
-            console.error("Supabase Init Error:", err);
-        }
-
-        const STORE_INQUIRY_WHATSAPP = "919999999999"; 
-        let currentUser = null;
-        let cart = [];
-
-        window.openAuthModal = function() {
-            const modal = document.getElementById('authModal');
-            if (modal) modal.classList.remove('hidden');
-        };
-
-        window.closeAuthModal = function() {
-            const modal = document.getElementById('authModal');
-            if (modal) modal.classList.add('hidden');
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            if(db) {
-                fetchProducts();
-                checkUserSession();
-            } else {
-                fetchProductsFallback();
-            }
-        });
-
-        async function checkUserSession() {
-            if(!db) return;
-            const { data: { session } } = await db.auth.getSession();
-            currentUser = session?.user || null;
-            updateUIForAuth();
-
-            db.auth.onAuthStateChange((_event, session) => {
-                currentUser = session?.user || null;
-                updateUIForAuth();
-            });
-        }
-
-        function updateUIForAuth() {
-            const authHeader = document.getElementById('authHeaderAction');
-            const adminControls = document.getElementById('adminControls');
-
-            if (currentUser) {
-                authHeader.innerHTML = `
-                    <button onclick="logout()" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1 rounded-full border border-slate-300">
-                        Logout
-                    </button>
-                `;
-                adminControls.classList.remove('hidden');
-            } else {
-                authHeader.innerHTML = `
-                    <button id="mainLoginBtn" onclick="openAuthModal()" class="text-xs bg-slate-900 text-white font-semibold px-3 py-1.5 rounded-full hover:bg-slate-800 transition flex items-center gap-1 cursor-pointer">
-                        <i class="fa-solid fa-user-lock text-[10px]"></i> Login
-                    </button>
-                `;
-                adminControls.classList.add('hidden');
-            }
-        }
-
-        async function fetchProducts() {
-            const grid = document.getElementById('productGrid');
-            if(!db) { fetchProductsFallback(); return; }
-            
-            const { data: products, error } = await db.from('products').select('*').order('id', { ascending: false });
-
-            if (error) { 
-                fetchProductsFallback();
-                return; 
-            }
-            document.getElementById('productCount').innerText = `${products ? products.length : 0} Items`;
-
-            if (!products || products.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 text-xs text-slate-500">No products available yet. Click Login to add items!</div>`;
-                return;
-            }
-
-            renderProducts(products);
-        }
-
-        function fetchProductsFallback() {
-            const grid = document.getElementById('productGrid');
-            document.getElementById('productCount').innerText = `0 Items`;
-            grid.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 text-xs text-slate-500">No products available yet. Click Login to add items!</div>`;
-        }
-
-        function renderProducts(products) {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = products.map(p => {
-                const sizesArray = Array.isArray(p.sizes) ? p.sizes : (p.sizes ? p.sizes.split(',') : ['M', 'L', 'XL']);
-                return `
-                    <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col justify-between">
-                        <div>
-                            <div class="relative bg-slate-100 aspect-3/4 overflow-hidden">
-                                <img src="${p.image_url}" class="w-full h-full object-cover object-top" loading="lazy">
-                                <span class="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded">${p.design_code}</span>
-                            </div>
-                            <div class="p-3">
-                                <h3 class="font-bold text-xs text-slate-800">${p.title}</h3>
-                                <p class="text-[10px] text-slate-500 mb-1">${p.color ? 'Color: ' + p.color : 'Premium Quality'}</p>
-                                <div class="flex items-baseline gap-2 mb-2">
-                                    <span class="text-sm font-black text-rose-600">₹${p.price}</span>
-                                    <span class="text-[10px] text-slate-400 line-through">₹${Math.round(p.price * 1.4)}</span>
-                                </div>
-                                <div class="flex flex-wrap gap-1 mb-2">
-                                    ${sizesArray.map(s => `<span class="text-[9px] bg-slate-100 font-bold px-1.5 py-0.5 rounded">${s.trim()}</span>`).join('')}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-3 pt-0 flex gap-1.5">
-                            <button onclick="addToCart('${p.id}', '${p.design_code}', '${p.title}', ${p.price}, '${p.image_url}')" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] py-2 rounded-lg transition shadow-xs">
-                                <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                            </button>
-                            <button onclick="askOnWhatsApp('${p.design_code}')" title="Ask Question on WhatsApp" class="bg-green-100 text-green-700 px-2.5 py-2 rounded-lg text-xs font-bold">
-                                <i class="fa-brands fa-whatsapp text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function addToCart(id, code, title, price, img) {
-            const existing = cart.find(item => item.id === id);
-            if (existing) {
-                existing.qty += 1;
-            } else {
-                cart.push({ id, code, title, price, img, qty: 1 });
-            }
-            updateCartUI();
-            toggleCartDrawer(true);
-        }
-
-        function updateCartUI() 
-        const container = document.getElementById('cartItemsContainer');
-            const totalBadge = document.getElementById('cartCountBadge');
-            const grandTotal = document.getElementById('cartGrandTotal');
-
-            const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
-            const totalSum = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
-
-            totalBadge.innerText = totalItems;
-            grandTotal.innerText = `₹${totalSum}`;
-
-            if (cart.length === 0) {
-                container.innerHTML = `<p class="text-xs text-center text-slate-400 py-10">Your cart is empty.</p>`;
-                return;
-            }
-
-            container.innerHTML = cart.map((item, index) => `
-                <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
-                    <div class="flex items-center gap-2">
-                        <img src="${item.img}" class="w-10 h-10 object-cover rounded-md">
-                        <div>
-                            <p class="font-bold text-slate-800">${item.code}</p>
-                            <p class="text-[10px] text-slate-500">₹${item.price} x ${item.qty}</p>
-                        </div>
-                    </div>
-                    <button onclick="removeFromCart(${index})" class="text-rose-500 hover:text-rose-700 text-xs"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `).join('');
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-        }
-
-        function toggleCartDrawer(forceOpen = false) {
-            const drawer = document.getElementById('cartDrawer');
-            if (forceOpen) drawer.classList.remove('hidden');
-            else drawer.classList.toggle('hidden');
-        }
-
-        function proceedToCheckout() {
-            if (cart.length === 0) { alert('Cart is empty!'); return; }
-            toggleCartDrawer();
-            document.getElementById('checkoutModal').classList.remove('hidden');
-        }
-
-        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
-
-        async function submitWebOrder(e) {
-            e.preventDefault();
-            const name = document.getElementById('cName').value;
-            const phone = document.getElementById('cPhone').value;
-            const address = document.getElementById('cAddress').value;
-            const pincode = document.getElementById('cPincode').value;
-            const paymentMethod = document.getElementById('cPayment').value;
-            const totalAmount = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
-
-            if(!db) { alert('Order placed! (Database connection pending)'); return; }
-
-            const { data, error } = await db.from('orders').insert([{
-                user_id: currentUser ? currentUser.id : null,
-                customer_name: name,
-                customer_phone: phone,
-                shipping_address: address,
-                pincode: pincode,
-                items: cart,
-                total_amount: totalAmount,
-                payment_method: paymentMethod
-            }]);
-
-            if (error) {
-                alert('Order Failed: ' + error.message);
-            } else {
-                alert('🎉 Order Placed Successfully!');
-                cart = [];
-                updateCartUI();
-                closeCheckoutModal();
-            }
-        }
-
-        function askOnWhatsApp(code) {
-            const msg = `Hi Amane Store! I have a question regarding Design Code: ${code}.`;
-            window.open(`https://wa.me/${STORE_INQUIRY_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        async function loginWithGoogle() { 
-            if(!db) { alert("Supabase key error."); return; }
-            await db.auth.signInWithOAuth({ provider: 'google' }); 
-        }
-        
-        async function handleEmailAuth(e) {
-            e.preventDefault();
-            if(!db) { alert("Supabase key error."); return; }
-            const email = document.getElementById('authEmail').value;
-            const { error } = await db.auth.signInWithOtp({ email });
-            if (error) alert(error.message); else { alert('Magic link sent to your email!'); closeAuthModal(); }
-        }
-
-        async function logout() { if(db) await db.auth.signOut(); location.reload(); }
-
-        function openAddProductModal() { document.getElementById('productModal').classList.remove('hidden'); }
-        function closeProductModal() { document.getElementById('productModal').classList.add('hidden'); }
-        
-        async function saveProduct(e) {
-            e.preventDefault();
-            if(!db) return;
-            const code = document.getElementById('pCode').value;
-            const title = document.getElementById('pTitle').value;
-            const price = parseFloat(document.getElementById('pPrice').value);
-            const color = document.getElementById('pColor').value;
-            const sizesInput = document.getElementById('pSizes').value;
-            const img = document.getElementById('pImg').value;
-
-            const { error } = await db.from('products').insert([{
-                design_code: code, title: title, price: price, color: color,
-                sizes: sizesInput.split(',').map(s => s.trim()), image_url: img
-            }]);
-
-            if (error) alert('Error: ' + error.message);
-            else { alert('Product Published!'); closeProductModal(); fetchProducts(); }
-        }
-
-        async function openOrdersModal() {
-            document.getElementById('ordersModal').classList.remove('hidden');
-            const container = document.getElementById('adminOrdersList');
-            if(!db) return;
-            const { data: orders, error } = await db.from('orders').select('*').order('id', { ascending: false });
-
-            if (error) { container.innerHTML = `<p class="text-rose-500 text-xs">Failed to fetch orders.</p>`; return; }
-            if (!orders || orders.length === 0) { container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No orders received yet.</p>`; return; }
-
-            container.innerHTML = orders.map(o => `
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
-                    <div class="flex justify-between font-bold text-slate-900">
-                        <span>Order #${o.id} - ${o.customer_name} (${o.customer_phone})</span>
-                        <span class="text-rose-600">₹${o.total_amount} [${o.payment_method}]</span>
-                    </div>
-                    <p class="text-[11px] text-slate-600">📍 ${o.shipping_address}, Pincode: ${o.pincode}</p>
-                </div>
-            `).join('');
-        }
-
-        function closeOrdersModal() { document.getElementById('ordersModal').classList.add('hidden'); }
-    </script>
 </body>
 </html>
