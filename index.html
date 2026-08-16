@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans pb-24">
 
@@ -26,15 +28,15 @@
             </div>
         </div>
         
-        <!-- Cart & Login Button -->
+        <!-- Cart Button -->
         <div class="flex items-center gap-3">
             <button onclick="toggleCartDrawer()" class="relative text-slate-700 hover:text-rose-600 transition cursor-pointer">
                 <i class="fa-solid fa-bag-shopping text-xl"></i>
                 <span id="cartCountBadge" class="absolute -top-2 -right-2 bg-rose-600 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
             </button>
-            <button onclick="openAuthModal()" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1 cursor-pointer">
-                <i class="fa-solid fa-user-lock text-[10px]"></i> Login
-            </button>
+            <a href="/admin.html" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1">
+                <i class="fa-solid fa-user-lock text-[10px]"></i> Admin
+            </a>
         </div>
     </header>
 
@@ -106,7 +108,7 @@
         </div>
     </main>
 
-    <!-- STEP 3 LAYER: CART DRAWER MODAL -->
+    <!-- CART DRAWER MODAL -->
     <div id="cartDrawer" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex justify-end">
         <div class="bg-white w-full max-w-md h-full flex flex-col justify-between shadow-2xl">
             <div class="p-4 border-b border-slate-200 flex items-center justify-between">
@@ -134,7 +136,7 @@
         </div>
     </div>
 
-    <!-- STEP 4 LAYER: CHECKOUT MODAL -->
+    <!-- CHECKOUT MODAL -->
     <div id="checkoutModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
@@ -144,7 +146,7 @@
             <h3 class="font-bold text-slate-900 text-base mb-1 flex items-center gap-2">
                 <i class="fa-solid fa-truck text-rose-600"></i> Delivery Details
             </h3>
-            <p class="text-xs text-slate-500 mb-4">Fill your shipping address to place order.</p>
+            <p class="text-xs text-slate-500 mb-4">Fill your shipping address to place order directly.</p>
 
             <form onsubmit="handleCheckoutSubmit(event)" class="space-y-3">
                 <div>
@@ -173,54 +175,36 @@
                 </div>
 
                 <div class="pt-2">
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
-                        <i class="fa-brands fa-whatsapp text-sm"></i> Confirm & Send Order on WhatsApp
+                    <button type="submit" id="submitBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-circle-check text-sm"></i> Confirm Order
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- STEP 2 LAYER: AUTHENTICATION MODAL -->
-    <div id="authModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div class="text-center mb-5">
-                <div class="w-10 h-10 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
-                    <i class="fa-solid fa-user-check"></i>
-                </div>
-                <h3 class="font-bold text-slate-900 text-base">Customer / Admin Login</h3>
-                <p class="text-xs text-slate-500">Please verify identity to access panel or confirm order.</p>
+    <!-- ORDER SUCCESS MODAL -->
+    <div id="successModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 text-center shadow-2xl">
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
+                <i class="fa-solid fa-check"></i>
             </div>
-            
-            <button onclick="alert('Google Login Step 5 me connect hoga!')" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs mb-3 cursor-pointer">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google"> Continue with Google
+            <h3 class="font-bold text-slate-900 text-base mb-1">Order Placed Successfully!</h3>
+            <p class="text-xs text-slate-500 mb-4">Aapka order receive ho gaya hai. Admin team jald hi aapse contact karegi.</p>
+            <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white text-xs font-bold py-2.5 rounded-xl cursor-pointer">
+                Continue Shopping
             </button>
-            
-            <div class="text-center text-[10px] text-slate-400 my-2">OR EMAIL VERIFICATION</div>
-            
-            <form onsubmit="event.preventDefault(); alert('Magic link functionality next steps me aayegi!');" class="space-y-2">
-                <input type="email" required placeholder="Enter your email" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
-                <button type="submit" class="w-full bg-slate-900 text-white font-bold py-2 rounded-lg text-xs cursor-pointer">Send Magic Login Link</button>
-            </form>
         </div>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         let cart = [];
-
-        function openAuthModal() {
-            var modal = document.getElementById('authModal');
-            if (modal) modal.classList.remove('hidden');
-        }
-
-        function closeAuthModal() {
-            var modal = document.getElementById('authModal');
-            if (modal) modal.classList.add('hidden');
-        }
 
         function toggleCartDrawer(forceOpen = false) {
             const drawer = document.getElementById('cartDrawer');
@@ -239,6 +223,10 @@
 
         function closeCheckoutModal() {
             document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
         }
 
         function addToCart(id, code, title, price, img) {
@@ -289,22 +277,49 @@
             updateCartUI();
         }
 
-        function handleCheckoutSubmit(e) {
+        async function handleCheckoutSubmit(e) {
             e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = 'Processing Order...';
+            submitBtn.disabled = true;
+
             const name = document.getElementById('custName').value;
             const phone = document.getElementById('custPhone').value;
             const size = document.getElementById('custSize').value;
             const address = document.getElementById('custAddress').value;
-
-            let itemsText = cart.map(i => `- ${i.title} (${i.code}) x${i.qty} = ₹${i.price * i.qty}`).join('%0A');
             const totalSum = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
 
-            const msg = `*NEW ORDER - AMANE STORE*%0A%0A*Customer:* ${name}%0A*Phone:* ${phone}%0A*Size:* ${size}%0A*Address:* ${address}%0A%0A*Items:*%0A${itemsText}%0A%0A*Total Amount:* ₹${totalSum}`;
-            
-            // Step 5 me yahan Admin Number dynamically dynamic database se link karenge
-            window.open(`https://wa.me/?text=${msg}`, '_blank');
+            // Supabase me Direct Secure Order Save
+            const { data, error } = await _supabase.from('orders').insert([
+                {
+                    customer_name: name,
+                    phone: phone,
+                    size: size,
+                    address: address,
+                    items: cart,
+                    total_amount: totalSum,
+                    status: 'Pending'
+                }
+            ]);
+
+            if (error) {
+                console.error('Database Error:', error);
+                alert('Order save karne me problem aayi: ' + error.message);
+                submitBtn.innerText = 'Confirm Order';
+                submitBtn.disabled = false;
+                return;
+            }
+
+            // Cart reset & success popup display
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+            document.getElementById('successModal').classList.remove('hidden');
+
+            submitBtn.innerText = 'Confirm Order';
+            submitBtn.disabled = false;
         }
     </script>
 </body>
-                    </html>
-                    
+    </html>
+    
