@@ -35,7 +35,7 @@
             </button>
             
             <div id="authHeaderAction">
-                <button onclick="openAuthModal()" class="text-xs bg-slate-900 text-white font-semibold px-3 py-1.5 rounded-full hover:bg-slate-800 transition flex items-center gap-1">
+                <button id="mainLoginBtn" onclick="openAuthModal()" class="text-xs bg-slate-900 text-white font-semibold px-3 py-1.5 rounded-full hover:bg-slate-800 transition flex items-center gap-1 cursor-pointer">
                     <i class="fa-solid fa-user-lock text-[10px]"></i> Login
                 </button>
             </div>
@@ -62,7 +62,6 @@
 
         <!-- PRODUCT GRID -->
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <!-- Loading Skeletons -->
             <div class="bg-white rounded-xl h-72 border border-slate-200 animate-pulse"></div>
             <div class="bg-white rounded-xl h-72 border border-slate-200 animate-pulse"></div>
         </div>
@@ -151,8 +150,8 @@
             <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             <div class="text-center mb-5">
                 <div class="w-10 h-10 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-2 font-bold"><i class="fa-solid fa-user-check"></i></div>
-                <h3 class="font-bold text-slate-900 text-base">Customer Login Required</h3>
-                <p class="text-xs text-slate-500">Please verify identity to confirm purchase & address.</p>
+                <h3 class="font-bold text-slate-900 text-base">Customer / Admin Login</h3>
+                <p class="text-xs text-slate-500">Please verify identity to access panel or confirm order.</p>
             </div>
             <button onclick="loginWithGoogle()" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs mb-3">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google"> Continue with Google
@@ -237,7 +236,7 @@
                 adminControls.classList.remove('hidden');
             } else {
                 authHeader.innerHTML = `
-                    <button onclick="openAuthModal()" class="text-xs bg-slate-900 text-white font-semibold px-3 py-1.5 rounded-full hover:bg-slate-800 transition flex items-center gap-1">
+                    <button onclick="openAuthModal()" class="text-xs bg-slate-900 text-white font-semibold px-3 py-1.5 rounded-full hover:bg-slate-800 transition flex items-center gap-1 cursor-pointer">
                         <i class="fa-solid fa-user-lock text-[10px]"></i> Login
                     </button>
                 `;
@@ -249,11 +248,11 @@
             const grid = document.getElementById('productGrid');
             const { data: products, error } = await db.from('products').select('*').order('id', { ascending: false });
 
-            if (error) { grid.innerHTML = `<p class="text-rose-500 text-xs">Error loading catalog.</p>`; return; }
-            document.getElementById('productCount').innerText = `${products.length} Items`;
+            if (error) { grid.innerHTML = `<p class="text-rose-500 text-xs col-span-full text-center">Error loading catalog.</p>`; return; }
+            document.getElementById('productCount').innerText = `${products ? products.length : 0} Items`;
 
-            if (products.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 text-xs text-slate-500">No products available yet.</div>`;
+            if (!products || products.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 text-xs text-slate-500">No products available yet. Click Login to add items!</div>`;
                 return;
             }
 
@@ -324,5 +323,4 @@
                     <div class="flex items-center gap-2">
                         <img src="${item.img}" class="w-10 h-10 object-cover rounded-md">
                         <div>
-                            <p class="font-bold text-slate-800">${item.code}</p>
-          
+        
