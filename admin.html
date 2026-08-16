@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amane Store | Secure Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginSection" class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm border border-slate-200">
+            <div class="text-center mb-6">
+                <span class="bg-rose-600 text-white font-black text-2xl px-3 py-1 rounded-xl">A</span>
+                <h2 class="text-lg font-bold text-slate-900 mt-2">Admin Portal Access</h2>
+                <p class="text-xs text-slate-500">Only authorized store admins allowed.</p>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Admin Email</label>
+                    <input type="email" id="adminEmail" required placeholder="admin@amanestore.com" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+                    <input type="password" id="adminPassword" required placeholder="••••••••" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                </div>
+                <button type="submit" id="loginBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition cursor-pointer">
+                    Login to Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SCREEN -->
+    <div id="dashboardSection" class="hidden">
+        <header class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="bg-rose-600 font-black text-lg px-2.5 py-0.5 rounded-lg">A</span>
+                <h1 class="text-sm font-bold">Amane Store - Admin Order Panel</h1>
+            </div>
+            <button onclick="handleLogout()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 cursor-pointer">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </header>
+
+        <main class="max-w-6xl mx-auto p-4 md:p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-boxes-stacking text-rose-600"></i> Customer Orders
+                </h2>
+                <button onclick="fetchOrders()" class="text-xs bg-white border border-slate-300 px-3 py-1.5 rounded-lg font-medium shadow-xs hover:bg-slate-50 cursor-pointer">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                </button>
+            </div>
+
+            <div id="ordersContainer" class="space-y-3">
+                <p class="text-xs text-center text-slate-400 py-10">Loading orders...</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        window.onload = async () => {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                showDashboard();
+            }
+        };
+
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            btn.innerText = 'Verifying...';
+
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+
+            const { data, error } = await _supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                alert('Access Denied: ' + error.message);
+                btn.innerText = 'Login to Dashboard';
+                return;
+            }
+
+            showDashboard();
+        }
+
+        async function handleLogout() {
+            await _supabase.auth.signOut();
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            fetchOrders();
+        }
+
+        async function fetchOrders() {
+            const container = document.getElementById('ordersContainer');
+            container.innerHTML = `<p class="text-xs text-center text-slate-400 py-10">Fetching secure orders...</p>`;
+
+            const { data: orders, error } = await _supabase.from('orders').select('*').order('created_at', { ascending: false });
+
+            if (error) {
+                container.innerHTML = `<p class="text-xs text-center text-rose-500 py-10">Error fetching orders: ${error.message}</p>`;
+                return;
+            }
+
+            if (!orders || orders.length === 0) {
+                container.innerHTML = `<p class="text-xs text-center text-slate-400 py-10">No orders received yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = orders.map(ord => `
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">#ORD-${ord.id}</span>
+                            <span class="text-[10px] text-slate-400">${new Date(ord.created_at).toLocaleString()}</span>
+                        </div>
+                        <p class="text-xs font-bold text-slate-900">${ord.customer_name} (${ord.phone})</p>
+                        <p class="text-xs text-slate-600"><b>Size:</b> ${ord.size}</p>
+                        <p class="text-xs text-slate-500"><b>Address:</b> ${ord.address}</p>
+                    </div>
+                    
+                    <div class="border-t md:border-t-0 md:border-l border-slate-100 pt-3 md:pt-0 md:pl-4 flex flex-col justify-between items-end min-w-[180px]">
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-rose-600 text-base">₹${ord.total_amount}</p>
+                            <p class="text-[10px] text-slate-400">${ord.items ? ord.items.length : 0} Items</p>
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded ${ord.status === 'Pending' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">
+                            ${ord.status}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
+
