@@ -1,78 +1,382 @@
-async function handleCheckoutSubmit(e) {
-    e.preventDefault();
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.innerText = 'Processing Order...';
-    submitBtn.disabled = true;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amane Store | Ethnic Wear</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans pb-24">
 
-    const name = document.getElementById('custName').value;
-    const phone = document.getElementById('custPhone').value;
-    const size = document.getElementById('custSize').value;
-    const pincode = document.getElementById('custPincode').value;
-    const flat = document.getElementById('custFlat').value;
-    const area = document.getElementById('custArea').value;
-    const landmark = document.getElementById('custLandmark').value;
-    const cityState = document.getElementById('custCityState').value;
+    <!-- ANNOUNCEMENT BAR -->
+    <div class="bg-gradient-to-r from-amber-600 to-rose-600 text-white text-xs text-center py-2 px-4 font-medium shadow-md">
+        🔥 Direct Manufacturer Rates | Express Shipping All Over India!
+    </div>
 
-    const fullAddress = `${flat}, ${area}${landmark ? ', Near ' + landmark : ''}, ${cityState} - ${pincode}`;
-    const totalSum = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
-    const itemList = cart.map(i => `${i.code} (${i.title}) - Qty: ${i.qty}`).join('<br>');
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-xs">
+        <div class="flex items-center gap-2">
+            <span class="bg-rose-600 text-white font-black text-xl px-2.5 py-0.5 rounded-lg">A</span>
+            <div>
+                <h1 class="text-base font-bold text-slate-900 leading-tight">Amane Store</h1>
+                <p class="text-[9px] text-slate-500 font-medium">100% Factory Quality</p>
+            </div>
+        </div>
+        
+        <!-- Cart Button -->
+        <div class="flex items-center gap-3">
+            <button onclick="toggleCartDrawer()" class="relative text-slate-700 hover:text-rose-600 transition cursor-pointer">
+                <i class="fa-solid fa-bag-shopping text-xl"></i>
+                <span id="cartCountBadge" class="absolute -top-2 -right-2 bg-rose-600 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+            </button>
+            <a href="/admin.html" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1">
+                <i class="fa-solid fa-user-lock text-[10px]"></i> Admin
+            </a>
+        </div>
+    </header>
 
-    // 1. Supabase me Database Order Save
-    const { data, error } = await _supabase.from('orders').insert([
-        {
-            customer_name: name,
-            phone: phone,
-            size: size,
-            pincode: pincode,
-            address: fullAddress,
-            items: cart,
-            total_amount: totalSum,
-            status: 'Pending'
+    <!-- TRUST BADGES -->
+    <section class="max-w-6xl mx-auto px-4 my-4">
+        <div class="grid grid-cols-3 gap-2 bg-white p-3 rounded-xl border border-slate-200 text-center text-[11px]">
+            <div><i class="fa-solid fa-shield-halved text-rose-600 mb-1 text-sm"></i><p class="font-bold">Quality Assured</p></div>
+            <div class="border-x border-slate-100"><i class="fa-solid fa-truck-fast text-rose-600 mb-1 text-sm"></i><p class="font-bold">Fast Delivery</p></div>
+            <div><i class="fa-solid fa-hand-holding-dollar text-rose-600 mb-1 text-sm"></i><p class="font-bold">Cash On Delivery</p></div>
+        </div>
+    </section>
+
+    <!-- CATALOG MAIN SECTION -->
+    <main class="max-w-6xl mx-auto px-4">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                <i class="fa-solid fa-fire text-amber-500"></i> Trending Ethnic Catalog
+            </h2>
+            <span class="text-[11px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-semibold">Demo Items</span>
+        </div>
+
+        <!-- DEMO PRODUCTS GRID -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <!-- Sample Card 1 -->
+            <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="relative bg-slate-100 aspect-3/4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500" class="w-full h-full object-cover" loading="lazy">
+                        <span class="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded">D.NO-101</span>
+                    </div>
+                    <div class="p-2.5">
+                        <h3 class="font-bold text-xs text-slate-800 truncate">Designer Kurti Set</h3>
+                        <p class="text-[10px] text-slate-500 mb-1">Color: Pink</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-sm font-black text-rose-600">₹899</span>
+                            <span class="text-[10px] text-slate-400 line-through">₹1299</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2.5 pt-0">
+                    <button onclick="addToCart('101', 'D.NO-101', 'Designer Kurti Set', 899, 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] py-1.5 rounded-lg shadow-xs transition cursor-pointer">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sample Card 2 -->
+            <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col justify-between">
+                <div>
+                    <div class="relative bg-slate-100 aspect-3/4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500" class="w-full h-full object-cover" loading="lazy">
+                        <span class="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded">D.NO-102</span>
+                    </div>
+                    <div class="p-2.5">
+                        <h3 class="font-bold text-xs text-slate-800 truncate">Rayon Anarkali Suit</h3>
+                        <p class="text-[10px] text-slate-500 mb-1">Color: Maroon</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-sm font-black text-rose-600">₹1199</span>
+                            <span class="text-[10px] text-slate-400 line-through">₹1699</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2.5 pt-0">
+                    <button onclick="addToCart('102', 'D.NO-102', 'Rayon Anarkali Suit', 1199, 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] py-1.5 rounded-lg shadow-xs transition cursor-pointer">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CART DRAWER MODAL -->
+    <div id="cartDrawer" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex justify-end">
+        <div class="bg-white w-full max-w-md h-full flex flex-col justify-between shadow-2xl">
+            <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-rose-600"></i> Your Shopping Cart
+                </h3>
+                <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-slate-600 text-xl cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="cartItemsContainer" class="p-4 overflow-y-auto flex-1 space-y-3">
+                <p class="text-xs text-center text-slate-400 py-10">Your cart is empty.</p>
+            </div>
+
+            <div class="p-4 border-t border-slate-200 bg-slate-50">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-xs font-bold text-slate-600">Total Payable:</span>
+                    <span id="cartGrandTotal" class="text-lg font-black text-rose-600">₹0</span>
+                </div>
+                <button onclick="openCheckoutModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
+                    Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkoutModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <h3 class="font-bold text-slate-900 text-base mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-truck text-rose-600"></i> Shipping Address
+            </h3>
+            <p class="text-xs text-slate-500 mb-4">Please fill complete details for smooth courier delivery.</p>
+
+            <form onsubmit="handleCheckoutSubmit(event)" class="space-y-3">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Name</label>
+                        <input type="text" id="custName" required placeholder="Name" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Mobile / WhatsApp</label>
+                        <input type="tel" id="custPhone" required placeholder="10-digit number" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Size Needed</label>
+                        <select id="custSize" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600 bg-white">
+                            <option value="M">Medium (M - 38)</option>
+                            <option value="L">Large (L - 40)</option>
+                            <option value="XL">X-Large (XL - 42)</option>
+                            <option value="XXL">XXL (44)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Pincode</label>
+                        <input type="text" id="custPincode" required placeholder="6-digit Pincode" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Flat / House No. / Building Name</label>
+                    <input type="text" id="custFlat" required placeholder="e.g. Flat 302, Green Apartments" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Street / Area / Colony</label>
+                    <input type="text" id="custArea" required placeholder="e.g. Main Market, Lajpat Nagar" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Landmark (Optional)</label>
+                        <input type="text" id="custLandmark" placeholder="e.g. Near Metro Station" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">City & State</label>
+                        <input type="text" id="custCityState" required placeholder="e.g. Delhi, New Delhi" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="submitBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-circle-check text-sm"></i> Confirm Order
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ORDER SUCCESS MODAL -->
+    <div id="successModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 text-center shadow-2xl">
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base mb-1">Order Placed Successfully!</h3>
+            <p class="text-xs text-slate-500 mb-4">Aapka order receive ho gaya hai. Admin team jald hi aapse contact karegi.</p>
+            <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white text-xs font-bold py-2.5 rounded-xl cursor-pointer">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let cart = [];
+
+        function toggleCartDrawer(forceOpen = false) {
+            const drawer = document.getElementById('cartDrawer');
+            if (forceOpen) drawer.classList.remove('hidden');
+            else drawer.classList.toggle('hidden');
         }
-    ]);
 
-    if (error) {
-        console.error('Database Error:', error);
-        alert('Order save karne me problem aayi: ' + error.message);
-        submitBtn.innerText = 'Confirm Order';
-        submitBtn.disabled = false;
-        return;
-    }
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                alert('Pehle cart me koi item add karo!');
+                return;
+            }
+            toggleCartDrawer(false);
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
 
-    // 2. Gmail par instant order notification send karna
-    try {
-        await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer re_AKS6o89U_9fn2qi8chxuLcUnRq7akEnps', // <-- Yahan apni re_... key paste karo
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                from: 'Amane Store <onboarding@resend.dev>',
-                to: ['abhijeetbhadra20@gmail.com'],
-                subject: `🚨 New Order Received from ${name} (₹${totalSum})`,
-                html: `
-                    <h2>New Order Details</h2>
-                    <p><strong>Customer Name:</strong> ${name}</p>
-                    <p><strong>Phone:</strong> ${phone}</p>
-                    <p><strong>Size:</strong> ${size}</p>
-                    <p><strong>Full Address:</strong> ${fullAddress}</p>
-                    <p><strong>Items:</strong><br>${itemList}</p>
-                    <p><strong>Total Amount:</strong> ₹${totalSum}</p>
-                `
-            })
-        });
-    } catch (err) {
-        console.error('Email Notification Error:', err);
-    }
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
 
-    // Cart reset & success popup display
-    cart = [];
-    updateCartUI();
-    closeCheckoutModal();
-    document.getElementById('successModal').classList.remove('hidden');
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
 
-    submitBtn.innerText = 'Confirm Order';
-    submitBtn.disabled = false;
-}
-                    
+        function addToCart(id, code, title, price, img) {
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ id, code, title, price, img, qty: 1 });
+            }
+            updateCartUI();
+            toggleCartDrawer(true);
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cartItemsContainer');
+            const totalBadge = document.getElementById('cartCountBadge');
+            const grandTotal = document.getElementById('cartGrandTotal');
+
+            const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+            const totalSum = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+
+            totalBadge.innerText = totalItems;
+            grandTotal.innerText = `₹${totalSum}`;
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p class="text-xs text-center text-slate-400 py-10">Your cart is empty.</p>`;
+                return;
+            }
+
+            container.innerHTML = cart.map((item, index) => `
+                <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
+                    <div class="flex items-center gap-2">
+                        <img src="${item.img}" class="w-10 h-10 object-cover rounded-md">
+                        <div>
+                            <p class="font-bold text-slate-800">${item.code}</p>
+                            <p class="text-[10px] text-slate-500">₹${item.price} x ${item.qty}</p>
+                        </div>
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="text-rose-500 hover:text-rose-700 text-xs p-1 cursor-pointer">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        async function handleCheckoutSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = 'Processing Order...';
+            submitBtn.disabled = true;
+
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const size = document.getElementById('custSize').value;
+            const pincode = document.getElementById('custPincode').value;
+            const flat = document.getElementById('custFlat').value;
+            const area = document.getElementById('custArea').value;
+            const landmark = document.getElementById('custLandmark').value;
+            const cityState = document.getElementById('custCityState').value;
+
+            const fullAddress = `${flat}, ${area}${landmark ? ', Near ' + landmark : ''}, ${cityState} - ${pincode}`;
+            const totalSum = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            const itemList = cart.map(i => `${i.code} (${i.title}) - Qty: ${i.qty}`).join('<br>');
+
+            // 1. Supabase me Database Order Save
+            const { data, error } = await _supabase.from('orders').insert([
+                {
+                    customer_name: name,
+                    phone: phone,
+                    size: size,
+                    pincode: pincode,
+                    address: fullAddress,
+                    items: cart,
+                    total_amount: totalSum,
+                    status: 'Pending'
+                }
+            ]);
+
+            if (error) {
+                console.error('Database Error:', error);
+                alert('Order save karne me problem aayi: ' + error.message);
+                submitBtn.innerText = 'Confirm Order';
+                submitBtn.disabled = false;
+                return;
+            }
+
+            // 2. Direct Resend Email API Call (Instant Admin Gmail Alert)
+            try {
+                await fetch('https://api.resend.com/emails', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer re_AKS6o89U_9fn2qi8chxuLcUnRq7akEnps',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        from: 'Amane Store <onboarding@resend.dev>',
+                        to: ['abhijeetbhadra20@gmail.com'],
+                        subject: `🚨 New Order Received from ${name} (₹${totalSum})`,
+                        html: `
+                            <h2>New Order Details</h2>
+                            <p><strong>Customer Name:</strong> ${name}</p>
+                            <p><strong>Phone:</strong> ${phone}</p>
+                            <p><strong>Size:</strong> ${size}</p>
+                            <p><strong>Full Address:</strong> ${fullAddress}</p>
+                            <p><strong>Items:</strong><br>${itemList}</p>
+                            <p><strong>Total Amount:</strong> ₹${totalSum}</p>
+                        `
+                    })
+                });
+            } catch (err) {
+                console.error('Email Notification Error:', err);
+            }
+
+            // Cart reset & success popup display
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+            document.getElementById('successModal').classList.remove('hidden');
+
+            submitBtn.innerText = 'Confirm Order';
+            submitBtn.disabled = false;
+        }
+    </script>
+</body>
+</html>
