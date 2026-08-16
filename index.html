@@ -26,11 +26,11 @@
             </div>
         </div>
         
-        <!-- Cart & Working Login Button -->
+        <!-- Cart & Login Button -->
         <div class="flex items-center gap-3">
-            <button class="relative text-slate-700">
+            <button onclick="toggleCartDrawer()" class="relative text-slate-700 hover:text-rose-600 transition cursor-pointer">
                 <i class="fa-solid fa-bag-shopping text-xl"></i>
-                <span class="absolute -top-2 -right-2 bg-rose-600 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                <span id="cartCountBadge" class="absolute -top-2 -right-2 bg-rose-600 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
             </button>
             <button onclick="openAuthModal()" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1 cursor-pointer">
                 <i class="fa-solid fa-user-lock text-[10px]"></i> Login
@@ -75,7 +75,9 @@
                     </div>
                 </div>
                 <div class="p-2.5 pt-0">
-                    <button class="w-full bg-rose-600 text-white font-bold text-[11px] py-1.5 rounded-lg shadow-xs opacity-90">Add to Cart</button>
+                    <button onclick="addToCart('101', 'D.NO-101', 'Designer Kurti Set', 899, 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] py-1.5 rounded-lg shadow-xs transition cursor-pointer">
+                        Add to Cart
+                    </button>
                 </div>
             </div>
 
@@ -96,16 +98,46 @@
                     </div>
                 </div>
                 <div class="p-2.5 pt-0">
-                    <button class="w-full bg-rose-600 text-white font-bold text-[11px] py-1.5 rounded-lg shadow-xs opacity-90">Add to Cart</button>
+                    <button onclick="addToCart('102', 'D.NO-102', 'Rayon Anarkali Suit', 1199, 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] py-1.5 rounded-lg shadow-xs transition cursor-pointer">
+                        Add to Cart
+                    </button>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- STEP 3 LAYER: CART DRAWER MODAL -->
+    <div id="cartDrawer" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex justify-end">
+        <div class="bg-white w-full max-w-md h-full flex flex-col justify-between shadow-2xl">
+            <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-rose-600"></i> Your Shopping Cart
+                </h3>
+                <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-slate-600 text-xl cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="cartItemsContainer" class="p-4 overflow-y-auto flex-1 space-y-3">
+                <p class="text-xs text-center text-slate-400 py-10">Your cart is empty.</p>
+            </div>
+
+            <div class="p-4 border-t border-slate-200 bg-slate-50">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-xs font-bold text-slate-600">Total Payable:</span>
+                    <span id="cartGrandTotal" class="text-lg font-black text-rose-600">₹0</span>
+                </div>
+                <button onclick="alert('Checkout Form Step 4 me aayega!')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
+                    Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- STEP 2 LAYER: AUTHENTICATION MODAL -->
     <div id="authModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="text-center mb-5">
@@ -116,33 +148,85 @@
                 <p class="text-xs text-slate-500">Please verify identity to access panel or confirm order.</p>
             </div>
             
-            <button onclick="alert('Google Login Step 4 me connect hoga!')" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs mb-3">
+            <button onclick="alert('Google Login Step 5 me connect hoga!')" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs mb-3 cursor-pointer">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google"> Continue with Google
             </button>
             
             <div class="text-center text-[10px] text-slate-400 my-2">OR EMAIL VERIFICATION</div>
             
-            <form onsubmit="event.preventDefault(); alert('Magic link functionality next step me aayegi!');" class="space-y-2">
+            <form onsubmit="event.preventDefault(); alert('Magic link functionality next steps me aayegi!');" class="space-y-2">
                 <input type="email" required placeholder="Enter your email" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
-                <button type="submit" class="w-full bg-slate-900 text-white font-bold py-2 rounded-lg text-xs">Send Magic Login Link</button>
+                <button type="submit" class="w-full bg-slate-900 text-white font-bold py-2 rounded-lg text-xs cursor-pointer">Send Magic Login Link</button>
             </form>
         </div>
     </div>
 
-    <!-- STEP 2 JAVASCRIPT (ZERO DEPENDENCY) -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
+        let cart = [];
+
         function openAuthModal() {
             var modal = document.getElementById('authModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-            }
+            if (modal) modal.classList.remove('hidden');
         }
 
         function closeAuthModal() {
             var modal = document.getElementById('authModal');
-            if (modal) {
-                modal.classList.add('hidden');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function toggleCartDrawer(forceOpen = false) {
+            const drawer = document.getElementById('cartDrawer');
+            if (forceOpen) drawer.classList.remove('hidden');
+            else drawer.classList.toggle('hidden');
+        }
+
+        function addToCart(id, code, title, price, img) {
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ id, code, title, price, img, qty: 1 });
             }
+            updateCartUI();
+            toggleCartDrawer(true);
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cartItemsContainer');
+            const totalBadge = document.getElementById('cartCountBadge');
+            const grandTotal = document.getElementById('cartGrandTotal');
+
+            const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+            const totalSum = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+
+            totalBadge.innerText = totalItems;
+            grandTotal.innerText = `₹${totalSum}`;
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p class="text-xs text-center text-slate-400 py-10">Your cart is empty.</p>`;
+                return;
+            }
+
+            container.innerHTML = cart.map((item, index) => `
+                <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
+                    <div class="flex items-center gap-2">
+                        <img src="${item.img}" class="w-10 h-10 object-cover rounded-md">
+                        <div>
+                            <p class="font-bold text-slate-800">${item.code}</p>
+                            <p class="text-[10px] text-slate-500">₹${item.price} x ${item.qty}</p>
+                        </div>
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="text-rose-500 hover:text-rose-700 text-xs p-1 cursor-pointer">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
         }
     </script>
 </body>
