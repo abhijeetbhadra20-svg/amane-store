@@ -10,7 +10,7 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-24">
 
-    <!-- Admin Login Screen (Supabase Auth) -->
+    <!-- Admin Login Screen -->
     <div id="adminLoginScreen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4">
             <div class="text-center">
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <!-- Main Admin Dashboard (Protected) -->
+    <!-- Main Admin Dashboard -->
     <div id="adminDashboardContent" class="hidden">
         <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
             <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -128,7 +128,6 @@
         let uploadedImageBase64 = "";
 
         window.onload = async function() {
-            // Check if user is already logged in via Supabase session
             const { data: { session } } = await _supabase.auth.getSession();
             if (session) {
                 showDashboard(session.user.email);
@@ -144,10 +143,7 @@
             btn.innerText = "Verifying...";
             btn.disabled = true;
 
-            const { data, error } = await _supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
 
             if (error) {
                 alert('Login Failed: ' + error.message);
@@ -202,6 +198,7 @@
 
             alert('Product added successfully!');
             e.target.reset();
+            uploadedImageBase64 = "";
             renderAdminProducts();
         }
 
@@ -219,12 +216,16 @@
                         <div class="truncate">
                             <span class="bg-slate-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">${p.code}</span>
                             <h4 class="font-bold text-slate-800 mt-0.5 truncate">${p.title}</h4>
-                            <p class="text-[10px] text-slate-500">₹${p.price} | Stock: ${p.inStock !== false ? 'Yes' : 'No'}</p>
+                            <p class="text-[10px] text-slate-500">₹${p.price} | Stock: <span class="${p.inStock !== false ? 'text-emerald-600 font-bold' : 'text-rose-600 font-bold'}">${p.inStock !== false ? 'Yes' : 'No'}</span></p>
                         </div>
                     </div>
                     <div class="flex gap-1 shrink-0">
-                        <button onclick="toggleStock(${index})" class="bg-amber-50 text-amber-700 p-2 rounded-lg cursor-pointer"><i class="fa-solid fa-box"></i></button>
-                        <button onclick="deleteAdminProduct(${index})" class="bg-rose-50 text-rose-600 p-2 rounded-lg cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="toggleStock(${index})" class="bg-amber-50 text-amber-700 px-2.5 py-1.5 rounded-lg cursor-pointer text-[10px] font-bold" title="Toggle Stock">
+                            <i class="fa-solid fa-box mr-1"></i> Stock
+                        </button>
+                        <button onclick="deleteAdminProduct(${index})" class="bg-rose-50 text-rose-600 p-2 rounded-lg cursor-pointer" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
                 </div>
             `).join('');
@@ -262,15 +263,15 @@
                     return `
                         <div class="bg-slate-50 rounded-xl border border-slate-200 p-3 text-xs space-y-2">
                             <div class="flex items-center justify-between border-b pb-2">
-                                <div><span class="font-black">${order.customer_name}</span> <span class="text-slate-400">(${order.phone})</span></div>
+                                <div><span class="font-black">${order.customer_name || 'Customer'}</span> <span class="text-slate-400">(${order.phone || 'N/A'})</span></div>
                                 <span class="${badgeColor} font-extrabold text-[10px] px-2.5 py-0.5 rounded-full">${status}</span>
                             </div>
-                            <div class="text-[11px] text-slate-600">
-                                <p><b>Address:</b> ${order.address} (${order.pincode})</p>
-                                <p><b>Payment:</b> ${order.payment_mode || 'COD'}</p>
+                            <div class="text-[11px] text-slate-600 space-y-0.5">
+                                <p><b>Address:</b> ${order.address || ''}, ${order.landmark || ''}, ${order.city_state || ''} - ${order.pincode || ''}</p>
+                                <p><b>Size:</b> ${order.size || 'N/A'} | <b>Payment:</b> ${order.payment_mode || 'COD'}</p>
                             </div>
                             <div class="flex items-center justify-between pt-1 border-t font-bold">
-                                <span>Total: ₹${order.total_amount}</span>
+                                <span>Total: ₹${order.total_amount || 0}</span>
                                 <div class="flex gap-1">
                                     <button onclick="updateOrderStatus('${order.id}', 'Delivered')" class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded cursor-pointer text-[10px]">Mark Delivered</button>
                                     <button onclick="deleteCustomerOrder('${order.id}')" class="bg-rose-50 text-rose-600 px-2 py-1 rounded cursor-pointer text-[10px]">Delete</button>
@@ -280,19 +281,27 @@
                     `;
                 }).join('');
             } catch(err) {
-                container.innerHTML = `<p class="text-xs text-rose-500 text-center py-6">Error loading orders.</p>`;
+                container.innerHTML = `<p class="text-xs text-rose-500 text-center py-6">Error loading orders from database.</p>`;
             }
         }
 
         async function updateOrderStatus(id, status) {
-            await _supabase.from('orders').update({ status }).eq('id', id);
-            fetchCustomerOrders();
+            const { error } = await _supabase.from('orders').update({ status }).eq('id', id);
+            if (error) {
+                alert('Error updating status: ' + error.message);
+            } else {
+                fetchCustomerOrders();
+            }
         }
 
         async function deleteCustomerOrder(id) {
-            if (confirm('Delete this order?')) {
-                await _supabase.from('orders').delete().eq('id', id);
-                fetchCustomerOrders();
+            if (confirm('Permanently delete this order from database?')) {
+                const { error } = await _supabase.from('orders').delete().eq('id', id);
+                if (error) {
+                    alert('Error deleting order: ' + error.message);
+                } else {
+                    fetchCustomerOrders();
+                }
             }
         }
     </script>
