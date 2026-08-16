@@ -1,255 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amane Store | Ethnic Wear</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-</head>
-<body class="bg-slate-100 text-slate-800 font-sans pb-24">
-
-    <div class="bg-gradient-to-r from-rose-600 to-pink-600 text-white text-[11px] text-center py-1.5 px-4 font-medium tracking-wide">
-        🛍️ Special Wholesale Rates | Free Shipping & Cash on Delivery Available!
-    </div>
-
-    <header class="sticky top-0 z-40 bg-white border-b border-slate-200 px-4 py-3 shadow-sm">
-        <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
-            <div class="flex items-center gap-2">
-                <span class="bg-rose-600 text-white font-black text-xl px-2.5 py-0.5 rounded-xl shadow-sm">A</span>
-                <div>
-                    <h1 class="text-base font-extrabold text-slate-900 tracking-tight leading-none">AMANE STORE</h1>
-                    <p class="text-[9px] text-rose-600 font-bold uppercase tracking-widest mt-0.5">Fashion Wholesale</p>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-3">
-                <button onclick="toggleCartDrawer()" class="relative text-slate-700 hover:text-rose-600 p-1.5 transition cursor-pointer">
-                    <i class="fa-solid fa-bag-shopping text-xl"></i>
-                    <span id="cartCountBadge" class="absolute top-0 right-0 bg-rose-600 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">0</span>
-                </button>
-                <a href="/admin.html" class="text-[11px] bg-slate-900 hover:bg-slate-800 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-user-gear text-[10px]"></i> Admin
-                </a>
-            </div>
-        </div>
-    </header>
-
-    <section class="max-w-6xl mx-auto px-4 mt-3">
-        <div class="relative flex items-center bg-white rounded-xl border border-slate-300 shadow-xs overflow-hidden focus-within:border-rose-500 transition">
-            <div class="pl-3.5 text-slate-400">
-                <i class="fa-solid fa-magnifying-glass text-xs"></i>
-            </div>
-            <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search Kurtis, Suits, Dress Material or Design No..." class="w-full py-2.5 px-3 text-xs outline-none bg-transparent text-slate-800 placeholder-slate-400">
-            <button onclick="clearSearch()" id="clearSearchBtn" class="hidden pr-3 text-slate-400 hover:text-slate-600">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-        </div>
-
-        <div class="flex items-center gap-2 mt-2.5 overflow-x-auto no-scrollbar py-1 text-[11px]">
-            <button onclick="filterCategory('all')" class="cat-badge active bg-rose-600 text-white font-semibold px-3 py-1 rounded-full whitespace-nowrap shadow-xs">All Items</button>
-            <button onclick="filterCategory('kurti')" class="cat-badge bg-white text-slate-600 border border-slate-200 font-medium px-3 py-1 rounded-full whitespace-nowrap">Kurtis</button>
-            <button onclick="filterCategory('suit')" class="cat-badge bg-white text-slate-600 border border-slate-200 font-medium px-3 py-1 rounded-full whitespace-nowrap">Suits & Sets</button>
-            <button onclick="filterCategory('saree')" class="cat-badge bg-white text-slate-600 border border-slate-200 font-medium px-3 py-1 rounded-full whitespace-nowrap">Sarees</button>
-        </div>
-    </section>
-
-    <section class="max-w-6xl mx-auto px-4 mt-3">
-        <div class="grid grid-cols-3 gap-2 bg-rose-50/60 border border-rose-100 rounded-xl p-2.5 text-center text-[10px] text-slate-700">
-            <div class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-shield-check text-rose-600 text-xs"></i><span class="font-semibold">Verified Quality</span></div>
-            <div class="flex items-center justify-center gap-1.5 border-x border-rose-200"><i class="fa-solid fa-truck-fast text-rose-600 text-xs"></i><span class="font-semibold">Fast Delivery</span></div>
-            <div class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-rotate-left text-rose-600 text-xs"></i><span class="font-semibold">Easy Returns</span></div>
-        </div>
-    </section>
-
-    <main class="max-w-6xl mx-auto px-4 mt-4">
-        <div class="flex items-center justify-between mb-3">
-            <h2 class="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                <i class="fa-solid fa-fire text-amber-500"></i> Trending Products
-            </h2>
-            <span id="productCountBadge" class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md font-bold">2 Items</span>
-        </div>
-
-        <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            
-            <div class="product-card bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:shadow-md transition" data-category="kurti" data-title="designer kurti set pink clothes" data-code="d.no-101 101">
-                <div>
-                    <div class="relative bg-slate-100 aspect-3/4 overflow-hidden group">
-                        <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                        <span class="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-xs text-white text-[9px] font-bold px-2 py-0.5 rounded-md">D.NO-101</span>
-                        <span class="absolute bottom-2 left-2 bg-emerald-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                            4.5 <i class="fa-solid fa-star text-[8px]"></i>
-                        </span>
-                    </div>
-                    <div class="p-2.5">
-                        <p class="text-[10px] text-slate-400 font-medium">Amane Exclusive</p>
-                        <h3 class="font-bold text-xs text-slate-800 truncate leading-tight">Designer Kurti Set</h3>
-                        <p class="text-[10px] text-slate-500 my-0.5">Color: Pink</p>
-                        
-                        <div class="flex items-baseline gap-1.5 mt-1">
-                            <span class="text-sm font-black text-slate-900">₹899</span>
-                            <span class="text-[10px] text-slate-400 line-through">₹1,299</span>
-                            <span class="text-[10px] font-bold text-emerald-600">30% off</span>
-                        </div>
-                        <p class="text-[9px] font-semibold text-emerald-700 mt-0.5">Free Delivery</p>
-                    </div>
-                </div>
-                <div class="p-2.5 pt-0">
-                    <button onclick="addToCart('101', 'D.NO-101', 'Designer Kurti Set', 899, 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500')" class="w-full bg-rose-600 hover:bg-rose-700 active:scale-98 text-white font-bold text-[11px] py-2 rounded-lg shadow-xs transition cursor-pointer flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-cart-plus text-xs"></i> Add to Cart
-                    </button>
-                </div>
-            </div>
-
-            <div class="product-card bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:shadow-md transition" data-category="suit" data-title="rayon anarkali suit maroon clothes" data-code="d.no-102 102">
-                <div>
-                    <div class="relative bg-slate-100 aspect-3/4 overflow-hidden group">
-                        <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                        <span class="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-xs text-white text-[9px] font-bold px-2 py-0.5 rounded-md">D.NO-102</span>
-                        <span class="absolute bottom-2 left-2 bg-emerald-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                            4.8 <i class="fa-solid fa-star text-[8px]"></i>
-                        </span>
-                    </div>
-                    <div class="p-2.5">
-                        <p class="text-[10px] text-slate-400 font-medium">Amane Exclusive</p>
-                        <h3 class="font-bold text-xs text-slate-800 truncate leading-tight">Rayon Anarkali Suit</h3>
-                        <p class="text-[10px] text-slate-500 my-0.5">Color: Maroon</p>
-                        
-                        <div class="flex items-baseline gap-1.5 mt-1">
-                            <span class="text-sm font-black text-slate-900">₹1,199</span>
-                            <span class="text-[10px] text-slate-400 line-through">₹1,699</span>
-                            <span class="text-[10px] font-bold text-emerald-600">29% off</span>
-                        </div>
-                        <p class="text-[9px] font-semibold text-emerald-700 mt-0.5">Free Delivery</p>
-                    </div>
-                </div>
-                <div class="p-2.5 pt-0">
-                    <button onclick="addToCart('102', 'D.NO-102', 'Rayon Anarkali Suit', 1199, 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500')" class="w-full bg-rose-600 hover:bg-rose-700 active:scale-98 text-white font-bold text-[11px] py-2 rounded-lg shadow-xs transition cursor-pointer flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-cart-plus text-xs"></i> Add to Cart
-                    </button>
-                </div>
-            </div>
-
-        </div>
-
-        <div id="noResults" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200 mt-2">
-            <i class="fa-solid fa-magnifying-glass text-3xl text-slate-300 mb-2"></i>
-            <p class="text-xs font-bold text-slate-700">No matching products found</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">Try searching with product code like '101' or 'Suit'</p>
-        </div>
-    </main>
-
-    <div id="cartDrawer" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex justify-end">
-        <div class="bg-white w-full max-w-md h-full flex flex-col justify-between shadow-2xl">
-            <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-bag-shopping text-rose-600"></i> My Shopping Bag
-                </h3>
-                <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-slate-600 text-xl cursor-pointer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div id="cartItemsContainer" class="p-4 overflow-y-auto flex-1 space-y-3">
-                <p class="text-xs text-center text-slate-400 py-10">Your cart is empty.</p>
-            </div>
-
-            <div class="p-4 border-t border-slate-200 bg-slate-50">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-slate-600">Total Amount:</span>
-                    <span id="cartGrandTotal" class="text-lg font-black text-rose-600">₹0</span>
-                </div>
-                <button onclick="openCheckoutModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
-                    Proceed to Delivery Address <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="checkoutModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            
-            <h3 class="font-bold text-slate-900 text-base mb-0.5 flex items-center gap-2">
-                <i class="fa-solid fa-location-dot text-rose-600"></i> Delivery Address
-            </h3>
-            <p class="text-xs text-slate-500 mb-4">Enter complete address for smooth shipping.</p>
-
-            <form onsubmit="handleCheckoutSubmit(event)" class="space-y-3">
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Name *</label>
-                        <input type="text" id="custName" required placeholder="Full Name" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Mobile / WhatsApp *</label>
-                        <input type="tel" id="custPhone" required placeholder="10-digit Phone" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Size Needed *</label>
-                        <select id="custSize" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600 bg-white">
-                            <option value="M">Medium (M - 38)</option>
-                            <option value="L">Large (L - 40)</option>
-                            <option value="XL">X-Large (XL - 42)</option>
-                            <option value="XXL">XXL (44)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Pincode *</label>
-                        <input type="text" id="custPincode" required placeholder="6-digit Pincode" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">House / Flat / Building *</label>
-                    <input type="text" id="custFlat" required placeholder="e.g. House No 42, Block B" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Street / Area / Colony *</label>
-                    <input type="text" id="custArea" required placeholder="e.g. Lajpat Nagar, Main Road" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Landmark (Optional)</label>
-                        <input type="text" id="custLandmark" placeholder="e.g. Near Metro Station" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">City & State *</label>
-                        <input type="text" id="custCityState" required placeholder="e.g. New Delhi, Delhi" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
-                    </div>
-                </div>
-
-                <div class="pt-2">
-                    <button type="submit" id="submitBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-circle-check text-sm"></i> Place Order (Cash On Delivery)
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="successModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 text-center shadow-2xl">
-            <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl font-bold">
-                <i class="fa-solid fa-check"></i>
-            </div>
-            <h3 class="font-bold text-slate-900 text-base mb-1">Order Placed Successfully!</h3>
-            <p class="text-xs text-slate-500 mb-4">Admin team ko aapka order receive ho gaya hai. Jald hi verification call/message aayega.</p>
-            <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white text-xs font-bold py-2.5 rounded-xl cursor-pointer">
-                Continue Shopping
-            </button>
-        </div>
-    </div>
-
     <script>
         // Supabase Init
         const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
@@ -263,6 +11,54 @@
 
         let cart = [];
 
+        // Dynamic & Local Storage Products Sync (Admin Panel Integration)
+        function getStoredProducts() {
+            const defaultStaticProducts = [
+                { id: '101', code: 'D.NO-101', category: 'kurti', title: 'Designer Kurti Set', color: 'Pink', price: 899, mrp: 1299, rating: '4.5', img: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500' },
+                { id: '102', code: 'D.NO-102', category: 'suit', title: 'Rayon Anarkali Suit', color: 'Maroon', price: 1199, mrp: 1699, rating: '4.8', img: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500' }
+            ];
+            const localCustomProducts = JSON.parse(localStorage.getItem('store_products')) || [];
+            return [...defaultStaticProducts, ...localCustomProducts];
+        }
+
+        function renderShopProducts(productsToRender = null) {
+            const productsGrid = document.getElementById('productsGrid');
+            const products = productsToRender || getStoredProducts();
+            
+            productsGrid.innerHTML = products.map(p => `
+                <div class="product-card bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:shadow-md transition" data-category="${p.category || 'kurti'}" data-title="${p.title.toLowerCase()} ${p.color ? p.color.toLowerCase() : ''}" data-code="${p.code.toLowerCase()}">
+                    <div>
+                        <div class="relative bg-slate-100 aspect-3/4 overflow-hidden group">
+                            <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <span class="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-xs text-white text-[9px] font-bold px-2 py-0.5 rounded-md">${p.code}</span>
+                            <span class="absolute bottom-2 left-2 bg-emerald-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                ${p.rating || '4.5'} <i class="fa-solid fa-star text-[8px]"></i>
+                            </span>
+                        </div>
+                        <div class="p-2.5">
+                            <p class="text-[10px] text-slate-400 font-medium">Amane Exclusive</p>
+                            <h3 class="font-bold text-xs text-slate-800 truncate leading-tight">${p.title}</h3>
+                            <p class="text-[10px] text-slate-500 my-0.5">Color: ${p.color || 'Standard'}</p>
+                            
+                            <div class="flex items-baseline gap-1.5 mt-1">
+                                <span class="text-sm font-black text-slate-900">₹${p.price}</span>
+                                <span class="text-[10px] text-slate-400 line-through">₹${p.mrp}</span>
+                                <span class="text-[10px] font-bold text-emerald-600">${Math.round(((p.mrp - p.price)/p.mrp)*100)}% off</span>
+                            </div>
+                            <p class="text-[9px] font-semibold text-emerald-700 mt-0.5">Free Delivery</p>
+                        </div>
+                    </div>
+                    <div class="p-2.5 pt-0">
+                        <button onclick="addToCart('${p.id}', '${p.code}', '${p.title}', ${p.price}, '${p.img}')" class="w-full bg-rose-600 hover:bg-rose-700 active:scale-98 text-white font-bold text-[11px] py-2 rounded-lg shadow-xs transition cursor-pointer flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-cart-plus text-xs"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('productCountBadge').innerText = `${products.length} Items`;
+        }
+
         // Live Search Handler
         function handleSearch() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -275,8 +71,8 @@
             else clearBtn.classList.add('hidden');
 
             cards.forEach(card => {
-                const title = card.getAttribute('data-title').toLowerCase();
-                const code = card.getAttribute('data-code').toLowerCase();
+                const title = card.getAttribute('data-title') || '';
+                const code = card.getAttribute('data-code') || '';
 
                 if (title.includes(query) || code.includes(query)) {
                     card.classList.remove('hidden');
@@ -301,7 +97,7 @@
             const cards = document.querySelectorAll('.product-card');
             const badges = document.querySelectorAll('.cat-badge');
             
-            badges.forEach(b => {
+            badges.forEach(b =>  {
                 b.classList.remove('bg-rose-600', 'text-white', 'shadow-xs');
                 b.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200');
             });
@@ -396,7 +192,7 @@
             updateCartUI();
         }
 
-        // Checkout & Dual Email Notification
+        // Checkout, Supabase Insert & EmailJS Notification
         async function handleCheckoutSubmit(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
@@ -414,56 +210,52 @@
 
             const fullAddress = `${flat}, ${area}${landmark ? ', Near ' + landmark : ''}, ${cityState} - ${pincode}`;
             const totalSum = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
-            const itemList = cart.map(i => `${i.code} (${i.title}) x ${i.qty}`).join(', ');
-
-            // 1. Database Order Save
-            const { data, error } = await _supabase.from('orders').insert([
-                {
-                    customer_name: name,
-                    phone: phone,
-                    size: size,
-                    pincode: pincode,
-                    address: fullAddress,
-                    items: cart,
-                    total_amount: totalSum,
-                    status: 'Pending'
-                }
-            ]);
-
-            if (error) {
-                console.error('Database Error:', error);
-                alert('Order save karne me error aaya: ' + error.message);
-                submitBtn.innerText = 'Place Order (Cash On Delivery)';
-                submitBtn.disabled = false;
-                return;
-            }
-
-            // 2. EmailJS Dual Email Alert
-            const templateParams = {
-                customer_name: name,
-                phone: phone,
-                size: size,
-                address: fullAddress,
-                items: itemList,
-                total_amount: `₹${totalSum}`
-            };
+            const itemList = cart.map(i => `${i.code} (${i.title}) [Size: ${size}] x ${i.qty}`).join(', ');
 
             try {
-                await emailjs.send('service_c42uaaa', 'template_5cff49a', templateParams);
-                console.log('Dual Admin Email Sent Successfully!');
+                // 1. Save to Supabase Database
+                const { error } = await _supabase.from('orders').insert([
+                    {
+                        customer_name: name,
+                        phone: phone,
+                        size: size,
+                        pincode: pincode,
+                        address: fullAddress,
+                        items: cart,
+                        total_amount: totalSum,
+                        status: 'Pending'
+                    }
+                ]);
+
+                if (error) throw error;
+
+                // 2. Trigger EmailJS Notification
+                await emailjs.send('default_service', 'template_id', {
+                    customer_name: name,
+                    customer_phone: phone,
+                    customer_address: fullAddress,
+                    order_items: itemList,
+                    total_amount: `₹${totalSum}`
+                });
+
+                // Success Actions
+                closeCheckoutModal();
+                cart = [];
+                updateCartUI();
+                document.getElementById('successModal').classList.remove('hidden');
+
             } catch (err) {
-                console.error('EmailJS Error:', err);
+                console.error('Order Error:', err);
+                alert('Order place karne me kuch dikkat aayi. Kripya dubara try karein.');
+            } finally {
+                submitBtn.innerText = 'Place Order (Cash On Delivery)';
+                submitBtn.disabled = false;
             }
-
-            // Success Reset
-            cart = [];
-            updateCartUI();
-            closeCheckoutModal();
-            document.getElementById('successModal').classList.remove('hidden');
-
-            submitBtn.innerText = 'Place Order (Cash On Delivery)';
-            submitBtn.disabled = false;
         }
-    </script>
-</body>
-</html>
+
+        // Initialize Shop on Page Load
+        window.onload = function() {
+            renderShopProducts();
+        };
+                    </script>
+                    
