@@ -127,10 +127,57 @@
                     <span class="text-xs font-bold text-slate-600">Total Payable:</span>
                     <span id="cartGrandTotal" class="text-lg font-black text-rose-600">₹0</span>
                 </div>
-                <button onclick="alert('Checkout Form Step 4 me aayega!')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
+                <button onclick="openCheckoutModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
                     Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- STEP 4 LAYER: CHECKOUT MODAL -->
+    <div id="checkoutModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <h3 class="font-bold text-slate-900 text-base mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-truck text-rose-600"></i> Delivery Details
+            </h3>
+            <p class="text-xs text-slate-500 mb-4">Fill your shipping address to place order.</p>
+
+            <form onsubmit="handleCheckoutSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="custName" required placeholder="Enter your full name" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Mobile / WhatsApp No.</label>
+                    <input type="tel" id="custPhone" required placeholder="10-digit phone number" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Size Needed</label>
+                    <select id="custSize" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600 bg-white">
+                        <option value="M">Medium (M - 38)</option>
+                        <option value="L">Large (L - 40)</option>
+                        <option value="XL">X-Large (XL - 42)</option>
+                        <option value="XXL">XXL (44)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Address & Pincode</label>
+                    <textarea id="custAddress" required rows="3" placeholder="House No, Area, City, State, Pincode" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-rose-600"></textarea>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> Confirm & Send Order on WhatsApp
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -181,6 +228,19 @@
             else drawer.classList.toggle('hidden');
         }
 
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                alert('Pehle cart me koi item add karo!');
+                return;
+            }
+            toggleCartDrawer(false);
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
         function addToCart(id, code, title, price, img) {
             const existing = cart.find(item => item.id === id);
             if (existing) {
@@ -228,6 +288,23 @@
             cart.splice(index, 1);
             updateCartUI();
         }
+
+        function handleCheckoutSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const size = document.getElementById('custSize').value;
+            const address = document.getElementById('custAddress').value;
+
+            let itemsText = cart.map(i => `- ${i.title} (${i.code}) x${i.qty} = ₹${i.price * i.qty}`).join('%0A');
+            const totalSum = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+
+            const msg = `*NEW ORDER - AMANE STORE*%0A%0A*Customer:* ${name}%0A*Phone:* ${phone}%0A*Size:* ${size}%0A*Address:* ${address}%0A%0A*Items:*%0A${itemsText}%0A%0A*Total Amount:* ₹${totalSum}`;
+            
+            // Step 5 me yahan Admin Number dynamically dynamic database se link karenge
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+        }
     </script>
 </body>
-</html>
+                    </html>
+                    
