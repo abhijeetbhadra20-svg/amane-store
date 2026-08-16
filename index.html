@@ -103,7 +103,7 @@
         </div>
     </div>
 
-    <!-- CHECKOUT & SHIPPING ADDRESS MODAL -->
+    <!-- CHECKOUT MODAL -->
     <div id="checkoutModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
@@ -113,20 +113,20 @@
             <form onsubmit="submitWebOrder(event)" class="space-y-3">
                 <div>
                     <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Name</label>
-                    <input type="text" id="cName" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500">
+                    <input type="text" id="cName" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Contact / WhatsApp Number</label>
-                    <input type="tel" id="cPhone" required placeholder="10 Digit Mobile Number" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500">
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp Number</label>
+                    <input type="tel" id="cPhone" required placeholder="10 Digit Mobile Number" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Address (House/Street/Locality)</label>
-                    <textarea id="cAddress" rows="2" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500"></textarea>
+                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Address</label>
+                    <textarea id="cAddress" rows="2" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"></textarea>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">Pincode</label>
-                        <input type="text" id="cPincode" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500">
+                        <input type="text" id="cPincode" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">Payment Method</label>
@@ -164,7 +164,7 @@
         </div>
     </div>
 
-    <!-- ADD PRODUCT MODAL (Admin Only) -->
+    <!-- ADD PRODUCT MODAL -->
     <div id="productModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeProductModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
@@ -183,7 +183,7 @@
         </div>
     </div>
 
-    <!-- ADMIN ORDERS DASHBOARD MODAL -->
+    <!-- ORDERS DASHBOARD MODAL -->
     <div id="ordersModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-2xl p-6 shadow-2xl relative max-h-[85vh] overflow-y-auto">
             <button onclick="closeOrdersModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
@@ -196,23 +196,45 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT APP LOGIC -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         const SUPABASE_URL = "https://mthkwrtfruhgcjmuwjih.supabase.co";
         const SUPABASE_KEY = "Sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc";
-        const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let db = null;
+        try {
+            if (window.supabase) {
+                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+        } catch(err) {
+            console.error("Supabase Init Error:", err);
+        }
 
         const STORE_INQUIRY_WHATSAPP = "919999999999"; 
-
         let currentUser = null;
         let cart = [];
 
+        window.openAuthModal = function() {
+            const modal = document.getElementById('authModal');
+            if (modal) modal.classList.remove('hidden');
+        };
+
+        window.closeAuthModal = function() {
+            const modal = document.getElementById('authModal');
+            if (modal) modal.classList.add('hidden');
+        };
+
         window.addEventListener('DOMContentLoaded', () => {
-            fetchProducts();
-            checkUserSession();
+            if(db) {
+                fetchProducts();
+                checkUserSession();
+            } else {
+                fetchProductsFallback();
+            }
         });
 
         async function checkUserSession() {
+            if(!db) return;
             const { data: { session } } = await db.auth.getSession();
             currentUser = session?.user || null;
             updateUIForAuth();
@@ -236,7 +258,7 @@
                 adminControls.classList.remove('hidden');
             } else {
                 authHeader.innerHTML = `
-                    <button onclick="openAuthModal()" class="text-xs bg-slate-900 text-white font-semibold px-3 py-1.5 rounded-full hover:bg-slate-800 transition flex items-center gap-1 cursor-pointer">
+                    <button id="mainLoginBtn" onclick="openAuthModal()" class="text-xs bg-slate-900 text-white font-semibold px-3 py-1.5 rounded-full hover:bg-slate-800 transition flex items-center gap-1 cursor-pointer">
                         <i class="fa-solid fa-user-lock text-[10px]"></i> Login
                     </button>
                 `;
@@ -246,9 +268,14 @@
 
         async function fetchProducts() {
             const grid = document.getElementById('productGrid');
+            if(!db) { fetchProductsFallback(); return; }
+            
             const { data: products, error } = await db.from('products').select('*').order('id', { ascending: false });
 
-            if (error) { grid.innerHTML = `<p class="text-rose-500 text-xs col-span-full text-center">Error loading catalog.</p>`; return; }
+            if (error) { 
+                fetchProductsFallback();
+                return; 
+            }
             document.getElementById('productCount').innerText = `${products ? products.length : 0} Items`;
 
             if (!products || products.length === 0) {
@@ -256,6 +283,17 @@
                 return;
             }
 
+            renderProducts(products);
+        }
+
+        function fetchProductsFallback() {
+            const grid = document.getElementById('productGrid');
+            document.getElementById('productCount').innerText = `0 Items`;
+            grid.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 text-xs text-slate-500">No products available yet. Click Login to add items!</div>`;
+        }
+
+        function renderProducts(products) {
+            const grid = document.getElementById('productGrid');
             grid.innerHTML = products.map(p => {
                 const sizesArray = Array.isArray(p.sizes) ? p.sizes : (p.sizes ? p.sizes.split(',') : ['M', 'L', 'XL']);
                 return `
@@ -290,7 +328,6 @@
             }).join('');
         }
 
-        // CART LOGIC
         function addToCart(id, code, title, price, img) {
             const existing = cart.find(item => item.id === id);
             if (existing) {
@@ -302,8 +339,8 @@
             toggleCartDrawer(true);
         }
 
-        function updateCartUI() {
-            const container = document.getElementById('cartItemsContainer');
+        function updateCartUI() 
+        const container = document.getElementById('cartItemsContainer');
             const totalBadge = document.getElementById('cartCountBadge');
             const grandTotal = document.getElementById('cartGrandTotal');
 
@@ -323,4 +360,129 @@
                     <div class="flex items-center gap-2">
                         <img src="${item.img}" class="w-10 h-10 object-cover rounded-md">
                         <div>
+                            <p class="font-bold text-slate-800">${item.code}</p>
+                            <p class="text-[10px] text-slate-500">₹${item.price} x ${item.qty}</p>
+                        </div>
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="text-rose-500 hover:text-rose-700 text-xs"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCartDrawer(forceOpen = false) {
+            const drawer = document.getElementById('cartDrawer');
+            if (forceOpen) drawer.classList.remove('hidden');
+            else drawer.classList.toggle('hidden');
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) { alert('Cart is empty!'); return; }
+            toggleCartDrawer();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
+
+        async function submitWebOrder(e) {
+            e.preventDefault();
+            const name = document.getElementById('cName').value;
+            const phone = document.getElementById('cPhone').value;
+            const address = document.getElementById('cAddress').value;
+            const pincode = document.getElementById('cPincode').value;
+            const paymentMethod = document.getElementById('cPayment').value;
+            const totalAmount = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+
+            if(!db) { alert('Order placed! (Database connection pending)'); return; }
+
+            const { data, error } = await db.from('orders').insert([{
+                user_id: currentUser ? currentUser.id : null,
+                customer_name: name,
+                customer_phone: phone,
+                shipping_address: address,
+                pincode: pincode,
+                items: cart,
+                total_amount: totalAmount,
+                payment_method: paymentMethod
+            }]);
+
+            if (error) {
+                alert('Order Failed: ' + error.message);
+            } else {
+                alert('🎉 Order Placed Successfully!');
+                cart = [];
+                updateCartUI();
+                closeCheckoutModal();
+            }
+        }
+
+        function askOnWhatsApp(code) {
+            const msg = `Hi Amane Store! I have a question regarding Design Code: ${code}.`;
+            window.open(`https://wa.me/${STORE_INQUIRY_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        async function loginWithGoogle() { 
+            if(!db) { alert("Supabase key error."); return; }
+            await db.auth.signInWithOAuth({ provider: 'google' }); 
+        }
         
+        async function handleEmailAuth(e) {
+            e.preventDefault();
+            if(!db) { alert("Supabase key error."); return; }
+            const email = document.getElementById('authEmail').value;
+            const { error } = await db.auth.signInWithOtp({ email });
+            if (error) alert(error.message); else { alert('Magic link sent to your email!'); closeAuthModal(); }
+        }
+
+        async function logout() { if(db) await db.auth.signOut(); location.reload(); }
+
+        function openAddProductModal() { document.getElementById('productModal').classList.remove('hidden'); }
+        function closeProductModal() { document.getElementById('productModal').classList.add('hidden'); }
+        
+        async function saveProduct(e) {
+            e.preventDefault();
+            if(!db) return;
+            const code = document.getElementById('pCode').value;
+            const title = document.getElementById('pTitle').value;
+            const price = parseFloat(document.getElementById('pPrice').value);
+            const color = document.getElementById('pColor').value;
+            const sizesInput = document.getElementById('pSizes').value;
+            const img = document.getElementById('pImg').value;
+
+            const { error } = await db.from('products').insert([{
+                design_code: code, title: title, price: price, color: color,
+                sizes: sizesInput.split(',').map(s => s.trim()), image_url: img
+            }]);
+
+            if (error) alert('Error: ' + error.message);
+            else { alert('Product Published!'); closeProductModal(); fetchProducts(); }
+        }
+
+        async function openOrdersModal() {
+            document.getElementById('ordersModal').classList.remove('hidden');
+            const container = document.getElementById('adminOrdersList');
+            if(!db) return;
+            const { data: orders, error } = await db.from('orders').select('*').order('id', { ascending: false });
+
+            if (error) { container.innerHTML = `<p class="text-rose-500 text-xs">Failed to fetch orders.</p>`; return; }
+            if (!orders || orders.length === 0) { container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No orders received yet.</p>`; return; }
+
+            container.innerHTML = orders.map(o => `
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
+                    <div class="flex justify-between font-bold text-slate-900">
+                        <span>Order #${o.id} - ${o.customer_name} (${o.customer_phone})</span>
+                        <span class="text-rose-600">₹${o.total_amount} [${o.payment_method}]</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600">📍 ${o.shipping_address}, Pincode: ${o.pincode}</p>
+                </div>
+            `).join('');
+        }
+
+        function closeOrdersModal() { document.getElementById('ordersModal').classList.add('hidden'); }
+    </script>
+</body>
+</html>
