@@ -9,16 +9,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .glass-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
         .glass-nav {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
@@ -28,96 +28,163 @@
     <header class="glass-nav border-b border-white/50 sticky top-0 z-30 shadow-xs">
         <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
             <h1 class="text-base font-black tracking-tight text-slate-900">AMANE <span class="text-rose-600">ADMIN</span></h1>
-            <a href="index.html" class="text-xs bg-slate-900 text-white font-bold px-3.5 py-1.5 rounded-xl shadow-xs">View Store</a>
+            <div class="flex items-center gap-2">
+                <span id="adminUserEmail" class="text-[11px] font-bold text-slate-600 hidden sm:inline"></span>
+                <a href="index.html" class="text-xs bg-slate-900 text-white font-bold px-3.5 py-1.5 rounded-xl shadow-xs">View Store</a>
+            </div>
         </div>
     </header>
 
     <main class="max-w-3xl mx-auto px-4 mt-4 space-y-4">
-        <!-- Add Product Form Card -->
-        <div class="glass-card rounded-3xl p-5 shadow-lg border border-white/80 space-y-4">
-            <h2 class="text-sm font-black uppercase text-slate-900 border-b border-slate-200/60 pb-2">Add New Product</h2>
-            <form onsubmit="handleAddNewProduct(event)" class="space-y-3 text-xs">
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Product Title</label>
-                        <input type="text" id="prodTitle" required placeholder="e.g. Short Kurti Cotton" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Product Code (D.No)</label>
-                        <input type="text" id="prodCode" required placeholder="e.g. D.No.10049" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2.5">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Price (₹)</label>
-                        <input type="number" id="prodPrice" required placeholder="899" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">MRP (₹)</label>
-                        <input type="number" id="prodMrp" required placeholder="1299" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Discount Tag</label>
-                        <input type="text" id="prodDiscount" placeholder="50% Off" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Category</label>
-                        <input type="text" id="prodCategory" required placeholder="kurti" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Color / Variant</label>
-                        <input type="text" id="prodColor" required placeholder="(Purple/Lilac)" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                    </div>
-                </div>
-
-                <!-- Camera / File Upload Input -->
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Upload Product Images <span class="text-[10px] text-slate-400">(Select Camera or Gallery)</span></label>
-                    <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleImageSelection(event)" class="w-full p-2 glass-card rounded-xl border border-white/80 text-[11px] file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer">
-                    <div id="imagePreviewContainer" class="flex gap-2 mt-2 overflow-x-auto"></div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Custom Delivery Text</label>
-                        <input type="text" id="prodDelivery" value="Free Delivery across Delhi" placeholder="Free Delivery across Delhi" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Custom Returns Text</label>
-                        <input type="text" id="prodReturns" value="Easy 3-day returns & exchange" placeholder="Easy 3-day returns" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Sizes (Comma separated)</label>
-                    <input type="text" id="prodSizes" value="S, M, L, XL" placeholder="S, M, L, XL" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
-                </div>
-
-                <button type="submit" id="publishBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl shadow-md transition cursor-pointer">
-                    Publish Product
-                </button>
-            </form>
+        <!-- Admin Auth Guard Section -->
+        <div id="adminAuthSection" class="glass-card rounded-3xl p-6 shadow-lg border border-white/80 text-center space-y-3">
+            <h2 class="text-sm font-black uppercase text-slate-900">Admin Authentication Required</h2>
+            <p class="text-xs text-slate-500">Please sign in with your authorized admin account to manage inventory.</p>
+            <div id="loginContainer" class="max-w-xs mx-auto space-y-2 pt-2">
+                <input type="email" id="adminEmailInput" placeholder="Admin Email" class="w-full p-2.5 glass-card rounded-xl border border-white/80 text-xs outline-none focus:border-rose-600">
+                <input type="password" id="adminPassInput" placeholder="Password" class="w-full p-2.5 glass-card rounded-xl border border-white/80 text-xs outline-none focus:border-rose-600">
+                <button onclick="handleAdminLogin()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-2.5 rounded-xl text-xs shadow-md transition cursor-pointer">Login as Admin</button>
+            </div>
         </div>
 
-        <!-- Manage Existing Products -->
-        <div class="glass-card rounded-3xl p-5 shadow-lg border border-white/80 space-y-3">
-            <h2 class="text-sm font-black uppercase text-slate-900 border-b border-slate-200/60 pb-2">Manage Store Products</h2>
-            <div id="adminProductsList" class="space-y-2">
-                <p class="text-xs text-slate-400 text-center py-4">Loading inventory...</p>
+        <!-- Main Admin Panel (Hidden until authenticated) -->
+        <div id="adminPanelContent" class="space-y-4 hidden">
+            <!-- Add Product Form Card -->
+            <div class="glass-card rounded-3xl p-5 shadow-lg border border-white/80 space-y-4">
+                <h2 class="text-sm font-black uppercase text-slate-900 border-b border-slate-200/60 pb-2">Add New Product</h2>
+                <form onsubmit="handleAddNewProduct(event)" class="space-y-3 text-xs">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Product Title</label>
+                            <input type="text" id="prodTitle" required placeholder="e.g. Short Kurti Cotton" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Product Code (D.No)</label>
+                            <input type="text" id="prodCode" required placeholder="e.g. D.No.10049" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Price (₹)</label>
+                            <input type="number" id="prodPrice" required placeholder="899" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">MRP (₹)</label>
+                            <input type="number" id="prodMrp" required placeholder="1299" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Discount Tag</label>
+                            <input type="text" id="prodDiscount" placeholder="50% Off" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Category</label>
+                            <input type="text" id="prodCategory" required placeholder="kurti" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Color / Variant</label>
+                            <input type="text" id="prodColor" required placeholder="(Purple/Lilac)" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                        </div>
+                    </div>
+
+                    <!-- Camera & File Picker Input -->
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Upload Product Images <span class="text-[10px] text-slate-400">(Camera or Gallery)</span></label>
+                        <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleImageSelection(event)" class="w-full p-2 glass-card rounded-xl border border-white/80 text-[11px] file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer">
+                        <div id="imagePreviewContainer" class="flex gap-2 mt-2 overflow-x-auto"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Custom Delivery Text</label>
+                            <input type="text" id="prodDelivery" value="Free Delivery across Delhi" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Custom Returns Text</label>
+                            <input type="text" id="prodReturns" value="Easy 3-day returns & exchange" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Sizes (Comma separated)</label>
+                        <input type="text" id="prodSizes" value="S, M, L, XL" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
+                    </div>
+
+                    <button type="submit" id="publishBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl shadow-md transition cursor-pointer">
+                        Publish Product
+                    </button>
+                </form>
+            </div>
+
+            <!-- Manage Existing Products -->
+            <div class="glass-card rounded-3xl p-5 shadow-lg border border-white/80 space-y-3">
+                <h2 class="text-sm font-black uppercase text-slate-900 border-b border-slate-200/60 pb-2">Manage Store Products</h2>
+                <div id="adminProductsList" class="space-y-2">
+                    <p class="text-xs text-slate-400 text-center py-4">Loading inventory...</p>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
+        const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         let uploadedImagesList = [];
 
-        window.onload = function() {
+        window.onload = async function() {
+            checkUserSession();
             renderAdminProducts();
         };
+
+        async function checkUserSession() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                verifyAdminRole(session.user);
+            }
+        }
+
+        async function handleAdminLogin() {
+            const email = document.getElementById('adminEmailInput').value.trim();
+            const password = document.getElementById('adminPassInput').value.trim();
+
+            if (!email || !password) {
+                alert('Please enter both email and password.');
+                return;
+            }
+
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                alert('Login failed: ' + error.message);
+                return;
+            }
+
+            verifyAdminRole(data.user);
+        }
+
+        async function verifyAdminRole(user) {
+            // Check if user is allowed in admins table or metadata
+            const { data, error } = await _supabase
+                .from('admins')
+                .select('*')
+                .eq('email', user.email)
+                .single();
+
+            if (error || !data) {
+                alert('Access Denied: You are not authorized as an admin.');
+                await _supabase.auth.signOut();
+                return;
+            }
+
+            // Authorized
+            document.getElementById('adminAuthSection').classList.add('hidden');
+            document.getElementById('adminPanelContent').classList.remove('hidden');
+            document.getElementById('adminUserEmail').innerText = user.email;
+        }
 
         function getProducts() {
             return JSON.parse(localStorage.getItem('store_products')) || [];
@@ -136,55 +203,65 @@
             if (!files || files.length === 0) return;
 
             for (let file of files) {
-                const base64Data = await toBase64(file);
-                uploadedImagesList.push(base64Data);
+                const compressedData = await compressImage(file, 600, 0.7);
+                uploadedImagesList.push(compressedData);
 
                 const imgTag = document.createElement('img');
-                imgTag.src = base64Data;
+                imgTag.src = compressedData;
                 imgTag.className = "w-14 h-14 object-cover rounded-xl border border-white shadow-xs shrink-0";
                 previewContainer.appendChild(imgTag);
             }
         }
 
-        const toBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
+        // Optimized compression to prevent UI lags and storage overflow
+        function compressImage(file, maxWidth, quality) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                };
+            });
+        }
 
         async function handleAddNewProduct(e) {
             e.preventDefault();
             if (uploadedImagesList.length === 0) {
-                alert('Please select at least one image using camera or gallery!');
+                alert('Please select at least one image!');
                 return;
             }
 
-            const title = document.getElementById('prodTitle').value.trim();
-            const code = document.getElementById('prodCode').value.trim();
-            const price = parseFloat(document.getElementById('prodPrice').value);
-            const mrp = parseFloat(document.getElementById('prodMrp').value);
-            const discount = document.getElementById('prodDiscount').value.trim();
-            const category = document.getElementById('prodCategory').value.trim();
-            const color = document.getElementById('prodColor').value.trim();
-            const deliveryText = document.getElementById('prodDelivery').value.trim();
-            const returnText = document.getElementById('prodReturns').value.trim();
-            const sizes = document.getElementById('prodSizes').value.trim();
-
             const newProduct = {
                 id: 'prod_' + Date.now(),
-                title,
-                code,
-                price,
-                mrp,
-                discount,
-                category,
-                color,
+                title: document.getElementById('prodTitle').value.trim(),
+                code: document.getElementById('prodCode').value.trim(),
+                price: parseFloat(document.getElementById('prodPrice').value),
+                mrp: parseFloat(document.getElementById('prodMrp').value),
+                discount: document.getElementById('prodDiscount').value.trim(),
+                category: document.getElementById('prodCategory').value.trim(),
+                color: document.getElementById('prodColor').value.trim(),
                 images: uploadedImagesList.join(','),
                 img: uploadedImagesList[0],
-                deliveryText,
-                returnText,
-                sizes,
+                deliveryText: document.getElementById('prodDelivery').value.trim(),
+                returnText: document.getElementById('prodReturns').value.trim(),
+                sizes: document.getElementById('prodSizes').value.trim(),
                 inStock: true
             };
 
@@ -248,3 +325,4 @@
     </script>
 </body>
 </html>
+
