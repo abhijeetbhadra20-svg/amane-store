@@ -18,7 +18,6 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-32">
 
-    <!-- Header / Navbar -->
     <header class="glass-nav border-b border-slate-200/50 sticky top-0 z-30 shadow-xs">
         <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -28,11 +27,6 @@
                 <a href="admin.html" class="text-xs text-slate-500 font-bold hover:text-rose-600 transition">
                     <i class="fa-solid fa-lock text-[10px] mr-0.5"></i> Admin
                 </a>
-                <!-- Wishlist Icon -->
-                <button onclick="alert('Wishlist feature coming soon!')" class="relative bg-white/80 border border-slate-200 text-slate-700 p-2 rounded-xl text-xs font-bold flex items-center justify-center shadow-xs cursor-pointer">
-                    <i class="fa-regular fa-heart text-sm text-rose-600"></i>
-                </button>
-                <!-- Cart Icon -->
                 <button onclick="openCartDrawer()" class="relative bg-slate-900 text-white p-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer">
                     <i class="fa-solid fa-bag-shopping text-sm"></i>
                     <span id="cartItemCount" class="bg-rose-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
@@ -41,15 +35,12 @@
         </div>
     </header>
 
-    <!-- Main Store Content -->
     <main class="max-w-3xl mx-auto px-4 mt-4 space-y-4">
-        <!-- Banner / Notice -->
         <div class="bg-gradient-to-r from-rose-600 to-pink-600 rounded-2xl p-4 text-white shadow-md">
             <h2 class="text-sm font-black uppercase tracking-wider">New Designer Collection</h2>
             <p class="text-xs text-rose-100 mt-0.5">Handpicked exclusive styles just for you. Cash on Delivery available!</p>
         </div>
 
-        <!-- Search Bar -->
         <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
                 <i class="fa-solid fa-magnifying-glass text-xs"></i>
@@ -57,53 +48,70 @@
             <input type="text" id="searchInput" oninput="handleSearchProducts()" placeholder="Search by product name, code, or category..." class="w-full bg-white pl-10 pr-4 py-3 border border-slate-200 rounded-2xl text-xs outline-none focus:border-rose-600 shadow-xs transition">
         </div>
 
-        <!-- Filter Categories -->
         <div id="categoryFilters" class="flex gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
             <button onclick="filterCategory('all')" class="category-btn active px-3.5 py-1.5 rounded-xl font-bold bg-slate-900 text-white shrink-0 cursor-pointer transition">All Items</button>
         </div>
 
-        <!-- Product Grid -->
         <div id="storeProductsGrid" class="grid grid-cols-2 gap-3">
             <p class="text-xs text-slate-400 col-span-2 text-center py-10">Loading products...</p>
         </div>
     </main>
 
-    <!-- Glassmorphism Bottom Navigation Bar -->
+    <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="p-3 border-b flex justify-between items-center bg-slate-50">
+                <span id="modalProdCode" class="text-[10px] font-black bg-slate-900 text-white px-2 py-0.5 rounded"></span>
+                <button onclick="closeProductDetail()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <div class="overflow-y-auto p-4 space-y-3">
+                <div class="aspect-[3/4] bg-slate-100 rounded-xl overflow-hidden border">
+                    <img id="modalProdImg" src="" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <span id="modalProdCategoryColor" class="text-[10px] text-slate-400 font-bold uppercase tracking-wider"></span>
+                    <h3 id="modalProdTitle" class="text-sm font-black text-slate-900 mt-0.5"></h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="modalProdPrice" class="text-base font-black text-slate-900"></span>
+                    <span id="modalProdMrp" class="text-xs text-slate-400 line-through"></span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border text-xs space-y-1 text-slate-600">
+                    <p><b>Delivery:</b> Free Delivery across India</p>
+                    <p><b>Returns:</b> Easy 7-day returns & exchange</p>
+                </div>
+            </div>
+            <div class="p-4 border-t bg-slate-50 flex gap-2">
+                <button onclick="addCurrentToCartFromModal()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl shadow-md transition cursor-pointer text-xs">
+                    Add to Bag
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40">
         <nav class="glass-nav rounded-2xl shadow-xl px-4 py-2.5 flex items-center justify-around border border-white/40">
-            <!-- Home -->
             <a href="index.html" class="flex flex-col items-center text-rose-600 text-[10px] font-bold gap-0.5 cursor-pointer">
                 <i class="fa-solid fa-house text-base"></i>
                 <span>Home</span>
             </a>
-            <!-- Categories -->
             <button onclick="scrollToCategories()" class="flex flex-col items-center text-slate-600 hover:text-rose-600 text-[10px] font-bold gap-0.5 cursor-pointer">
                 <i class="fa-solid fa-layer-group text-base"></i>
                 <span>Categories</span>
             </button>
-            <!-- Shop -->
             <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-slate-600 hover:text-rose-600 text-[10px] font-bold gap-0.5 cursor-pointer">
                 <i class="fa-solid fa-shop text-base"></i>
                 <span>Shop</span>
             </button>
-            <!-- Filters -->
-            <button onclick="scrollToCategories()" class="flex flex-col items-center text-slate-600 hover:text-rose-600 text-[10px] font-bold gap-0.5 cursor-pointer">
-                <i class="fa-solid fa-sliders text-base"></i>
-                <span>Filters</span>
-            </button>
         </nav>
     </div>
 
-    <!-- Cart Drawer Modal -->
     <div id="cartDrawer" class="fixed inset-0 z-50 bg-black/50 hidden flex justify-end transition-opacity">
         <div class="bg-white w-full max-w-sm h-full flex flex-col shadow-2xl">
             <div class="p-4 border-b flex items-center justify-between">
                 <h3 class="text-sm font-black tracking-tight">YOUR SHOPPING BAG</h3>
                 <button onclick="closeCartDrawer()" class="text-slate-400 hover:text-slate-600 p-2 cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
-            <div id="cartDrawerItems" class="flex-1 overflow-y-auto p-4 space-y-3">
-                <!-- Cart items will load here -->
-            </div>
+            <div id="cartDrawerItems" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
             <div class="p-4 border-t bg-slate-50 space-y-3">
                 <div class="flex justify-between text-xs font-bold">
                     <span>Subtotal:</span>
@@ -116,7 +124,6 @@
         </div>
     </div>
 
-    <!-- Checkout Modal -->
     <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2">
@@ -145,13 +152,13 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block font-bold text-slate-700 mb-1">House No, Building, Street</label>
-                    <input type="text" id="custAddress" required placeholder="Address line" class="w-full p-2.5 border border-slate-200 rounded-xl outline-none focus:border-rose-600">
+                    <label class="block font-bold text-slate-700 mb-1">Address Line</label>
+                    <input type="text" id="custAddress" required placeholder="House No, Street" class="w-full p-2.5 border border-slate-200 rounded-xl outline-none focus:border-rose-600">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Landmark</label>
-                        <input type="text" id="custLandmark" placeholder="Near temple, school..." class="w-full p-2.5 border border-slate-200 rounded-xl outline-none focus:border-rose-600">
+                        <input type="text" id="custLandmark" placeholder="Near temple..." class="w-full p-2.5 border border-slate-200 rounded-xl outline-none focus:border-rose-600">
                     </div>
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Pincode</label>
@@ -179,14 +186,13 @@
         </div>
     </div>
 
-    <!-- Success Order Screen -->
     <div id="successModal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-2xl p-6 text-center space-y-3 shadow-2xl">
             <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl">
                 <i class="fa-solid fa-check"></i>
             </div>
             <h3 class="text-base font-black text-slate-900">Order Placed Successfully!</h3>
-            <p class="text-xs text-slate-500">Thank you for shopping with Amane Store. We will verify and dispatch your order soon.</p>
+            <p class="text-xs text-slate-500">Thank you for shopping with Amane Store. We will dispatch your order soon.</p>
             <button onclick="location.reload()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl text-xs mt-2 cursor-pointer">
                 Back to Store
             </button>
@@ -200,6 +206,7 @@
 
         let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
         let currentFilter = 'all';
+        let selectedProductForDetail = null;
 
         window.onload = function() {
             renderStoreProducts();
@@ -220,7 +227,6 @@
             const products = getProducts();
             const grid = document.getElementById('storeProductsGrid');
 
-            // Render category buttons dynamically
             const categories = ['all', ...new Set(products.map(p => p.category))];
             const filterContainer = document.getElementById('categoryFilters');
             filterContainer.innerHTML = categories.map(cat => `
@@ -229,10 +235,8 @@
                 </button>
             `).join('');
 
-            // Filter by category first
             let filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
 
-            // Apply search query filter if user typed something
             if (searchQuery.trim() !== '') {
                 const query = searchQuery.toLowerCase().trim();
                 filtered = products.filter(p => 
@@ -253,7 +257,8 @@
                 return `
                     <div class="bg-white rounded-2xl border border-slate-200 p-2.5 flex flex-col justify-between shadow-xs relative overflow-hidden">
                         ${isOutOfStock ? '<div class="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-10 flex items-center justify-center"><span class="bg-rose-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md">Out of Stock</span></div>' : ''}
-                        <div>
+                        
+                        <div onclick="openProductDetail('${p.id}')" class="cursor-pointer">
                             <div class="relative rounded-xl overflow-hidden aspect-[3/4] bg-slate-100 mb-2">
                                 <img src="${p.img}" class="w-full h-full object-cover">
                                 <span class="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-md backdrop-blur-xs">${p.code}</span>
@@ -261,6 +266,7 @@
                             <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">${p.category} • ${p.color}</span>
                             <h4 class="text-xs font-bold text-slate-800 line-clamp-1 mt-0.5">${p.title}</h4>
                         </div>
+
                         <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
                             <div>
                                 <span class="text-xs font-black text-slate-900">₹${p.price}</span>
@@ -276,13 +282,42 @@
         }
 
         function filterCategory(cat) {
-            document.getElementById('searchInput').value = ''; // clear search when category is clicked
+            document.getElementById('searchInput').value = '';
             renderStoreProducts(cat, '');
         }
 
         function handleSearchProducts() {
             const query = document.getElementById('searchInput').value;
             renderStoreProducts(currentFilter, query);
+        }
+
+        // Product Detail Page Modal Functions
+        function openProductDetail(prodId) {
+            const products = getProducts();
+            const product = products.find(p => p.id === prodId);
+            if (!product) return;
+
+            selectedProductForDetail = product;
+
+            document.getElementById('modalProdCode').innerText = product.code;
+            document.getElementById('modalProdImg').src = product.img;
+            document.getElementById('modalProdCategoryColor').innerText = `${product.category} • ${product.color}`;
+            document.getElementById('modalProdTitle').innerText = product.title;
+            document.getElementById('modalProdPrice').innerText = `₹${product.price}`;
+            document.getElementById('modalProdMrp').innerText = `₹${product.mrp}`;
+
+            document.getElementById('productDetailModal').classList.remove('hidden');
+        }
+
+        function closeProductDetail() {
+            document.getElementById('productDetailModal').classList.add('hidden');
+            selectedProductForDetail = null;
+        }
+
+        function addCurrentToCartFromModal() {
+            if (!selectedProductForDetail) return;
+            addToCart(selectedProductForDetail.id);
+            closeProductDetail();
         }
 
         function addToCart(prodId) {
@@ -420,4 +455,3 @@
     </script>
 </body>
 </html>
-      
