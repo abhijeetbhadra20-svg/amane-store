@@ -269,6 +269,22 @@
         let selectedProductForDetail = null;
         let selectedSizeForOrder = 'Free Size';
 
+        // Safely parse the `images` field. New products store a JSON array.
+        // Older/legacy products may have a broken comma-joined string
+        // (since base64 data-URLs contain their own comma) — fall back
+        // gracefully to `img` (or first image) in that case.
+        function getImagesArray(p) {
+            if (!p) return [];
+            if (Array.isArray(p.images)) return p.images;
+            if (typeof p.images === 'string' && p.images.trim().startsWith('[')) {
+                try {
+                    const arr = JSON.parse(p.images);
+                    if (Array.isArray(arr) && arr.length) return arr;
+                } catch (e) { /* fall through */ }
+            }
+            return p.img ? [p.img] : [];
+        }
+
         window.onload = function() {
             renderStoreProducts();
             updateCartUI();
@@ -316,7 +332,7 @@
             grid.innerHTML = filtered.map(p => {
                 const isOutOfStock = p.inStock === false;
                 // Support multiple images (first image as cover)
-                let imgArr = p.images ? p.images.split(',').map(s => s.trim()) : [p.img];
+                let imgArr = getImagesArray(p);
                 let coverImg = imgArr[0] || p.img;
 
                 return `
@@ -385,7 +401,7 @@
             document.getElementById('modalProdReturns').innerText = product.returnText || 'Easy 7-day returns & exchange';
 
             // Images Slider setup
-            let imgList = product.images ? product.images.split(',').map(s => s.trim()) : [product.img];
+            let imgList = getImagesArray(product);
             const sliderEl = document.getElementById('modalImageSlider');
             const dotsEl = document.getElementById('modalSliderDots');
 
@@ -441,7 +457,7 @@
             if (existing) {
                 existing.qty += 1;
             } else {
-                let imgArr = product.images ? product.images.split(',').map(s => s.trim()) : [product.img];
+                let imgArr = getImagesArray(product);
                 cart.push({ ...product, img: imgArr[0], qty: 1, size: chosenSize });
             }
             saveCart();
