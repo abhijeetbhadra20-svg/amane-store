@@ -137,6 +137,21 @@
 
         let uploadedImagesList = [];
 
+        // Safely parse the `images` field. New products store a JSON array.
+        // Older/legacy products may have a broken comma-joined string
+        // (since base64 data-URLs contain their own comma) — fall back
+        // gracefully to `img` (or first image) in that case.
+        function getImagesArray(p) {
+            if (Array.isArray(p.images)) return p.images;
+            if (typeof p.images === 'string' && p.images.trim().startsWith('[')) {
+                try {
+                    const arr = JSON.parse(p.images);
+                    if (Array.isArray(arr) && arr.length) return arr;
+                } catch (e) { /* fall through */ }
+            }
+            return p.img ? [p.img] : [];
+        }
+
         window.onload = async function() {
             const { data: { session } } = await _supabase.auth.getSession();
             if (session) {
@@ -248,7 +263,7 @@
                 discount: document.getElementById('prodDiscount').value.trim(),
                 category: document.getElementById('prodCategory').value.trim(),
                 color: document.getElementById('prodColor').value.trim(),
-                images: uploadedImagesList.join(','),
+                images: JSON.stringify(uploadedImagesList),
                 img: uploadedImagesList[0],
                 deliveryText: document.getElementById('prodDelivery').value.trim(),
                 returnText: document.getElementById('prodReturns').value.trim(),
@@ -315,4 +330,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
