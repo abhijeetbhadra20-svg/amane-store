@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         .glass-nav {
             background: rgba(255, 255, 255, 0.65);
@@ -196,6 +197,11 @@
                 <button onclick="closeCheckoutModal()" class="w-7 h-7 bg-white/80 rounded-full flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="submitCustomerOrder(event)" class="space-y-3 text-xs">
+                <!-- Honeypot field: invisible to real users, bots tend to fill every field -->
+                <div class="hidden" aria-hidden="true">
+                    <label>Leave this field empty</label>
+                    <input type="text" id="custWebsite" name="website" tabindex="-1" autocomplete="off">
+                </div>
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Full Name</label>
                     <input type="text" id="custName" required placeholder="Enter your name" class="w-full p-3 glass-card rounded-2xl outline-none focus:border-rose-600 border border-white/80">
@@ -203,7 +209,8 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Phone Number</label>
-                        <input type="tel" id="custPhone" required placeholder="10-digit mobile" pattern="[0-9]{10}" class="w-full p-3 glass-card rounded-2xl outline-none focus:border-rose-600 border border-white/80">
+                        <input type="tel" id="custPhone" required placeholder="10-digit mobile" pattern="[6-9][0-9]{9}" maxlength="10" oninput="clearFieldError('custPhoneError')" class="w-full p-3 glass-card rounded-2xl outline-none focus:border-rose-600 border border-white/80">
+                        <p id="custPhoneError" class="text-rose-600 text-[10px] font-bold mt-1 hidden"></p>
                     </div>
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Selected Size</label>
@@ -221,12 +228,13 @@
                     </div>
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Pincode</label>
-                        <input type="text" id="custPincode" required placeholder="6-digit" pattern="[0-9]{6}" class="w-full p-3 glass-card rounded-2xl outline-none focus:border-rose-600 border border-white/80">
+                        <input type="text" id="custPincode" required placeholder="6-digit" pattern="[0-9]{6}" maxlength="6" oninput="handlePincodeInput()" class="w-full p-3 glass-card rounded-2xl outline-none focus:border-rose-600 border border-white/80">
+                        <p id="custPincodeStatus" class="text-[10px] font-bold mt-1 hidden"></p>
                     </div>
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">City & State</label>
-                    <input type="text" id="custCityState" required placeholder="City, State" class="w-full p-3 glass-card rounded-2xl outline-none focus:border-rose-600 border border-white/80">
+                    <input type="text" id="custCityState" required readonly placeholder="Auto-filled from pincode" class="w-full p-3 bg-white/50 glass-card rounded-2xl outline-none font-bold text-slate-700 border border-white/80">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Payment Mode</label>
@@ -263,6 +271,14 @@
         const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ---- EmailJS setup (for automatic order-notification emails) ----
+        const EMAILJS_PUBLIC_KEY = 'LxuaFnLtYqBKmLpX5';
+        const EMAILJS_SERVICE_ID = 'service_i6jrdol';
+        const EMAILJS_TEMPLATE_ID = 'template_0huv5ro';
+        if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+            emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+        }
 
         let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
         let currentFilter = 'all';
@@ -599,11 +615,94 @@
             document.getElementById('checkoutModal').classList.add('hidden');
         }
 
+        function clearFieldError(elId) {
+            const el = document.getElementById(elId);
+            el.classList.add('hidden');
+            el.innerText = '';
+        }
+
+        // Rejects obviously fake numbers: all-same-digit (9999999999),
+        // simple ascending/descending sequences (1234567890), etc.
+        // Combined with the HTML pattern [6-9][0-9]{9}, this catches the
+        // most common junk/spam entries without needing paid SMS OTP.
+        function isPhoneNumberGenuine(phone) {
+            if (!/^[6-9][0-9]{9}$/.test(phone)) return false;
+            if (/^(\d)\1{9}$/.test(phone)) return false; // all same digit
+
+            const ascending = '0123456789';
+            const descending = '9876543210';
+            if (ascending.includes(phone) || descending.includes(phone)) return false;
+
+            return true;
+        }
+
+        let pincodeLookupTimer = null;
+        let pincodeVerified = false;
+
+        // Looks up the pincode against India Post's free public API and
+        // auto-fills City & State with the real district/state on file —
+        // this stops customers typing a random/mismatched city manually.
+        function handlePincodeInput() {
+            const pincode = document.getElementById('custPincode').value.trim();
+            const statusEl = document.getElementById('custPincodeStatus');
+            const cityStateEl = document.getElementById('custCityState');
+            pincodeVerified = false;
+            cityStateEl.value = '';
+
+            clearTimeout(pincodeLookupTimer);
+
+            if (pincode.length !== 6) {
+                statusEl.classList.add('hidden');
+                return;
+            }
+
+            statusEl.classList.remove('hidden');
+            statusEl.className = 'text-slate-500 text-[10px] font-bold mt-1';
+            statusEl.innerText = 'Checking pincode...';
+
+            pincodeLookupTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+                    const data = await res.json();
+                    const result = data && data[0];
+
+                    if (result && result.Status === 'Success' && result.PostOffice && result.PostOffice.length > 0) {
+                        const po = result.PostOffice[0];
+                        cityStateEl.value = `${po.District}, ${po.State}`;
+                        pincodeVerified = true;
+                        statusEl.className = 'text-emerald-600 text-[10px] font-bold mt-1';
+                        statusEl.innerText = `✓ Verified: ${po.District}, ${po.State}`;
+                    } else {
+                        statusEl.className = 'text-rose-600 text-[10px] font-bold mt-1';
+                        statusEl.innerText = 'Pincode not found. Please check and re-enter.';
+                    }
+                } catch (err) {
+                    // Network hiccup — don't hard-block a genuine customer,
+                    // just let them type the city/state manually.
+                    console.error('Pincode lookup failed:', err);
+                    cityStateEl.removeAttribute('readonly');
+                    cityStateEl.classList.remove('bg-white/50');
+                    cityStateEl.placeholder = 'Could not auto-verify — enter City, State';
+                    pincodeVerified = true; // don't block checkout on a network issue
+                    statusEl.className = 'text-amber-600 text-[10px] font-bold mt-1';
+                    statusEl.innerText = 'Could not auto-verify pincode — please enter city/state manually.';
+                }
+            }, 500);
+        }
+
         async function submitCustomerOrder(e) {
             e.preventDefault();
-            const btn = document.getElementById('placeOrderBtn');
-            btn.innerText = "Placing Order...";
-            btn.disabled = true;
+
+            // Honeypot check — real customers never fill this hidden field,
+            // only bots that blindly fill every input do.
+            const honeypot = document.getElementById('custWebsite').value.trim();
+            if (honeypot !== '') {
+                // Silently pretend success so the bot doesn't learn anything —
+                // but nothing actually gets saved.
+                document.getElementById('checkoutModal').classList.add('hidden');
+                document.getElementById('successModal').classList.remove('hidden');
+                return;
+            }
 
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
@@ -613,6 +712,31 @@
             const pincode = document.getElementById('custPincode').value.trim();
             const cityState = document.getElementById('custCityState').value.trim();
             const paymentMode = document.getElementById('custPaymentMode').value;
+
+            // Genuine phone number check
+            if (!isPhoneNumberGenuine(phone)) {
+                const errEl = document.getElementById('custPhoneError');
+                errEl.innerText = 'Please enter a valid, genuine mobile number.';
+                errEl.classList.remove('hidden');
+                document.getElementById('custPhone').focus();
+                return;
+            }
+
+            // Genuine location check — pincode must have been verified
+            // against India Post, or city/state must be manually filled
+            // after a lookup failure.
+            if (!pincodeVerified || cityState === '') {
+                const statusEl = document.getElementById('custPincodeStatus');
+                statusEl.classList.remove('hidden');
+                statusEl.className = 'text-rose-600 text-[10px] font-bold mt-1';
+                statusEl.innerText = 'Please enter a valid pincode and wait for it to verify.';
+                document.getElementById('custPincode').focus();
+                return;
+            }
+
+            const btn = document.getElementById('placeOrderBtn');
+            btn.innerText = "Placing Order...";
+            btn.disabled = true;
 
             let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             let itemsSummary = cart.map(i => `${i.title} (${i.code}) x ${i.qty} [Size: ${i.size}]`).join(', ');
@@ -637,12 +761,28 @@
                 alert('Failed to place order: ' + error.message);
                 btn.innerText = "Place Order Now";
                 btn.disabled = false;
-            } else {
-                cart = [];
-                saveCart();
-                document.getElementById('checkoutModal').classList.add('hidden');
-                document.getElementById('successModal').classList.remove('hidden');
+                return;
             }
+
+            // Fire-and-forget email notification to the admin — order is
+            // already saved in the database either way, so a failure here
+            // should never block the customer's success screen.
+            if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                    customer_name: name,
+                    phone: phone,
+                    address: `${address}${landmark ? ', ' + landmark : ''}, ${cityState} - ${pincode}`,
+                    items: itemsSummary,
+                    total_amount: `₹${totalAmount}`,
+                    payment_mode: paymentMode,
+                    size: size
+                }).catch(err => console.error('Order email notification failed:', err));
+            }
+
+            cart = [];
+            saveCart();
+            document.getElementById('checkoutModal').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('hidden');
         }
     </script>
 </body>
