@@ -52,8 +52,8 @@
         <div id="adminPanelContent" class="space-y-4 hidden">
             <!-- Add Product Form Card -->
             <div class="glass-card rounded-3xl p-5 shadow-lg border border-white/80 space-y-4">
-                <h2 class="text-sm font-black uppercase text-slate-900 border-b border-slate-200/60 pb-2">Add New Product</h2>
-                <form onsubmit="handleAddNewProduct(event)" class="space-y-3 text-xs">
+                <h2 id="formTitle" class="text-sm font-black uppercase text-slate-900 border-b border-slate-200/60 pb-2">Add New Product</h2>
+                <form id="addProductForm" onsubmit="handleAddNewProduct(event)" class="space-y-3 text-xs">
                     <div class="grid grid-cols-2 gap-2.5">
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Product Title</label>
@@ -114,9 +114,14 @@
                         <input type="text" id="prodSizes" value="S, M, L, XL" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
                     </div>
 
-                    <button type="submit" id="publishBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl shadow-md transition cursor-pointer">
-                        Publish Product
-                    </button>
+                    <div class="flex gap-2">
+                        <button type="submit" id="publishBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl shadow-md transition cursor-pointer">
+                            Publish Product
+                        </button>
+                        <button type="button" id="cancelEditBtn" onclick="cancelEdit()" class="hidden shrink-0 bg-slate-200 hover:bg-slate-300 text-slate-700 font-extrabold py-3 px-4 rounded-xl shadow-xs transition cursor-pointer">
+                            Cancel
+                        </button>
+                    </div>
                 </form>
             </div>
 
@@ -136,6 +141,7 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let uploadedImagesList = [];
+        let editingProductId = null;
 
         // Safely parse the `images` field. New products store a JSON array.
         // Older/legacy products may have a broken comma-joined string
@@ -284,12 +290,12 @@
                 return;
             }
 
+            const isEditing = !!editingProductId;
             const btn = document.getElementById('publishBtn');
-            btn.innerText = 'Publishing...';
+            btn.innerText = isEditing ? 'Updating...' : 'Publishing...';
             btn.disabled = true;
 
-            const newRow = {
-                id: 'prod_' + Date.now(),
+            const rowData = {
                 title: document.getElementById('prodTitle').value.trim(),
                 code: document.getElementById('prodCode').value.trim(),
                 price: parseFloat(document.getElementById('prodPrice').value),
@@ -300,25 +306,79 @@
                 images: uploadedImagesList,
                 delivery_text: document.getElementById('prodDelivery').value.trim(),
                 return_text: document.getElementById('prodReturns').value.trim(),
-                sizes: document.getElementById('prodSizes').value.trim(),
-                in_stock: true
+                sizes: document.getElementById('prodSizes').value.trim()
             };
 
-            const { error } = await _supabase.from('products').insert([newRow]);
+            let error;
+            if (isEditing) {
+                ({ error } = await _supabase.from('products').update(rowData).eq('id', editingProductId));
+            } else {
+                rowData.id = 'prod_' + Date.now();
+                rowData.in_stock = true;
+                ({ error } = await _supabase.from('products').insert([rowData]));
+            }
 
-            btn.innerText = 'Publish Product';
             btn.disabled = false;
 
             if (error) {
-                alert('Failed to publish product: ' + error.message);
+                alert('Failed to save product: ' + error.message);
+                btn.innerText = isEditing ? 'Update Product' : 'Publish Product';
                 return;
             }
 
-            alert('Product published successfully!');
-            e.target.reset();
+            alert(isEditing ? 'Product updated successfully!' : 'Product published successfully!');
+            cancelEdit(); // resets the form back to "Add New Product" mode
+            await renderAdminProducts();
+        }
+
+        // Loads an existing product's data into the form so the admin can
+        // edit it, then submits via the same handleAddNewProduct as an update.
+        function editProduct(prodId) {
+            const p = cachedProducts.find(x => x.id === prodId);
+            if (!p) return;
+
+            editingProductId = prodId;
+
+            document.getElementById('prodTitle').value = p.title || '';
+            document.getElementById('prodCode').value = p.code || '';
+            document.getElementById('prodPrice').value = p.price ?? '';
+            document.getElementById('prodMrp').value = p.mrp ?? '';
+            document.getElementById('prodDiscount').value = p.discount || '';
+            document.getElementById('prodCategory').value = p.category || '';
+            document.getElementById('prodColor').value = p.color || '';
+            document.getElementById('prodDelivery').value = p.deliveryText || '';
+            document.getElementById('prodReturns').value = p.returnText || '';
+            document.getElementById('prodSizes').value = p.sizes || '';
+
+            // Keep the existing images unless the admin chooses new files
+            uploadedImagesList = getImagesArray(p);
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            previewContainer.innerHTML = '';
+            uploadedImagesList.forEach(imgUrl => {
+                const imgTag = document.createElement('img');
+                imgTag.src = imgUrl;
+                imgTag.className = "w-14 h-14 object-cover rounded-xl border border-white shadow-xs shrink-0";
+                previewContainer.appendChild(imgTag);
+            });
+
+            document.getElementById('formTitle').innerText = 'Edit Product';
+            document.getElementById('publishBtn').innerText = 'Update Product';
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+
+            document.getElementById('adminPanelContent').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            editingProductId = null;
+            document.getElementById('addProductForm').reset();
+            document.getElementById('prodDelivery').value = 'Free Delivery across Delhi';
+            document.getElementById('prodReturns').value = 'Easy 3-day returns & exchange';
+            document.getElementById('prodSizes').value = 'S, M, L, XL';
             uploadedImagesList = [];
             document.getElementById('imagePreviewContainer').innerHTML = '';
-            await renderAdminProducts();
+            document.getElementById('formTitle').innerText = 'Add New Product';
+            document.getElementById('publishBtn').innerText = 'Publish Product';
+            document.getElementById('cancelEditBtn').classList.add('hidden');
         }
 
         async function renderAdminProducts() {
@@ -342,6 +402,9 @@
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button onclick="toggleStock('${p.id}')" class="px-2.5 py-1 rounded-xl text-[10px] font-extrabold ${p.inStock !== false ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} cursor-pointer">
                             ${p.inStock !== false ? 'In Stock' : 'Out of Stock'}
+                        </button>
+                        <button onclick="editProduct('${p.id}')" class="w-7 h-7 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-200">
+                            <i class="fa-solid fa-pen text-[10px]"></i>
                         </button>
                         <button onclick="deleteProduct('${p.id}')" class="w-7 h-7 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-rose-100">
                             <i class="fa-solid fa-trash text-[10px]"></i>
@@ -376,4 +439,5 @@
         }
     </script>
 </body>
-    </html>
+</html>
+   
