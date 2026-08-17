@@ -285,13 +285,55 @@
             return p.img ? [p.img] : [];
         }
 
-        window.onload = function() {
+        window.onload = async function() {
+            await loadProducts();
             renderStoreProducts();
             updateCartUI();
         };
 
+        let cachedProducts = [];
+
+        // Converts a database row (snake_case) into the product object
+        // shape the rest of the storefront UI already expects (camelCase).
+        function dbRowToProduct(row) {
+            return {
+                id: row.id,
+                title: row.title,
+                code: row.code,
+                price: row.price,
+                mrp: row.mrp,
+                discount: row.discount,
+                category: row.category,
+                color: row.color,
+                images: row.images,
+                img: Array.isArray(row.images) && row.images.length ? row.images[0] : null,
+                deliveryText: row.delivery_text,
+                returnText: row.return_text,
+                sizes: row.sizes,
+                inStock: row.in_stock
+            };
+        }
+
+        // Fetches products from Supabase once and caches them in memory.
+        // Filtering/searching then reads from this cache (fast, no repeat DB calls).
+        async function loadProducts() {
+            const { data, error } = await _supabase
+                .from('products')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Failed to load products:', error);
+                document.getElementById('storeProductsGrid').innerHTML =
+                    `<p class="text-xs text-rose-500 col-span-2 text-center py-10">Could not load products. Please refresh the page.</p>`;
+                return [];
+            }
+            cachedProducts = (data || []).map(dbRowToProduct);
+            return cachedProducts;
+        }
+
         function getProducts() {
-            return JSON.parse(localStorage.getItem('store_products')) || [];
+            return cachedProducts;
         }
 
         function scrollToCategories() {
@@ -317,10 +359,10 @@
             if (searchQuery.trim() !== '') {
                 const query = searchQuery.toLowerCase().trim();
                 filtered = products.filter(p => 
-                    p.title.toLowerCase().includes(query) ||
-                    p.code.toLowerCase().includes(query) ||
-                    p.category.toLowerCase().includes(query) ||
-                    p.color.toLowerCase().includes(query)
+                    (p.title || '').toLowerCase().includes(query) ||
+                    (p.code || '').toLowerCase().includes(query) ||
+                    (p.category || '').toLowerCase().includes(query) ||
+                    (p.color || '').toLowerCase().includes(query)
                 );
             }
 
@@ -342,7 +384,7 @@
                         <!-- Clickable Area to Open Product Page -->
                         <div onclick="openProductDetail('${p.id}')" class="cursor-pointer">
                             <div class="relative rounded-2xl overflow-hidden aspect-[3/4] bg-slate-100 mb-2.5 shadow-xs border border-white">
-                                <img src="${coverImg}" class="w-full h-full object-cover">
+                                <img src="${coverImg}" class="w-full h-full object-contain">
                                 <span class="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-lg backdrop-blur-xs">${p.code}</span>
                                 ${p.discount ? `<span class="absolute bottom-2 right-2 bg-emerald-600 text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-xs">${p.discount}</span>` : ''}
                             </div>
@@ -407,13 +449,21 @@
 
             sliderEl.innerHTML = imgList.map((imgUrl, idx) => `
                 <div class="w-full h-full shrink-0 snap-center">
-                    <img src="${imgUrl}" class="w-full h-full object-cover">
+                    <img src="${imgUrl}" class="w-full h-full object-contain">
                 </div>
             `).join('');
 
             dotsEl.innerHTML = imgList.map((_, idx) => `
                 <div class="w-1.5 h-1.5 rounded-full bg-white/70 shadow-xs transition-all ${idx === 0 ? 'bg-white w-3' : ''}"></div>
             `).join('');
+
+            // Keep the dots in sync while the user swipes through images
+            sliderEl.onscroll = () => {
+                const activeIdx = Math.round(sliderEl.scrollLeft / sliderEl.clientWidth);
+                document.querySelectorAll('#modalSliderDots > div').forEach((dot, i) => {
+                    dot.className = `w-1.5 h-1.5 rounded-full bg-white/70 shadow-xs transition-all ${i === activeIdx ? 'bg-white w-3' : ''}`;
+                });
+            };
 
             // Sizes setup
             let sizesList = product.sizes ? product.sizes.split(',').map(s => s.trim()) : ['S', 'M', 'L', 'XL', 'XXL'];
@@ -457,8 +507,19 @@
             if (existing) {
                 existing.qty += 1;
             } else {
+                // Store only what's needed to display the cart item —
+                // not the full product (which can carry several large
+                // base64 images and would bloat localStorage per cart line).
                 let imgArr = getImagesArray(product);
-                cart.push({ ...product, img: imgArr[0], qty: 1, size: chosenSize });
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    code: product.code,
+                    price: product.price,
+                    img: imgArr[0],
+                    qty: 1,
+                    size: chosenSize
+                });
             }
             saveCart();
             updateCartUI();
