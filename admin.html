@@ -303,7 +303,15 @@
                 products = products.filter(x => x.id !== prodId);
                 saveProducts(products);
                 renderAdminProducts();
+            async function handleAdminLogout() {
+    const { error } = await _supabase.auth.signOut();
+    if (error) {
+        alert('Logout error: ' + error.message);
+        return;
+    }
+    window.location.reload();
             }
+                
         }
     </script>
 </body>
