@@ -74,9 +74,11 @@
                     </div>
                 </div>
 
+                <!-- File & Camera Image Picker -->
                 <div>
-                    <label class="block font-bold text-slate-700 mb-1">Multiple Image URLs <span class="text-[10px] text-slate-400">(Comma separated for slider: Front, Back, Side etc.)</span></label>
-                    <textarea id="prodImages" rows="2" required placeholder="https://img1.jpg, https://img2.jpg, https://img3.jpg" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600"></textarea>
+                    <label class="block font-bold text-slate-700 mb-1">Upload Product Images <span class="text-[10px] text-slate-400">(Select multiple: Front, Back, Side etc.)</span></label>
+                    <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleImageSelection(event)" class="w-full p-2 glass-card rounded-xl border border-white/80 text-[11px] file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer">
+                    <div id="imagePreviewContainer" class="flex gap-2 mt-2 overflow-x-auto"></div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2.5">
@@ -95,7 +97,7 @@
                     <input type="text" id="prodSizes" value="S, M, L, XL, XXL" placeholder="S, M, L, XL" class="w-full p-2.5 glass-card rounded-xl border border-white/80 outline-none focus:border-rose-600">
                 </div>
 
-                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl shadow-md transition cursor-pointer">
+                <button type="submit" id="publishBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl shadow-md transition cursor-pointer">
                     Publish Product
                 </button>
             </form>
@@ -115,6 +117,8 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        let uploadedBase64Images = [];
+
         window.onload = function() {
             renderAdminProducts();
         };
@@ -127,8 +131,41 @@
             localStorage.setItem('store_products', JSON.stringify(products));
         }
 
-        function handleAddNewProduct(e) {
+        async function handleImageSelection(event) {
+            const files = event.target.files;
+            uploadedBase64Images = [];
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            previewContainer.innerHTML = '';
+
+            if (!files || files.length === 0) return;
+
+            for (let file of files) {
+                const base64 = await convertFileToBase64(file);
+                uploadedBase64Images.push(base64);
+
+                const imgTag = document.createElement('img');
+                imgTag.src = base64;
+                imgTag.className = "w-14 h-14 object-cover rounded-xl border border-white shadow-xs shrink-0";
+                previewContainer.appendChild(imgTag);
+            }
+        }
+
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleAddNewProduct(e) {
             e.preventDefault();
+            if (uploadedBase64Images.length === 0) {
+                alert('Please select at least one product image!');
+                return;
+            }
+
             const title = document.getElementById('prodTitle').value.trim();
             const code = document.getElementById('prodCode').value.trim();
             const price = parseFloat(document.getElementById('prodPrice').value);
@@ -136,12 +173,12 @@
             const discount = document.getElementById('prodDiscount').value.trim();
             const category = document.getElementById('prodCategory').value.trim();
             const color = document.getElementById('prodColor').value.trim();
-            const images = document.getElementById('prodImages').value.trim();
             const deliveryText = document.getElementById('prodDelivery').value.trim();
             const returnText = document.getElementById('prodReturns').value.trim();
             const sizes = document.getElementById('prodSizes').value.trim();
 
-            let firstImg = images.includes(',') ? images.split(',')[0].trim() : images;
+            let imagesString = uploadedBase64Images.join(',');
+            let firstImg = uploadedBase64Images[0];
 
             const newProduct = {
                 id: 'prod_' + Date.now(),
@@ -152,8 +189,8 @@
                 discount,
                 category,
                 color,
-                images,
-                img: firstImg, // fallback cover image
+                images: imagesString,
+                img: firstImg,
                 deliveryText,
                 returnText,
                 sizes,
@@ -166,6 +203,8 @@
 
             alert('Product added successfully!');
             e.target.reset();
+            uploadedBase64Images = [];
+            document.getElementById('imagePreviewContainer').innerHTML = '';
             renderAdminProducts();
         }
 
