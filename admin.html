@@ -24,7 +24,7 @@
 </head>
 <body class="bg-gradient-to-br from-slate-100 via-rose-50/30 to-pink-100/40 text-slate-800 font-sans pb-24 min-h-screen">
 
-        <!-- Header -->
+    <!-- Header -->
     <header class="glass-nav border-b border-white/50 sticky top-0 z-30 shadow-xs">
         <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
             <h1 class="text-base font-black tracking-tight text-slate-900">AMANE <span class="text-rose-600">ADMIN</span></h1>
@@ -35,13 +35,12 @@
             </div>
         </div>
     </header>
-    
 
     <main class="max-w-3xl mx-auto px-4 mt-4 space-y-4">
         <!-- Supabase Auth Login Section -->
         <div id="adminAuthSection" class="glass-card rounded-3xl p-6 shadow-lg border border-white/80 text-center space-y-3">
             <h2 class="text-sm font-black uppercase text-slate-900">Supabase Auth Admin Login</h2>
-            <p class="text-xs text-slate-500">Sign in with your Supabase Auth user credentials </p>
+            <p class="text-xs text-slate-500">Sign in with your Supabase Auth user credentials</p>
             <div class="max-w-xs mx-auto space-y-2 pt-2">
                 <input type="email" id="adminEmailInput" placeholder="Enter Supabase Auth Email" class="w-full p-2.5 glass-card rounded-xl border border-white/80 text-xs outline-none focus:border-rose-600">
                 <input type="password" id="adminPassInput" placeholder="Password" class="w-full p-2.5 glass-card rounded-xl border border-white/80 text-xs outline-none focus:border-rose-600">
@@ -162,6 +161,15 @@
             }
 
             activateAdminUI(data.user.email);
+        }
+
+        async function handleAdminLogout() {
+            const { error } = await _supabase.auth.signOut();
+            if (error) {
+                alert('Logout error: ' + error.message);
+                return;
+            }
+            window.location.reload();
         }
 
         function activateAdminUI(email) {
@@ -303,15 +311,7 @@
                 products = products.filter(x => x.id !== prodId);
                 saveProducts(products);
                 renderAdminProducts();
-            async function handleAdminLogout() {
-    const { error } = await _supabase.auth.signOut();
-    if (error) {
-        alert('Logout error: ' + error.message);
-        return;
-    }
-    window.location.reload();
             }
-                
         }
     </script>
 </body>
