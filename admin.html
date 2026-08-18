@@ -807,16 +807,16 @@
         }
 
 async function deleteProduct(prodId) {
-    showCustomConfirm('Delete Product', 'Are you sure you want to delete this product?', async () => {
-        const { error } = await _supabase.from('products').delete().eq('id', prodId);
-        if (error) {
-            alert('Failed to delete product: ' + error.message);
-            return;
-        }
-        await renderAdminProducts();
-    });
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    
+    const { error } = await _supabase.from('products').delete().eq('id', prodId);
+    if (error) {
+        alert('Failed to delete product: ' + error.message);
+        return;
+    }
+    await renderAdminProducts();
 }
         
-    </script>
+        </script>
 </body>
 </html>
