@@ -43,8 +43,6 @@
             box-shadow: 0 24px 60px -16px rgba(74, 18, 38, 0.35), inset 0 1px 0 rgba(255,255,255,1);
         }
 
-        /* Ambient background glow — fixed, blurred color fields for a premium
-           layered feel behind the glass panels. Purely decorative. */
         .aurora {
             position: fixed;
             inset: 0;
@@ -62,26 +60,15 @@
         .aurora .a2 { width: 380px; height: 380px; top: 20%; right: -140px; background: radial-gradient(circle, #6B1B38, transparent 70%); opacity: 0.18; }
         .aurora .a3 { width: 300px; height: 300px; bottom: -100px; left: 10%; background: radial-gradient(circle, #C89B4A, transparent 70%); opacity: 0.25; }
 
-        /* Hide scrollbar for chrome, safari and opera */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Entrance animation */
         @keyframes fadeSlideUp {
             from { opacity: 0; transform: translateY(14px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .fade-in-up {
-            animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
+        .fade-in-up { animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-        /* Cart bump when an item is added */
         @keyframes cartBump {
             0%, 100% { transform: scale(1); }
             30% { transform: scale(1.25) rotate(-6deg); }
@@ -89,14 +76,12 @@
         }
         .cart-bump { animation: cartBump 0.45s ease-out; }
 
-        /* Modal entrance */
         @keyframes modalPopIn {
             from { opacity: 0; transform: scale(0.94) translateY(12px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
         .modal-pop-in { animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-        /* Loading shimmer */
         @keyframes shimmer {
             0% { background-position: -400px 0; }
             100% { background-position: 400px 0; }
@@ -168,48 +153,31 @@
 
         <!-- Product Grid -->
         <div id="storeProductsGrid" class="grid grid-cols-2 gap-3.5">
-            <!-- Skeleton loading placeholders shown until products fetch from the database -->
             <div class="glass-card rounded-3xl p-3 border border-white/80"><div class="shimmer bg-slate-200/60 aspect-[3/4] rounded-2xl mb-2.5"></div><div class="shimmer bg-slate-200/60 h-2.5 w-2/3 rounded mb-1.5"></div><div class="shimmer bg-slate-200/60 h-3 w-1/2 rounded"></div></div>
             <div class="glass-card rounded-3xl p-3 border border-white/80"><div class="shimmer bg-slate-200/60 aspect-[3/4] rounded-2xl mb-2.5"></div><div class="shimmer bg-slate-200/60 h-2.5 w-2/3 rounded mb-1.5"></div><div class="shimmer bg-slate-200/60 h-3 w-1/2 rounded"></div></div>
         </div>
     </main>
-
-    <!-- Product Detail Modal with Glassmorphism & Image Slider -->
+        <!-- Product Detail Modal -->
     <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 transition-all">
         <div id="productDetailModalPanel" class="glass-modal w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl max-h-[92vh] flex flex-col border border-white/80">
-            <!-- Modal Header -->
             <div class="p-3.5 border-b border-slate-200/60 flex justify-between items-center bg-white/40">
                 <span id="modalProdCode" class="text-[10px] font-black bg-slate-900 text-white px-2.5 py-1 rounded-xl tracking-wider"></span>
                 <button onclick="closeProductDetail()" class="w-7 h-7 bg-white/80 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 cursor-pointer shadow-xs transition"><i class="fa-solid fa-xmark text-sm"></i></button>
             </div>
-
-            <!-- Modal Content (Scrollable) -->
             <div class="overflow-y-auto p-4 space-y-3.5 no-scrollbar">
-                <!-- Image Slider Container -->
                 <div class="relative aspect-[3/4] bg-slate-100 rounded-2xl overflow-hidden shadow-inner border border-white">
-                    <div id="modalImageSlider" class="flex h-full overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth">
-                        <!-- Images injected dynamically -->
-                    </div>
-                    <!-- Slider Dots Indicator -->
-                    <div id="modalSliderDots" class="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
-                        <!-- Dots injected dynamically -->
-                    </div>
+                    <div id="modalImageSlider" class="flex h-full overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth"></div>
+                    <div id="modalSliderDots" class="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 pointer-events-none"></div>
                 </div>
-
-                <!-- Product Info -->
                 <div>
                     <span id="modalProdCategoryColor" class="text-[10px] text-rose-600 font-extrabold uppercase tracking-wider"></span>
                     <h3 id="modalProdTitle" class="font-display text-base font-semibold text-slate-900 mt-0.5 leading-snug"></h3>
                 </div>
-
-                <!-- Pricing & Discount Badge -->
                 <div class="flex items-center gap-2.5 flex-wrap">
                     <span id="modalProdPrice" class="font-display text-lg font-semibold text-slate-900"></span>
                     <span id="modalProdMrp" class="text-xs text-slate-400 line-through"></span>
                     <span id="modalProdDiscount" class="text-[10px] font-extrabold bg-[color:var(--gold)]/15 text-[color:var(--gold)] px-2 py-0.5 rounded-lg"></span>
                 </div>
-
-                <!-- Custom Delivery Info Box -->
                 <div class="glass-card p-3 rounded-2xl border border-white/80 text-xs space-y-1.5 text-slate-700 shadow-xs">
                     <div class="flex items-start gap-2">
                         <i class="fa-solid fa-truck-fast text-rose-600 mt-0.5"></i>
@@ -220,17 +188,11 @@
                         <div><strong class="text-slate-900">Returns:</strong> <span id="modalProdReturns">Easy 7-day returns & exchange</span></div>
                     </div>
                 </div>
-
-                <!-- Size Selection -->
                 <div>
                     <label class="block text-xs font-black text-slate-700 mb-1.5">Select Size:</label>
-                    <div id="modalSizeContainer" class="flex flex-wrap gap-1.5">
-                        <!-- Sizes injected dynamically -->
-                    </div>
+                    <div id="modalSizeContainer" class="flex flex-wrap gap-1.5"></div>
                 </div>
             </div>
-
-            <!-- Modal Footer Button -->
             <div class="p-3.5 border-t border-slate-200/60 bg-white/40 flex gap-2">
                 <button onclick="addCurrentToCartFromModal()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer text-xs">
                     Add to Bag
@@ -285,7 +247,6 @@
                 <button onclick="closeCheckoutModal()" class="w-7 h-7 bg-white/80 rounded-full flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="submitCustomerOrder(event)" class="space-y-3 text-xs">
-                <!-- Honeypot field: invisible to real users, bots tend to fill every field -->
                 <div class="hidden" aria-hidden="true">
                     <label>Leave this field empty</label>
                     <input type="text" id="custWebsite" name="website" tabindex="-1" autocomplete="off">
@@ -355,12 +316,32 @@
         </div>
     </div>
 
+    <!-- Custom Confirmation Modal -->
+    <div id="customConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+        <div class="glass-modal modal-animate w-[90%] max-w-md p-6 rounded-2xl border border-white/20 shadow-2xl text-center bg-[#1a050b]/80">
+            <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[#6B1B38]/40 flex items-center justify-center border border-[#C89B4A]/30">
+                <svg class="w-6 h-6 text-[#C89B4A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h3 id="confirmTitle" class="text-lg font-bold text-white mb-2 font-display">Are you sure?</h3>
+            <p id="confirmMessage" class="text-sm text-gray-300 mb-6">This action cannot be undone.</p>
+            <div class="flex space-x-3">
+                <button id="confirmCancelBtn" class="flex-1 py-2.5 px-4 rounded-xl border border-white/20 text-white font-medium hover:bg-white/10 transition">
+                    Cancel
+                </button>
+                <button id="confirmOkBtn" class="flex-1 py-2.5 px-4 rounded-xl bg-[#6B1B38] text-white font-medium hover:bg-[#802244] border border-[#C89B4A]/40 transition shadow-lg">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ---- EmailJS setup (for automatic order-notification emails) ----
         const EMAILJS_PUBLIC_KEY = 'LxuaFnLtYqBKmLpX5';
         const EMAILJS_SERVICE_ID = 'service_i6jrdol';
         const EMAILJS_TEMPLATE_ID = 'template_0huv5ro';
@@ -373,10 +354,34 @@
         let selectedProductForDetail = null;
         let selectedSizeForOrder = 'Free Size';
 
-        // Safely parse the `images` field. New products store a JSON array.
-        // Older/legacy products may have a broken comma-joined string
-        // (since base64 data-URLs contain their own comma) — fall back
-        // gracefully to `img` (or first image) in that case.
+        // Custom Confirmation Modal Helper Function
+        function showCustomConfirm(title, message, onConfirm) {
+            const modal = document.getElementById('customConfirmModal');
+            const titleEl = document.getElementById('confirmTitle');
+            const msgEl = document.getElementById('confirmMessage');
+            const okBtn = document.getElementById('confirmOkBtn');
+            const cancelBtn = document.getElementById('confirmCancelBtn');
+
+            titleEl.textContent = title || "Are you sure?";
+            msgEl.textContent = message || "Do you want to proceed?";
+            
+            modal.classList.remove('hidden');
+
+            const newOkBtn = okBtn.cloneNode(true);
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+            document.getElementById('confirmOkBtn').addEventListener('click', () => {
+                modal.classList.add('hidden');
+                if (onConfirm) onConfirm();
+            });
+
+            document.getElementById('confirmCancelBtn').addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+        }
+
         function getImagesArray(p) {
             if (!p) return [];
             if (Array.isArray(p.images)) return p.images;
@@ -397,8 +402,6 @@
 
         let cachedProducts = [];
 
-        // Converts a database row (snake_case) into the product object
-        // shape the rest of the storefront UI already expects (camelCase).
         function dbRowToProduct(row) {
             return {
                 id: row.id,
@@ -418,8 +421,6 @@
             };
         }
 
-        // Fetches products from Supabase once and caches them in memory.
-        // Filtering/searching then reads from this cache (fast, no repeat DB calls).
         async function loadProducts() {
             const { data, error } = await _supabase
                 .from('products')
@@ -477,14 +478,13 @@
                             <i class="fa-solid fa-magnifying-glass text-rose-300 text-lg"></i>
                         </div>
                         <p class="font-display text-sm font-medium text-slate-700">Nothing matches yet</p>
-                        <p class="text-[11px] text-slate-400 mt-1">Try a different name, code, or category</p>
+                        <p class="text-[11px] text-slate-400 mt-1">Try a different name, code</p>
                     </div>`;
                 return;
             }
 
             grid.innerHTML = filtered.map((p, idx) => {
                 const isOutOfStock = p.inStock === false;
-                // Support multiple images (first image as cover)
                 let imgArr = getImagesArray(p);
                 let coverImg = imgArr[0] || p.img;
 
@@ -492,7 +492,6 @@
                     <div class="fade-in-up glass-card rounded-3xl p-3 flex flex-col justify-between relative overflow-hidden active:scale-[0.97] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#6B1B38]/15 transition-all duration-300" style="animation-delay: ${Math.min(idx * 0.04, 0.3)}s">
                         ${isOutOfStock ? '<div class="absolute inset-0 bg-white/70 backdrop-blur-[2px] z-10 flex items-center justify-center"><span class="bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-md">Out of Stock</span></div>' : ''}
                         
-                        <!-- Clickable Area to Open Product Page -->
                         <div onclick="openProductDetail('${p.id}')" class="cursor-pointer">
                             <div class="relative rounded-2xl overflow-hidden aspect-[3/4] bg-slate-100 mb-2.5 shadow-xs border border-white">
                                 <img src="${coverImg}" class="w-full h-full object-contain">
@@ -516,8 +515,7 @@
                 `;
             }).join('');
         }
-
-        function filterCategory(cat) {
+                function filterCategory(cat) {
             document.getElementById('searchInput').value = '';
             renderStoreProducts(cat, '');
         }
@@ -527,7 +525,6 @@
             renderStoreProducts(currentFilter, query);
         }
 
-        // Product Detail Page Modal with Image Slider & Customizations
         function openProductDetail(prodId) {
             const products = getProducts();
             const product = products.find(p => p.id === prodId);
@@ -549,11 +546,9 @@
                 discountEl.classList.add('hidden');
             }
 
-            // Custom Delivery & Returns
             document.getElementById('modalProdDelivery').innerText = product.deliveryText || 'Free Delivery across India';
             document.getElementById('modalProdReturns').innerText = product.returnText || 'Easy 7-day returns & exchange';
 
-            // Images Slider setup
             let imgList = getImagesArray(product);
             const sliderEl = document.getElementById('modalImageSlider');
             const dotsEl = document.getElementById('modalSliderDots');
@@ -568,7 +563,6 @@
                 <div class="w-1.5 h-1.5 rounded-full bg-white/70 shadow-xs transition-all ${idx === 0 ? 'bg-white w-3' : ''}"></div>
             `).join('');
 
-            // Keep the dots in sync while the user swipes through images
             sliderEl.onscroll = () => {
                 const activeIdx = Math.round(sliderEl.scrollLeft / sliderEl.clientWidth);
                 document.querySelectorAll('#modalSliderDots > div').forEach((dot, i) => {
@@ -576,9 +570,8 @@
                 });
             };
 
-            // Sizes setup
             let sizesList = product.sizes ? product.sizes.split(',').map(s => s.trim()) : ['S', 'M', 'L', 'XL', 'XXL'];
-            selectedSizeForOrder = sizesList[0]; // default first size
+            selectedSizeForOrder = sizesList[0];
             const sizeContainer = document.getElementById('modalSizeContainer');
             sizeContainer.innerHTML = sizesList.map((sz, idx) => `
                 <button type="button" onclick="selectSizeOption('${sz}', this)" class="size-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${idx === 0 ? 'bg-slate-900 text-white border-slate-900 shadow-sm' : 'glass-card text-slate-700 border-white/80'}">${sz}</button>
@@ -587,7 +580,7 @@
             document.getElementById('productDetailModal').classList.remove('hidden');
             const panel = document.getElementById('productDetailModalPanel');
             panel.classList.remove('modal-pop-in');
-            void panel.offsetWidth; // restart animation
+            void panel.offsetWidth;
             panel.classList.add('modal-pop-in');
         }
 
@@ -622,9 +615,6 @@
             if (existing) {
                 existing.qty += 1;
             } else {
-                // Store only what's needed to display the cart item —
-                // not the full product (which can carry several large
-                // base64 images and would bloat localStorage per cart line).
                 let imgArr = getImagesArray(product);
                 cart.push({
                     id: product.id,
@@ -650,7 +640,7 @@
             const countEl = document.getElementById('cartItemCount');
             countEl.innerText = totalCount;
             countEl.classList.remove('cart-bump');
-            void countEl.offsetWidth; // restart animation
+            void countEl.offsetWidth;
             countEl.classList.add('cart-bump');
 
             const container = document.getElementById('cartDrawerItems');
@@ -724,27 +714,18 @@
             el.innerText = '';
         }
 
-        // Rejects obviously fake numbers: all-same-digit (9999999999),
-        // simple ascending/descending sequences (1234567890), etc.
-        // Combined with the HTML pattern [6-9][0-9]{9}, this catches the
-        // most common junk/spam entries without needing paid SMS OTP.
         function isPhoneNumberGenuine(phone) {
             if (!/^[6-9][0-9]{9}$/.test(phone)) return false;
-            if (/^(\d)\1{9}$/.test(phone)) return false; // all same digit
-
+            if (/^(\d)\1{9}$/.test(phone)) return false;
             const ascending = '0123456789';
             const descending = '9876543210';
             if (ascending.includes(phone) || descending.includes(phone)) return false;
-
             return true;
         }
 
         let pincodeLookupTimer = null;
         let pincodeVerified = false;
 
-        // Looks up the pincode against India Post's free public API and
-        // auto-fills City & State with the real district/state on file —
-        // this stops customers typing a random/mismatched city manually.
         function handlePincodeInput() {
             const pincode = document.getElementById('custPincode').value.trim();
             const statusEl = document.getElementById('custPincodeStatus');
@@ -780,13 +761,11 @@
                         statusEl.innerText = 'Pincode not found. Please check and re-enter.';
                     }
                 } catch (err) {
-                    // Network hiccup — don't hard-block a genuine customer,
-                    // just let them type the city/state manually.
                     console.error('Pincode lookup failed:', err);
                     cityStateEl.removeAttribute('readonly');
                     cityStateEl.classList.remove('bg-white/50');
                     cityStateEl.placeholder = 'Could not auto-verify — enter City, State';
-                    pincodeVerified = true; // don't block checkout on a network issue
+                    pincodeVerified = true;
                     statusEl.className = 'text-amber-600 text-[10px] font-bold mt-1';
                     statusEl.innerText = 'Could not auto-verify pincode — please enter city/state manually.';
                 }
@@ -796,12 +775,8 @@
         async function submitCustomerOrder(e) {
             e.preventDefault();
 
-            // Honeypot check — real customers never fill this hidden field,
-            // only bots that blindly fill every input do.
             const honeypot = document.getElementById('custWebsite').value.trim();
             if (honeypot !== '') {
-                // Silently pretend success so the bot doesn't learn anything —
-                // but nothing actually gets saved.
                 document.getElementById('checkoutModal').classList.add('hidden');
                 document.getElementById('successModal').classList.remove('hidden');
                 return;
@@ -816,7 +791,6 @@
             const cityState = document.getElementById('custCityState').value.trim();
             const paymentMode = document.getElementById('custPaymentMode').value;
 
-            // Genuine phone number check
             if (!isPhoneNumberGenuine(phone)) {
                 const errEl = document.getElementById('custPhoneError');
                 errEl.innerText = 'Please enter a valid, genuine mobile number.';
@@ -825,9 +799,6 @@
                 return;
             }
 
-            // Genuine location check — pincode must have been verified
-            // against India Post, or city/state must be manually filled
-            // after a lookup failure.
             if (!pincodeVerified || cityState === '') {
                 const statusEl = document.getElementById('custPincodeStatus');
                 statusEl.classList.remove('hidden');
@@ -867,9 +838,6 @@
                 return;
             }
 
-            // Fire-and-forget email notification to the admin — order is
-            // already saved in the database either way, so a failure here
-            // should never block the customer's success screen.
             if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
                 emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
                     customer_name: name,
