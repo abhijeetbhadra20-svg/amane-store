@@ -414,10 +414,34 @@
         window.onload = async function() {
             const { data: { session } } = await _supabase.auth.getSession();
             if (session) {
-                activateAdminUI(session.user.email);
+                await handleSessionCheck(session.user.email);
             }
             await renderAdminProducts();
         };
+
+        // Only these emails are allowed to use the admin panel — this is a
+        // second layer of defense on top of Supabase Auth having just 2
+        // users. Even if a 3rd user somehow gets created in Supabase Auth,
+        // they still can't get into the admin panel unless listed here.
+        const ALLOWED_ADMIN_EMAILS = [
+            'abhijeetbhadra20@gmail.com',
+            'heyyyjatin@gmail.com'
+        ];
+
+        function isEmailWhitelisted(email) {
+            return ALLOWED_ADMIN_EMAILS.includes((email || '').trim().toLowerCase());
+        }
+
+        // Checks an existing (already-logged-in) session against the
+        // whitelist. Used on page load in case someone has an old valid
+        // Supabase session for a non-whitelisted account.
+        async function handleSessionCheck(email) {
+            if (!isEmailWhitelisted(email)) {
+                await _supabase.auth.signOut();
+                return;
+            }
+            activateAdminUI(email);
+        }
 
         async function handleSupabaseAdminLogin() {
             const email = document.getElementById('adminEmailInput').value.trim();
@@ -428,9 +452,22 @@
                 return;
             }
 
+            if (!isEmailWhitelisted(email)) {
+                alert('This email is not authorized to access the admin panel.');
+                return;
+            }
+
             const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
             if (error) {
                 alert('Login error: ' + error.message);
+                return;
+            }
+
+            // Double-check the authenticated user's actual email against the
+            // whitelist too (not just what was typed) — belt and suspenders.
+            if (!isEmailWhitelisted(data.user.email)) {
+                await _supabase.auth.signOut();
+                alert('This account is not authorized to access the admin panel.');
                 return;
             }
 
