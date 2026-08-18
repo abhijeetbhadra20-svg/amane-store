@@ -1,65 +1,101 @@
 /* ==========================================
-   AMANE STORE - UPGRADED ANIMATIONS.CSS
+   AMANE STORE - ULTRA HEAVY & CINEMATIC ANIMATIONS
    ========================================== */
 
-/* 1. Smooth Fade & Slide Up (Page Load ke liye) */
-@keyframes fadeInUp {
-    from {
+/* 1. Cinematic Page Entrance */
+@keyframes ultraEntrance {
+    0% {
         opacity: 0;
-        transform: translateY(16px);
+        transform: translateY(30px) scale(0.94);
+        filter: blur(4px);
     }
-    to {
+    100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
+        filter: blur(0);
     }
 }
 
 .fade-in-up {
-    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: ultraEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* 2. Glass Card Hover Effect (Cards ke liye) */
+/* 2. Heavy 3D Hover & Glass Elevation */
 .glass-card {
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s ease;
+    will-change: transform, box-shadow;
 }
 
 .glass-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px -10px rgba(107, 27, 56, 0.25);
+    transform: translateY(-8px) scale(1.02) rotateX(1deg);
+    box-shadow: 0 25px 60px -12px rgba(107, 27, 56, 0.45), 0 0 20px 2px rgba(200, 153, 74, 0.2);
+    border-color: rgba(200, 153, 74, 0.6);
 }
 
-/* 3. Button Press & Hover Micro-interactions */
+/* 3. Heavy Tactile Buttons & Spring Effect */
 button, .btn-interactive {
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 button:active, .btn-interactive:active {
-    transform: scale(0.96);
+    transform: scale(0.91) !important;
 }
 
-/* 4. Modal Pop-up Smooth Zoom Animation */
-@keyframes modalScaleIn {
-    from {
+/* Primary Button Heavy Neon/Wine Glow */
+button[type="submit"], .bg-\[\#6B1B38\] {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button[type="submit"]:hover, .bg-\[\#6B1B38\]:hover {
+    box-shadow: 0 12px 35px -8px rgba(107, 27, 56, 0.7), 0 0 15px rgba(200, 153, 74, 0.3);
+    transform: translateY(-3px) scale(1.02);
+}
+
+/* 4. Heavy Cinematic Modal Pop-up */
+@keyframes heavyCinematicModal {
+    0% {
         opacity: 0;
-        transform: scale(0.95) translateY(10px);
+        transform: scale(0.85) translateY(40px);
+        filter: blur(8px);
     }
-    to {
+    100% {
         opacity: 1;
         transform: scale(1) translateY(0);
+        filter: blur(0);
     }
 }
 
 .modal-animate {
-    animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: heavyCinematicModal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* 5. Subtle Pulse for Badges/Tags */
-@keyframes softPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+/* 5. Glowing Neon Pulse for Tags & Badges */
+@keyframes neonPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(107, 27, 56, 0.5);
+    }
+    70% {
+        box-shadow: 0 0 0 14px rgba(107, 27, 56, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(107, 27, 56, 0);
+    }
 }
 
 .badge-pulse {
-    animation: softPulse 2s infinite ease-in-out;
+    animation: neonPulse 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* 6. Dynamic Smooth Shimmer Loader */
+@keyframes heavyShimmer {
+    0% { background-position: -300% 0; }
+    100% { background-position: 300% 0; }
+}
+
+.shimmer-loading {
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.03) 100%);
+    background-size: 300% 100%;
+    animation: heavyShimmer 1.8s infinite linear;
 }
