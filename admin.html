@@ -309,6 +309,9 @@
                         <select onchange="updateOrderStatus(${o.id}, this.value)" class="flex-1 p-1.5 rounded-lg border border-white/80 bg-white text-[10px] font-bold outline-none">
                             ${ORDER_STATUSES.map(s => `<option value="${s}" ${s === status ? 'selected' : ''}>${s}</option>`).join('')}
                         </select>
+                        <button onclick="deleteOrder(${o.id})" class="w-7 h-7 shrink-0 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center cursor-pointer hover:bg-rose-100">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
                     </div>
                 </div>
             `;
@@ -323,6 +326,19 @@
             }
             const order = cachedOrders.find(o => o.id === orderId);
             if (order) order.status = newStatus;
+            renderOrderFilters();
+            renderOrdersList();
+        }
+
+        async function deleteOrder(orderId) {
+            if (!confirm('Delete this order permanently? This cannot be undone.')) return;
+
+            const { error } = await _supabase.from('orders').delete().eq('id', orderId);
+            if (error) {
+                alert('Failed to delete order: ' + error.message);
+                return;
+            }
+            cachedOrders = cachedOrders.filter(o => o.id !== orderId);
             renderOrderFilters();
             renderOrdersList();
         }
