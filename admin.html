@@ -20,6 +20,8 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-100 via-rose-50/30 to-pink-100/40 text-slate-800 font-sans pb-24 min-h-screen">
@@ -50,6 +52,17 @@
 
         <!-- Main Admin Panel (Hidden until login) -->
         <div id="adminPanelContent" class="space-y-4 hidden">
+            <!-- Tab Switcher -->
+            <div class="glass-card rounded-2xl p-1.5 shadow-md border border-white/80 flex gap-1.5">
+                <button id="tabBtnProducts" onclick="switchAdminTab('products')" class="flex-1 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer">
+                    <i class="fa-solid fa-shirt mr-1"></i> Products
+                </button>
+                <button id="tabBtnOrders" onclick="switchAdminTab('orders')" class="flex-1 py-2 rounded-xl text-xs font-extrabold bg-white/60 text-slate-600 transition cursor-pointer">
+                    <i class="fa-solid fa-receipt mr-1"></i> Orders
+                </button>
+            </div>
+
+            <div id="productsTabContent" class="space-y-4">
             <!-- Add Product Form Card -->
             <div class="glass-card rounded-3xl p-5 shadow-lg border border-white/80 space-y-4">
                 <h2 id="formTitle" class="text-sm font-black uppercase text-slate-900 border-b border-slate-200/60 pb-2">Add New Product</h2>
@@ -132,6 +145,25 @@
                     <p class="text-xs text-slate-400 text-center py-4">Loading inventory...</p>
                 </div>
             </div>
+            </div>
+            <!-- End productsTabContent -->
+
+            <!-- Orders Tab Content -->
+            <div id="ordersTabContent" class="space-y-4 hidden">
+                <div class="glass-card rounded-3xl p-5 shadow-lg border border-white/80 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-2">
+                        <h2 class="text-sm font-black uppercase text-slate-900">Order Tracking</h2>
+                        <button onclick="loadOrders()" class="text-[10px] font-bold text-rose-600 cursor-pointer"><i class="fa-solid fa-rotate-right mr-1"></i>Refresh</button>
+                    </div>
+
+                    <!-- Status Filter Pills -->
+                    <div id="orderStatusFilters" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
+
+                    <div id="adminOrdersList" class="space-y-2.5">
+                        <p class="text-xs text-slate-400 text-center py-4">Loading orders...</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -156,6 +188,143 @@
                 } catch (e) { /* fall through */ }
             }
             return p.img ? [p.img] : [];
+        }
+
+        // ---- Tab switching (Products / Orders) ----
+        let currentAdminTab = 'products';
+        let ordersLoaded = false;
+
+        function switchAdminTab(tab) {
+            currentAdminTab = tab;
+            const productsBtn = document.getElementById('tabBtnProducts');
+            const ordersBtn = document.getElementById('tabBtnOrders');
+
+            if (tab === 'products') {
+                document.getElementById('productsTabContent').classList.remove('hidden');
+                document.getElementById('ordersTabContent').classList.add('hidden');
+                productsBtn.className = 'flex-1 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer';
+                ordersBtn.className = 'flex-1 py-2 rounded-xl text-xs font-extrabold bg-white/60 text-slate-600 transition cursor-pointer';
+            } else {
+                document.getElementById('productsTabContent').classList.add('hidden');
+                document.getElementById('ordersTabContent').classList.remove('hidden');
+                ordersBtn.className = 'flex-1 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer';
+                productsBtn.className = 'flex-1 py-2 rounded-xl text-xs font-extrabold bg-white/60 text-slate-600 transition cursor-pointer';
+                if (!ordersLoaded) {
+                    loadOrders();
+                }
+            }
+        }
+
+        // ---- Order Tracking ----
+        let cachedOrders = [];
+        let currentOrderFilter = 'All';
+        const ORDER_STATUSES = ['Pending', 'Confirmed', 'Dispatched', 'Delivered', 'Cancelled'];
+        const ORDER_STATUS_COLORS = {
+            'Pending': 'bg-amber-100 text-amber-700',
+            'Confirmed': 'bg-blue-100 text-blue-700',
+            'Dispatched': 'bg-violet-100 text-violet-700',
+            'Delivered': 'bg-emerald-100 text-emerald-700',
+            'Cancelled': 'bg-rose-100 text-rose-700'
+        };
+
+        async function loadOrders() {
+            const listEl = document.getElementById('adminOrdersList');
+            listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Loading orders...</p>`;
+
+            const { data, error } = await _supabase
+                .from('orders')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Could not load orders: ${error.message}</p>`;
+                return;
+            }
+
+            cachedOrders = data || [];
+            ordersLoaded = true;
+            renderOrderFilters();
+            renderOrdersList();
+        }
+
+        function renderOrderFilters() {
+            const filtersEl = document.getElementById('orderStatusFilters');
+            const counts = { 'All': cachedOrders.length };
+            ORDER_STATUSES.forEach(s => counts[s] = cachedOrders.filter(o => (o.status || 'Pending') === s).length);
+
+            const filters = ['All', ...ORDER_STATUSES];
+            filtersEl.innerHTML = filters.map(f => `
+                <button onclick="setOrderFilter('${f}')" class="shrink-0 px-3 py-1.5 rounded-xl text-[10px] font-extrabold transition cursor-pointer ${currentOrderFilter === f ? 'bg-slate-900 text-white' : 'bg-white/70 text-slate-600'}">
+                    ${f} (${counts[f] || 0})
+                </button>
+            `).join('');
+        }
+
+        function setOrderFilter(status) {
+            currentOrderFilter = status;
+            renderOrderFilters();
+            renderOrdersList();
+        }
+
+        function renderOrdersList() {
+            const listEl = document.getElementById('adminOrdersList');
+            const filtered = currentOrderFilter === 'All'
+                ? cachedOrders
+                : cachedOrders.filter(o => (o.status || 'Pending') === currentOrderFilter);
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No orders in this category yet.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(o => {
+                const status = o.status || 'Pending';
+                const colorClass = ORDER_STATUS_COLORS[status] || 'bg-slate-100 text-slate-600';
+                const orderDate = o.created_at ? new Date(o.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+
+                return `
+                <div class="bg-white/60 p-3.5 rounded-2xl border border-white/80 text-xs space-y-2">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <h4 class="font-bold text-slate-900">${o.customer_name || 'Unknown'}</h4>
+                            <p class="text-[10px] text-slate-500">${o.phone || ''} · ${orderDate}</p>
+                        </div>
+                        <span class="shrink-0 px-2 py-0.5 rounded-lg text-[10px] font-extrabold ${colorClass}">${status}</span>
+                    </div>
+
+                    <p class="text-[11px] text-slate-700 leading-relaxed">${o.items || ''}</p>
+
+                    <div class="grid grid-cols-2 gap-1 text-[10px] text-slate-500">
+                        <p><span class="font-bold text-slate-700">Total:</span> ₹${o.total_amount ?? '-'}</p>
+                        <p><span class="font-bold text-slate-700">Payment:</span> ${o.payment_mode || '-'}</p>
+                    </div>
+
+                    <p class="text-[10px] text-slate-500">
+                        <span class="font-bold text-slate-700">Address:</span>
+                        ${o.address || ''}${o.landmark ? ', ' + o.landmark : ''}, ${o.city_state || ''} - ${o.pincode || ''}
+                    </p>
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <label class="text-[10px] font-bold text-slate-600">Update Status:</label>
+                        <select onchange="updateOrderStatus(${o.id}, this.value)" class="flex-1 p-1.5 rounded-lg border border-white/80 bg-white text-[10px] font-bold outline-none">
+                            ${ORDER_STATUSES.map(s => `<option value="${s}" ${s === status ? 'selected' : ''}>${s}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        async function updateOrderStatus(orderId, newStatus) {
+            const { error } = await _supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+            if (error) {
+                alert('Failed to update order status: ' + error.message);
+                return;
+            }
+            const order = cachedOrders.find(o => o.id === orderId);
+            if (order) order.status = newStatus;
+            renderOrderFilters();
+            renderOrdersList();
         }
 
         window.onload = async function() {
@@ -440,4 +609,3 @@
     </script>
 </body>
 </html>
-   
