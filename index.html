@@ -13,86 +13,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <link rel="stylesheet" href="ui.css">
     
-
-        /* Ambient background glow — fixed, blurred color fields for a premium
-           layered feel behind the glass panels. Purely decorative. */
-        .aurora {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        .aurora span {
-            position: absolute;
-            border-radius: 9999px;
-            filter: blur(70px);
-            opacity: 0.55;
-        }
-        .aurora .a1 { width: 340px; height: 340px; top: -120px; left: -80px; background: radial-gradient(circle, #f4c9a8, transparent 70%); }
-        .aurora .a2 { width: 380px; height: 380px; top: 20%; right: -140px; background: radial-gradient(circle, #6B1B38, transparent 70%); opacity: 0.18; }
-        .aurora .a3 { width: 300px; height: 300px; bottom: -100px; left: 10%; background: radial-gradient(circle, #C89B4A, transparent 70%); opacity: 0.25; }
-
-        /* Hide scrollbar for chrome, safari and opera */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-
-        /* Entrance animation */
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(14px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .fade-in-up {
-            animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-
-        /* Cart bump when an item is added */
-        @keyframes cartBump {
-            0%, 100% { transform: scale(1); }
-            30% { transform: scale(1.25) rotate(-6deg); }
-            60% { transform: scale(0.95) rotate(3deg); }
-        }
-        .cart-bump { animation: cartBump 0.45s ease-out; }
-
-        /* Modal entrance */
-        @keyframes modalPopIn {
-            from { opacity: 0; transform: scale(0.94) translateY(12px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .modal-pop-in { animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
-
-        /* Loading shimmer */
-        @keyframes shimmer {
-            0% { background-position: -400px 0; }
-            100% { background-position: 400px 0; }
-        }
-        .shimmer {
-            background: linear-gradient(90deg, rgba(255,255,255,0.4) 25%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.4) 75%);
-            background-size: 800px 100%;
-            animation: shimmer 1.6s infinite linear;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .fade-in-up, .shimmer { animation: none !important; }
-        }
-
-        /* ---- Smoothness / performance ----
-           Off-screen product cards skip layout+paint+backdrop-filter work
-           entirely until they scroll into view. This is the single biggest
-           lever for buttery scrolling on a grid full of glass-blur cards. */
-        .product-card {
-            content-visibility: auto;
-            contain-intrinsic-size: 0 340px;
-        }
-    </style>
 </head>
-<body class="bg-gradient-to-br from-[#FBF0E4] via-[#FCE8E4] to-[#F7DCE3] text-slate-800 font-sans pb-32 min-h-screen relative">
+    <body class="bg-gradient-to-br from-[#FBF0E4] via-[#FCE8E4] to-[#F7DCE3] text-slate-800 font-sans pb-32 min-h-screen relative">
     <div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
 
     <!-- Header / Navbar -->
