@@ -1,0 +1,92 @@
+/* ==========================================================================
+   AMANE STORE - Clean Editorial UI Design System (Non-Glassmorphic)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap');
+
+/* Base Styles */
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #F8F9FA;
+    color: #1A1A1A;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+}
+
+.font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F1F3F5;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #CED4DA;
+    border-radius: 3px;
+}
+
+/* Hide Scrollbar Utility */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Clean Editorial Card & Component Styles */
+.ui-card {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    border-radius: 1rem;
+    transition: all 0.25s ease;
+}
+
+.ui-card:hover {
+    border-color: #D1D5DB;
+}
+
+/* Custom Buttons */
+.ui-btn-dark {
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    font-weight: 600;
+    border-radius: 0.875rem;
+    transition: background-color 0.2s ease;
+}
+
+.ui-btn-dark:hover {
+    background-color: #2D2D2D;
+}
+
+/* Pill Tabs */
+.ui-pill-active {
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    font-weight: 600;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ui-pill-inactive {
+    background-color: #FFFFFF;
+    color: #4B5563;
+    border: 1px solid #E5E7EB;
+    font-weight: 600;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ui-pill-inactive:hover {
+    border-color: #9CA3AF;
+}
+
