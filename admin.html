@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amane Store — Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --wine: #6B1B38;
+            --wine-deep: #4A1226;
+            --gold: #C89B4A;
+        }
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .font-display { font-family: 'Fraunces', Georgia, serif; }
+
+        /* ---- Premium solid design system (no glassmorphism) ---- */
+        .site-nav {
+            background: #FFFFFF;
+            border-bottom: 1px solid #F0E9E2;
+            box-shadow: 0 1px 3px rgba(74,18,38,0.05);
+        }
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #F1EAE3;
+            box-shadow: 0 2px 10px -2px rgba(107,27,56,0.07);
+            transition: box-shadow 0.25s ease, transform 0.25s ease;
+        }
+        .modal-panel {
+            background: #FFFFFF;
+            box-shadow: 0 -10px 40px -8px rgba(74,18,38,0.22), 0 20px 60px -16px rgba(74,18,38,0.22);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up {
+            animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -400px 0; }
+            100% { background-position: 400px 0; }
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #F3EDE6 25%, #FBF8F4 50%, #F3EDE6 75%);
+            background-size: 800px 100%;
+            animation: shimmer 1.6s infinite linear;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fade-in-up, .shimmer { animation: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-[#FAF7F2] text-slate-800 font-sans pb-24 min-h-screen relative">
+
+    <!-- Header -->
+    <header class="site-nav sticky top-0 z-30">
+        <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
+            <div class="flex flex-col leading-none">
+                <h1 class="font-display text-lg font-semibold tracking-tight text-slate-900">Amane <span class="italic text-rose-600">Admin</span></h1>
+                <span class="text-[9px] font-bold tracking-[0.2em] uppercase text-[color:var(--gold)] mt-0.5">Store Management Panel</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="adminUserEmail" class="text-[11px] font-bold text-slate-600 hidden sm:inline"></span>
+                <a href="index.html" class="text-xs bg-slate-900/95 hover:bg-slate-900 text-white font-bold px-3.5 py-2 rounded-2xl shadow-md transition">View Store</a>
+                <button onclick="handleAdminLogout()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold px-3 py-2 rounded-2xl shadow-xs transition cursor-pointer">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 max-w-3xl mx-auto px-4 mt-4 space-y-4">
+        <!-- Supabase Auth Login Section -->
+        <div id="adminAuthSection" class="fade-in-up card rounded-3xl p-6 shadow-lg border border-slate-100 text-center space-y-3">
+            <h2 class="font-display text-base font-semibold text-slate-900">Admin Login</h2>
+            <p class="text-xs text-slate-500">Sign in with your Supabase Auth credentials</p>
+            <div class="max-w-xs mx-auto space-y-2 pt-2">
+                <input type="email" id="adminEmailInput" placeholder="Enter Supabase Auth Email" class="w-full p-3 card rounded-2xl border border-slate-100 text-xs outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                <input type="password" id="adminPassInput" placeholder="Password" class="w-full p-3 card rounded-2xl border border-slate-100 text-xs outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                <button onclick="handleSupabaseAdminLogin()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-2xl text-xs shadow-lg shadow-rose-600/20 transition cursor-pointer">Login to Admin Panel</button>
+            </div>
+        </div>
+
+        <!-- Main Admin Panel -->
+        <div id="adminPanelContent" class="space-y-4 hidden">
+            <!-- Tab Switcher -->
+            <div class="fade-in-up card rounded-2xl p-1.5 shadow-md border border-slate-100 flex gap-1.5">
+                <button id="tabBtnProducts" onclick="switchAdminTab('products')" class="flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer">
+                    <i class="fa-solid fa-shirt mr-1"></i> Products
+                </button>
+                <button id="tabBtnOrders" onclick="switchAdminTab('orders')" class="flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer">
+                    <i class="fa-solid fa-receipt mr-1"></i> Orders
+                </button>
+            </div>
+
+            <div id="productsTabContent" class="space-y-4">
+                <!-- Add Product Form Card -->
+                <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-4">
+                    <h2 id="formTitle" class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Add New Product</h2>
+                    <form id="addProductForm" onsubmit="handleAddNewProduct(event)" class="space-y-3 text-xs">
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Product Title</label>
+                                <input type="text" id="prodTitle" required placeholder="e.g. Short Kurti Cotton" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Product Code (D.No)</label>
+                                <input type="text" id="prodCode" required placeholder="e.g. D.No.10049" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2.5">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Price (₹)</label>
+                                <input type="number" id="prodPrice" required placeholder="899" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">MRP (₹)</label>
+                                <input type="number" id="prodMrp" required placeholder="1299" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Discount Tag</label>
+                                <input type="text" id="prodDiscount" placeholder="50% Off" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Category</label>
+                                <input type="text" id="prodCategory" required placeholder="kurti" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Color / Variant</label>
+                                <input type="text" id="prodColor" required placeholder="(Purple/Lilac)" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                        </div>
+
+                        <!-- Camera & File Picker Input -->
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Upload Product Images <span class="text-[10px] text-slate-400">(Camera or Gallery)</span></label>
+                            <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleImageSelection(event)" class="w-full p-2 card rounded-2xl border border-slate-100 text-[11px] file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer transition">
+                            <div id="imagePreviewContainer" class="flex gap-2 mt-2 overflow-x-auto"></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Custom Delivery Text</label>
+                                <input type="text" id="prodDelivery" value="Free Delivery across Delhi" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Custom Returns Text</label>
+                                <input type="text" id="prodReturns" value="Easy 3-day returns & exchange" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Sizes (Comma separated)</label>
+                            <input type="text" id="prodSizes" value="S, M, L, XL" class="w-full p-3 card rounded-2xl border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button type="submit" id="publishBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer">
+                                Publish Product
+                            </button>
+                            <button type="button" id="cancelEditBtn" onclick="cancelEdit()" class="hidden shrink-0 bg-slate-200 hover:bg-slate-300 text-slate-700 font-extrabold py-3 px-4 rounded-2xl shadow-xs transition cursor-pointer">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Manage Existing Products -->
+                <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-3">
+                    <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Manage Store Products</h2>
+                    <div id="adminProductsList" class="space-y-2">
+                        <div class="card rounded-2xl p-2.5 border border-slate-100 flex items-center gap-3"><div class="shimmer bg-slate-200/60 w-10 h-10 rounded-xl shrink-0"></div><div class="flex-1 space-y-1.5"><div class="shimmer bg-slate-200/60 h-2.5 w-1/2 rounded"></div><div class="shimmer bg-slate-200/60 h-2 w-1/3 rounded"></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Tab Content -->
+            <div id="ordersTabContent" class="space-y-4 hidden">
+                <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-2.5">
+                        <h2 class="font-display text-base font-semibold text-slate-900">Order Tracking</h2>
+                        <button onclick="loadOrders()" class="text-[10px] font-bold text-rose-600 hover:text-rose-700 cursor-pointer transition"><i class="fa-solid fa-rotate-right mr-1"></i>Refresh</button>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass text-[11px]"></i>
+                        </span>
+                        <input type="text" id="orderSearchInput" oninput="handleOrderSearch()" placeholder="Search by customer name or phone..." class="w-full card pl-9 pr-8 py-2.5 rounded-2xl text-[11px] border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                        <button id="orderSearchClearBtn" onclick="clearOrderSearch()" class="hidden absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-700 cursor-pointer">
+                            <i class="fa-solid fa-xmark text-[11px]"></i>
+                        </button>
+                    </div>
+
+                    <!-- Status Filter Pills -->
+                    <div id="orderStatusFilters" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
+
+                    <div id="adminOrdersList" class="space-y-2.5">
+                        <p class="text-xs text-slate-400 text-center py-4">Loading orders...</p>
+                    </div>
+
+                    <!-- Pagination Controls -->
+                    <div id="orderPaginationControls" class="hidden flex items-center justify-between pt-1 border-t border-slate-200/60"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let uploadedImagesList = [];
+        let editingProductId = null;
+
+        function getImagesArray(p) {
+            if (Array.isArray(p.images)) return p.images;
+            if (typeof p.images === 'string' && p.images.trim().startsWith('[')) {
+                try {
+                    const arr = JSON.parse(p.images);
+                    if (Array.isArray(arr) && arr.length) return arr;
+                } catch (e) {}
+            }
+            return p.img ? [p.img] : [];
+        }
+
+        let currentAdminTab = 'products';
+        let ordersLoaded = false;
+
+        function switchAdminTab(tab) {
+            currentAdminTab = tab;
+            const productsBtn = document.getElementById('tabBtnProducts');
+            const ordersBtn = document.getElementById('tabBtnOrders');
+
+            if (tab === 'products') {
+                document.getElementById('productsTabContent').classList.remove('hidden');
+                document.getElementById('ordersTabContent').classList.add('hidden');
+                productsBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer';
+                ordersBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer';
+            } else {
+                document.getElementById('productsTabContent').classList.add('hidden');
+                document.getElementById('ordersTabContent').classList.remove('hidden');
+                ordersBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer';
+                productsBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer';
+                if (!ordersLoaded) {
+                    loadOrders();
+                }
+            }
+        }
+
+        let cachedOrders = [];
+        let currentOrderFilter = 'All';
+        let currentOrderSearch = '';
+        let currentOrderPage = 1;
+        const ORDERS_PER_PAGE = 10;
+        const ORDER_STATUSES = ['Pending', 'Confirmed', 'Dispatched', 'Delivered', 'Cancelled'];
+        const ORDER_STATUS_COLORS = {
+            'Pending': 'bg-amber-100 text-amber-700',
+            'Confirmed': 'bg-blue-100 text-blue-700',
+            'Dispatched': 'bg-violet-100 text-violet-700',
+            'Delivered': 'bg-emerald-100 text-emerald-700',
+            'Cancelled': 'bg-rose-100 text-rose-700'
+        };
+
+        async function loadOrders() {
+            const listEl = document.getElementById('adminOrdersList');
+            listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Loading orders...</p>`;
+
+            const { data, error } = await _supabase
+                .from('orders')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Could not load orders: ${error.message}</p>`;
+                return;
+            }
+
+            cachedOrders = data || [];
+            ordersLoaded = true;
+            renderOrderFilters();
+            renderOrdersList();
+        }
+
+        function renderOrderFilters() {
+            const filtersEl = document.getElementById('orderStatusFilters');
+            const counts = { 'All': cachedOrders.length };
+            ORDER_STATUSES.forEach(s => counts[s] = cachedOrders.filter(o => (o.status || 'Pending') === s).length);
+
+            const filters = ['All', ...ORDER_STATUSES];
+            filtersEl.innerHTML = filters.map(f => `
+                <button onclick="setOrderFilter('${f}')" class="shrink-0 px-3 py-1.5 rounded-xl text-[10px] font-extrabold transition cursor-pointer ${currentOrderFilter === f ? 'bg-slate-900 text-white' : 'card text-slate-600'}">
+                    ${f} (${counts[f] || 0})
+                </button>
+            `).join('');
+        }
+
+        function setOrderFilter(status) {
+            currentOrderFilter = status;
+            currentOrderPage = 1;
+            renderOrderFilters();
+            renderOrdersList();
+        }
+
+        let orderSearchDebounceTimer = null;
+        function handleOrderSearch() {
+            clearTimeout(orderSearchDebounceTimer);
+            const value = document.getElementById('orderSearchInput').value.trim();
+            document.getElementById('orderSearchClearBtn').classList.toggle('hidden', value === '');
+            orderSearchDebounceTimer = setTimeout(() => {
+                currentOrderSearch = value.toLowerCase();
+                currentOrderPage = 1;
+                renderOrdersList();
+            }, 250);
+        }
+
+        function clearOrderSearch() {
+            document.getElementById('orderSearchInput').value = '';
+            document.getElementById('orderSearchClearBtn').classList.add('hidden');
+            currentOrderSearch = '';
+            currentOrderPage = 1;
+            renderOrdersList();
+        }
+
+        function goToOrderPage(page) {
+            currentOrderPage = page;
+            renderOrdersList();
+            document.getElementById('adminOrdersList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function renderOrdersList() {
+            const listEl = document.getElementById('adminOrdersList');
+            const paginationEl = document.getElementById('orderPaginationControls');
+
+            let filtered = currentOrderFilter === 'All'
+                ? cachedOrders
+                : cachedOrders.filter(o => (o.status || 'Pending') === currentOrderFilter);
+
+            if (currentOrderSearch) {
+                filtered = filtered.filter(o =>
+                    (o.customer_name || '').toLowerCase().includes(currentOrderSearch) ||
+                    (o.phone || '').toLowerCase().includes(currentOrderSearch)
+                );
+            }
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No orders found${currentOrderSearch ? ' for this search' : ' in this category yet'}.</p>`;
+                paginationEl.classList.add('hidden');
+                return;
+            }
+
+            const totalPages = Math.max(1, Math.ceil(filtered.length / ORDERS_PER_PAGE));
+            if (currentOrderPage > totalPages) currentOrderPage = totalPages;
+            const startIdx = (currentOrderPage - 1) * ORDERS_PER_PAGE;
+            const pageItems = filtered.slice(startIdx, startIdx + ORDERS_PER_PAGE);
+
+            listEl.innerHTML = pageItems.map(o => {
+                const status = o.status || 'Pending';
+                const colorClass = ORDER_STATUS_COLORS[status] || 'bg-slate-100 text-slate-600';
+                const orderDate = o.created_at ? new Date(o.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+
+                return `
+                <div class="card p-3.5 rounded-2xl border border-slate-100 text-xs space-y-2 shadow-xs">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <h4 class="font-bold text-slate-900">${o.customer_name || 'Unknown'}</h4>
+                            <p class="text-[10px] text-slate-500">${o.phone || ''} · ${orderDate}</p>
+                        </div>
+                        <span class="shrink-0 px-2 py-0.5 rounded-lg text-[10px] font-extrabold ${colorClass}">${status}</span>
+                    </div>
+
+                    <p class="text-[11px] text-slate-700 leading-relaxed">${o.items || ''}</p>
+
+                    <div class="grid grid-cols-2 gap-1 text-[10px] text-slate-500">
+                        <p><span class="font-bold text-slate-700">Total:</span> ₹${o.total_amount ?? '-'}</p>
+                        <p><span class="font-bold text-slate-700">Payment:</span> ${o.payment_mode || '-'}</p>
+                    </div>
+
+                    <p class="text-[10px] text-slate-500">
+                        <span class="font-bold text-slate-700">Address:</span>
+                        ${o.address || ''}${o.landmark ? ', ' + o.landmark : ''}, ${o.city_state || ''} - ${o.pincode || ''}
+                    </p>
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <label class="text-[10px] font-bold text-slate-600">Update Status:</label>
+                        <select onchange="updateOrderStatus(${o.id}, this.value)" class="flex-1 p-1.5 rounded-lg border border-slate-100 bg-white text-[10px] font-bold outline-none">
+                            ${ORDER_STATUSES.map(s => `<option value="${s}" ${s === status ? 'selected' : ''}>${s}</option>`).join('')}
+                        </select>
+                        <button onclick="deleteOrder(${o.id})" class="w-7 h-7 shrink-0 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center cursor-pointer hover:bg-rose-100">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            }).join('');
+
+            renderOrderPagination(totalPages, filtered.length, startIdx, pageItems.length);
+        }
+
+        function renderOrderPagination(totalPages, totalCount, startIdx, pageCount) {
+            const paginationEl = document.getElementById('orderPaginationControls');
+
+            if (totalPages <= 1) {
+                paginationEl.classList.add('hidden');
+                return;
+            }
+
+            paginationEl.classList.remove('hidden');
+            const rangeStart = startIdx + 1;
+            const rangeEnd = startIdx + pageCount;
+
+            paginationEl.innerHTML = `
+                <span class="text-[10px] font-bold text-slate-500">Showing ${rangeStart}-${rangeEnd} of ${totalCount}</span>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="goToOrderPage(${currentOrderPage - 1})" ${currentOrderPage <= 1 ? 'disabled' : ''} class="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold transition ${currentOrderPage <= 1 ? 'bg-slate-100 text-slate-300 cursor-not-allowed' : 'card text-slate-700 cursor-pointer hover:bg-white'}">
+                        <i class="fa-solid fa-chevron-left text-[9px]"></i>
+                    </button>
+                    <span class="text-[10px] font-bold text-slate-700 px-1">${currentOrderPage} / ${totalPages}</span>
+                    <button onclick="goToOrderPage(${currentOrderPage + 1})" ${currentOrderPage >= totalPages ? 'disabled' : ''} class="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold transition ${currentOrderPage >= totalPages ? 'bg-slate-100 text-slate-300 cursor-not-allowed' : 'card text-slate-700 cursor-pointer hover:bg-white'}">
+                        <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        async function updateOrderStatus(orderId, newStatus) {
+            const { error } = await _supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+            if (error) {
+                alert('Failed to update order status: ' + error.message);
+                return;
+            }
+            const order = cachedOrders.find(o => o.id === orderId);
+            if (order) order.status = newStatus;
+            renderOrderFilters();
+            renderOrdersList();
+        }
+
+        async function deleteOrder(orderId) {
+            if (!confirm('Delete this order permanently? This cannot be undone.')) return;
+
+            const { error } = await _supabase.from('orders').delete().eq('id', orderId);
+            if (error) {
+                alert('Failed to delete order: ' + error.message);
+                return;
+            }
+            cachedOrders = cachedOrders.filter(o => o.id !== orderId);
+            renderOrderFilters();
+            renderOrdersList();
+        }
+
+        window.onload = async function() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                await handleSessionCheck(session.user.email);
+            }
+            await renderAdminProducts();
+        };
+
+        const ALLOWED_ADMIN_EMAILS = [
+            'abhijeetbhadra20@gmail.com',
+            'heyyyjatin@gmail.com'
+        ];
+
+        function isEmailWhitelisted(email) {
+            return ALLOWED_ADMIN_EMAILS.includes((email || '').trim().toLowerCase());
+        }
+
+        async function handleSessionCheck(email) {
+            if (!isEmailWhitelisted(email)) {
+                await _supabase.auth.signOut();
+                return;
+            }
+            activateAdminUI(email);
+        }
+
+        async function handleSupabaseAdminLogin() {
+            const email = document.getElementById('adminEmailInput').value.trim();
+            const password = document.getElementById('adminPassInput').value.trim();
+
+            if (!email || !password) {
+                alert('Please enter your Supabase Auth credentials.');
+                return;
+            }
+
+            if (!isEmailWhitelisted(email)) {
+                alert('This email is not authorized to access the admin panel.');
+                return;
+            }
+
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                alert('Login error: ' + error.message);
+                return;
+            }
+
+            if (!isEmailWhitelisted(data.user.email)) {
+                await _supabase.auth.signOut();
+                alert('This account is not authorized to access the admin panel.');
+                return;
+            }
+
+            activateAdminUI(data.user.email);
+        }
+
+        async function handleAdminLogout() {
+            const { error } = await _supabase.auth.signOut();
+            if (error) {
+                alert('Logout error: ' + error.message);
+                return;
+            }
+            window.location.reload();
+        }
+
+        function activateAdminUI(email) {
+            document.getElementById('adminAuthSection').classList.add('hidden');
+            document.getElementById('adminPanelContent').classList.remove('hidden');
+            document.getElementById('adminUserEmail').innerText = email;
+        }
+
+        let cachedProducts = [];
+
+        function dbRowToProduct(row) {
+            return {
+                id: row.id,
+                title: row.title,
+                code: row.code,
+                price: row.price,
+                mrp: row.mrp,
+                discount: row.discount,
+                category: row.category,
+                color: row.color,
+                images: row.images,
+                img: Array.isArray(row.images) && row.images.length ? row.images[0] : null,
+                deliveryText: row.delivery_text,
+                returnText: row.return_text,
+                sizes: row.sizes,
+                inStock: row.in_stock
+            };
+        }
+
+        async function getProducts() {
+            const { data, error } = await _supabase
+                .from('products')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Failed to load products:', error);
+                return [];
+            }
+            cachedProducts = (data || []).map(dbRowToProduct);
+            return cachedProducts;
+        }
+
+        async function handleImageSelection(event) {
+            const files = event.target.files;
+            uploadedImagesList = [];
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            previewContainer.innerHTML = '';
+
+            if (!files || files.length === 0) return;
+
+            for (let file of files) {
+                const compressedData = await compressImage(file, 600, 0.7);
+                uploadedImagesList.push(compressedData);
+
+                const imgTag = document.createElement('img');
+                imgTag.src = compressedData;
+                imgTag.className = "w-14 h-14 object-cover rounded-xl border border-white shadow-xs shrink-0";
+                previewContainer.appendChild(imgTag);
+            }
+        }
+
+        function compressImage(file, maxWidth, quality) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                };
+            });
+        }
+
+        async function handleAddNewProduct(e) {
+            e.preventDefault();
+            if (uploadedImagesList.length === 0) {
+                alert('Please select product images!');
+                return;
+            }
+
+            const isEditing = !!editingProductId;
+            const btn = document.getElementById('publishBtn');
+            btn.innerText = isEditing ? 'Updating...' : 'Publishing...';
+            btn.disabled = true;
+
+            const rowData = {
+                title: document.getElementById('prodTitle').value.trim(),
+                code: document.getElementById('prodCode').value.trim(),
+                price: parseFloat(document.getElementById('prodPrice').value),
+                mrp: parseFloat(document.getElementById('prodMrp').value),
+                discount: document.getElementById('prodDiscount').value.trim(),
+                category: document.getElementById('prodCategory').value.trim().toLowerCase(),
+                color: document.getElementById('prodColor').value.trim(),
+                images: uploadedImagesList,
+                delivery_text: document.getElementById('prodDelivery').value.trim(),
+                return_text: document.getElementById('prodReturns').value.trim(),
+                sizes: document.getElementById('prodSizes').value.trim()
+            };
+
+            let error;
+            if (isEditing) {
+                ({ error } = await _supabase.from('products').update(rowData).eq('id', editingProductId));
+            } else {
+                rowData.id = 'prod_' + Date.now();
+                rowData.in_stock = true;
+                ({ error } = await _supabase.from('products').insert([rowData]));
+            }
+
+            btn.disabled = false;
+
+            if (error) {
+                alert('Failed to save product: ' + error.message);
+                btn.innerText = isEditing ? 'Update Product' : 'Publish Product';
+                return;
+            }
+
+            alert(isEditing ? 'Product updated successfully!' : 'Product published successfully!');
+            cancelEdit();
+            await renderAdminProducts();
+        }
+
+        function editProduct(prodId) {
+            const p = cachedProducts.find(x => x.id === prodId);
+            if (!p) return;
+
+            editingProductId = prodId;
+
+            document.getElementById('prodTitle').value = p.title || '';
+            document.getElementById('prodCode').value = p.code || '';
+            document.getElementById('prodPrice').value = p.price ?? '';
+            document.getElementById('prodMrp').value = p.mrp ?? '';
+            document.getElementById('prodDiscount').value = p.discount || '';
+            document.getElementById('prodCategory').value = p.category || '';
+            document.getElementById('prodColor').value = p.color || '';
+            document.getElementById('prodDelivery').value = p.deliveryText || '';
+            document.getElementById('prodReturns').value = p.returnText || '';
+            document.getElementById('prodSizes').value = p.sizes || '';
+
+            uploadedImagesList = getImagesArray(p);
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            previewContainer.innerHTML = '';
+            uploadedImagesList.forEach(imgUrl => {
+                const imgTag = document.createElement('img');
+                imgTag.src = imgUrl;
+                imgTag.className = "w-14 h-14 object-cover rounded-xl border border-white shadow-xs shrink-0";
+                previewContainer.appendChild(imgTag);
+            });
+
+            document.getElementById('formTitle').innerText = 'Edit Product';
+            document.getElementById('publishBtn').innerText = 'Update Product';
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+
+            document.getElementById('adminPanelContent').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            editingProductId = null;
+            document.getElementById('addProductForm').reset();
+            document.getElementById('prodDelivery').value = 'Free Delivery across Delhi';
+            document.getElementById('prodReturns').value = 'Easy 3-day returns & exchange';
+            document.getElementById('prodSizes').value = 'S, M, L, XL';
+            uploadedImagesList = [];
+            document.getElementById('imagePreviewContainer').innerHTML = '';
+            document.getElementById('formTitle').innerText = 'Add New Product';
+            document.getElementById('publishBtn').innerText = 'Publish Product';
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+        }
+
+        async function renderAdminProducts() {
+            const listEl = document.getElementById('adminProductsList');
+            listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Loading inventory...</p>`;
+
+            const products = await getProducts();
+
+            if (products.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No products added yet.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = products.map((p) => `
+                <div class="flex items-center justify-between card p-2.5 rounded-2xl border border-slate-100 text-xs gap-3 shadow-xs">
+                    <img src="${p.img}" class="w-10 h-10 object-cover rounded-xl border border-white shrink-0">
+                    <div class="flex-1 truncate">
+                        <h4 class="font-bold text-slate-900 truncate">${p.title}</h4>
+                        <p class="text-[10px] text-slate-500">${p.code} | ₹${p.price} ${p.discount ? '• ' + p.discount : ''}</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="toggleStock('${p.id}')" class="px-2.5 py-1 rounded-xl text-[10px] font-extrabold transition ${p.inStock !== false ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} cursor-pointer">
+                            ${p.inStock !== false ? 'In Stock' : 'Out of Stock'}
+                        </button>
+                        <button onclick="editProduct('${p.id}')" class="w-7 h-7 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-200 transition">
+                            <i class="fa-solid fa-pen text-[10px]"></i>
+                        </button>
+                        <button onclick="deleteProduct('${p.id}')" class="w-7 h-7 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-rose-100 transition">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function toggleStock(prodId) {
+            const p = cachedProducts.find(x => x.id === prodId);
+            if (!p) return;
+            const newStatus = p.inStock === false ? true : false;
+
+            const { error } = await _supabase.from('products').update({ in_stock: newStatus }).eq('id', prodId);
+            if (error) {
+                alert('Failed to update stock: ' + error.message);
+                return;
+            }
+            await renderAdminProducts();
+        }
+
+        async function deleteProduct(prodId) {
+            if (!window.confirm('Are you sure you want to delete this product?')) return;
+            
+            const { error } = await _supabase.from('products').delete().eq('id', prodId);
+            if (error) {
+                alert('Failed to delete product: ' + error.message);
+                return;
+            }
+            await renderAdminProducts();
+        }
+    </script>
+</body>
+</html>
