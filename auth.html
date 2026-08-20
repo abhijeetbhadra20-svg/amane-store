@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - Amane Store</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fraunces & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --wine: #6B1B38;
+            --wine-deep: #4A1226;
+            --gold: #C89B4A;
+            --cream: #FAF7F2;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream);
+            color: #1f2937;
+        }
+        .font-display {
+            font-family: 'Fraunces', serif;
+        }
+        .btn-wine {
+            background-color: var(--wine);
+            color: white;
+            transition: all 0.2s ease;
+        }
+        .btn-wine:hover {
+            background-color: var(--wine-deep);
+        }
+        .card-solid {
+            background: #ffffff;
+            border: 1px solid #f3e8ff;
+            box-shadow: 0 4px 20px -2px rgba(107, 27, 56, 0.08);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between py-8 px-4">
+
+    <!-- Top Header -->
+    <header class="w-full max-w-md mx-auto text-center mb-6">
+        <a href="index.html" class="inline-block font-display text-3xl font-bold tracking-wide" style="color: var(--wine);">
+            AMANE STORE
+        </a>
+        <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Women's Premium Kurtis</p>
+    </header>
+
+    <!-- Main Card container -->
+    <main class="w-full max-w-md mx-auto card-solid rounded-2xl p-6 sm:p-8">
+        
+        <!-- Tab Switcher -->
+        <div class="flex rounded-xl bg-gray-100 p-1 mb-6">
+            <button id="tabLoginBtn" onclick="switchTab('login')" class="flex-1 py-2 text-sm font-medium rounded-lg transition-all bg-white shadow-sm" style="color: var(--wine);">
+                Sign In
+            </button>
+            <button id="tabSignupBtn" onclick="switchTab('signup')" class="flex-1 py-2 text-sm font-medium rounded-lg transition-all text-gray-500 hover:text-gray-900">
+                Create Account
+            </button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Email Address</label>
+                <input type="email" id="loginEmail" required placeholder="yourname@gmail.com" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6B1B38] text-sm bg-gray-50">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Password</label>
+                <input type="password" id="loginPassword" required placeholder="••••••••" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6B1B38] text-sm bg-gray-50">
+            </div>
+            <button type="submit" id="loginBtn" class="w-full py-3.5 rounded-xl btn-wine font-medium text-sm tracking-wide shadow-md flex items-center justify-center gap-2">
+                <span>Sign In</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+        </form>
+
+        <!-- SIGNUP FORM (Hidden by default) -->
+        <form id="signupForm" onsubmit="handleSignup(event)" class="space-y-4 hidden">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Full Name</label>
+                <input type="text" id="signupName" required placeholder="Aarav Sharma" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6B1B38] text-sm bg-gray-50">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Email Address</label>
+                <input type="email" id="signupEmail" required placeholder="yourname@gmail.com" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6B1B38] text-sm bg-gray-50">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Password (Min 6 chars)</label>
+                <input type="password" id="signupPassword" required minlength="6" placeholder="••••••••" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6B1B38] text-sm bg-gray-50">
+            </div>
+            <button type="submit" id="signupBtn" class="w-full py-3.5 rounded-xl btn-wine font-medium text-sm tracking-wide shadow-md flex items-center justify-center gap-2">
+                <span>Create Account</span>
+                <i class="fa-solid fa-user-plus text-xs"></i>
+            </button>
+        </form>
+
+        <!-- Back to store link -->
+        <div class="text-center mt-6 pt-4 border-t border-gray-100">
+            <a href="index.html" class="text-xs text-gray-500 hover:text-[#6B1B38] font-medium transition-colors">
+                <i class="fa-solid fa-store mr-1"></i> Back to Storefront
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-400 mt-6">
+        &copy; 2026 Amane Store. All rights reserved.
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        // Supabase Initialization
+        const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Admin Whitelist (Same as admin.html)
+        const ALLOWED_ADMIN_EMAILS = [
+            'abhijeetbhadra20@gmail.com',
+            'heyyyjatin@gmail.com'
+        ];
+
+        // Tab Switching Logic
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const loginBtn = document.getElementById('tabLoginBtn');
+            const signupBtn = document.getElementById('tabSignupBtn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                loginBtn.className = 'flex-1 py-2 text-sm font-medium rounded-lg transition-all bg-white shadow-sm';
+                loginBtn.style.color = 'var(--wine)';
+                signupBtn.className = 'flex-1 py-2 text-sm font-medium rounded-lg transition-all text-gray-500 hover:text-gray-900';
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                signupBtn.className = 'flex-1 py-2 text-sm font-medium rounded-lg transition-all bg-white shadow-sm';
+                signupBtn.style.color = 'var(--wine)';
+                loginBtn.className = 'flex-1 py-2 text-sm font-medium rounded-lg transition-all text-gray-500 hover:text-gray-900';
+            }
+        }
+
+        // Handle Login
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Signing In...`;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+
+                alert('Login Successful! Welcome back.');
+
+                // Check if user is admin
+                if (ALLOWED_ADMIN_EMAILS.includes(email.toLowerCase())) {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } catch (err) {
+                alert('Login Failed: ' + err.message);
+                btn.disabled = false;
+                btn.innerHTML = `<span>Sign In</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+            }
+        }
+
+        // Handle Signup
+        async function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const btn = document.getElementById('signupBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...`;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: { full_name: name }
+                    }
+                });
+                if (error) throw error;
+
+                alert('Account Created Successfully! You are now logged in.');
+                
+                // Redirect user to storefront
+                window.location.href = 'index.html';
+            } catch (err) {
+                alert('Signup Failed: ' + err.message);
+                btn.disabled = false;
+                btn.innerHTML = `<span>Create Account</span> <i class="fa-solid fa-user-plus text-xs"></i>`;
+            }
+        }
+    </script>
+</body>
+</html>
+
