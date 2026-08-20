@@ -897,37 +897,37 @@
         <!-- AMANE STORE - CUSTOMER AUTH CHECK SCRIPT -->
 <script>
     document.addEventListener("DOMContentLoaded", async function() {
-        // Supabase client check or init
         const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
         const sbClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         if (!sbClient) return;
 
-        // Check active session
         const { data: { session } } = await sbClient.auth.getSession();
 
-        // Create a floating/header Account button dynamically
-        if (!document.getElementById('storeAccountBtn')) {
+        // Target the top header/nav bar so it sits cleanly inside it instead of floating awkwardly
+        const headerEl = document.querySelector('header') || document.querySelector('.site-nav');
+
+        if (headerEl && !document.getElementById('storeAccountBtn')) {
             const accBtn = document.createElement('a');
             accBtn.id = 'storeAccountBtn';
             accBtn.href = 'auth.html';
-            accBtn.className = 'fixed top-4 right-4 z-50 bg-white text-[#6B1B38] px-3.5 py-2 rounded-full shadow-lg border border-[#f3e8ff] text-xs font-semibold flex items-center gap-2 transition-all hover:bg-gray-50';
+            // Styled cleanly to fit the header next to admin/other links without floating
+            accBtn.className = 'bg-white text-[#6B1B38] px-3 py-1.5 rounded-lg border border-[#6B1B38]/20 text-xs font-semibold flex items-center gap-1.5 transition-all hover:bg-[#6B1B38] hover:text-white ml-2 shadow-sm';
 
             if (session) {
-                // User logged in hai toh naam ya email dikhao
                 const email = session.user.email;
                 const name = session.user.user_metadata?.full_name || email.split('@')[0];
-                accBtn.innerHTML = `<i class="fa-solid fa-user-check text-[#C89B4A]"></i> <span class="max-w-[100px] truncate">${name}</span>`;
+                accBtn.innerHTML = `<i class="fa-solid fa-user-check text-[#C89B4A]"></i> <span class="max-w-[80px] truncate">${name}</span>`;
             } else {
-                // Logged out hai toh Login dikhao
                 accBtn.innerHTML = `<i class="fa-solid fa-user text-[#C89B4A]"></i> <span>Login</span>`;
             }
 
-            document.body.appendChild(accBtn);
+            headerEl.appendChild(accBtn);
         }
     });
 </script>
+        
         
 </body>
 </html>
