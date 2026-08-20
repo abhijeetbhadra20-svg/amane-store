@@ -50,7 +50,7 @@
         <a href="index.html" class="inline-block font-display text-3xl font-bold tracking-wide" style="color: var(--wine);">
             AMANE STORE
         </a>
-        <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Women's Premium Kurtis</p>
+        <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Women's Fashion Collection</p>
     </header>
 
     <!-- Main Card container -->
@@ -122,18 +122,15 @@
 
     <!-- Script Logic -->
     <script>
-        // Supabase Initialization
         const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Admin Whitelist (Same as admin.html)
         const ALLOWED_ADMIN_EMAILS = [
             'abhijeetbhadra20@gmail.com',
             'heyyyjatin@gmail.com'
         ];
 
-        // Tab Switching Logic
         function switchTab(tab) {
             const loginForm = document.getElementById('loginForm');
             const signupForm = document.getElementById('signupForm');
@@ -155,7 +152,6 @@
             }
         }
 
-        // Handle Login
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim();
@@ -171,7 +167,6 @@
 
                 alert('Login Successful! Welcome back.');
 
-                // Check if user is admin
                 if (ALLOWED_ADMIN_EMAILS.includes(email.toLowerCase())) {
                     window.location.href = 'admin.html';
                 } else {
@@ -184,7 +179,6 @@
             }
         }
 
-        // Handle Signup
         async function handleSignup(e) {
             e.preventDefault();
             const name = document.getElementById('signupName').value.trim();
@@ -206,8 +200,6 @@
                 if (error) throw error;
 
                 alert('Account Created Successfully! You are now logged in.');
-                
-                // Redirect user to storefront
                 window.location.href = 'index.html';
             } catch (err) {
                 alert('Signup Failed: ' + err.message);
@@ -218,4 +210,3 @@
     </script>
 </body>
 </html>
-
