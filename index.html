@@ -1,1219 +1,193 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amane Store — Designer Collection</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <style>
-        :root {
-            --wine: #6B1B38;
-            --wine-deep: #4A1226;
-            --gold: #C89B4A;
-        }
-        body { font-family: 'Inter', system-ui, sans-serif; }
-        .font-display { font-family: 'Fraunces', Georgia, serif; }
-
-        /* ---- Premium solid design system (no glassmorphism) ---- */
-        .site-nav {
-            background: #FFFFFF;
-            border-bottom: 1px solid #F0E9E2;
-            box-shadow: 0 1px 3px rgba(74,18,38,0.05);
-        }
-        .card {
-            background: #FFFFFF;
-            border: 1px solid #F1EAE3;
-            box-shadow: 0 2px 10px -2px rgba(107,27,56,0.07);
-            transition: box-shadow 0.25s ease, transform 0.25s ease;
-        }
-        .modal-panel {
-            background: #FFFFFF;
-            box-shadow: 0 -10px 40px -8px rgba(74,18,38,0.22), 0 20px 60px -16px rgba(74,18,38,0.22);
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in-up {
-            animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -400px 0; }
-            100% { background-position: 400px 0; }
-        }
-        .shimmer {
-            background: linear-gradient(90deg, #F3EDE6 25%, #FBF8F4 50%, #F3EDE6 75%);
-            background-size: 800px 100%;
-            animation: shimmer 1.6s infinite linear;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .fade-in-up, .shimmer { animation: none !important; }
-        }
-
-        /* Off-screen product cards skip layout+paint work until scrolled
-           into view — the main lever for smooth scrolling on long grids. */
-        .product-card {
-            content-visibility: auto;
-            contain-intrinsic-size: 0 340px;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbf7f2">
+<meta name="description" content="Amane Store — modern everyday fashion for women.">
+<title>Amane Store — Everyday, Elevated.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f4ef;--surface:rgba(255,255,255,.58);--surface-strong:rgba(255,255,255,.82);
+  --ink:#211b1d;--muted:#756c6e;--line:rgba(49,36,38,.10);--brand:#6d2542;
+  --brand2:#a94f6c;--accent:#d4a55d;--ok:#2e7658;--danger:#a33b4e;
+  --shadow:0 18px 55px rgba(70,42,48,.12);--radius:24px;--max:1240px;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:
+radial-gradient(circle at 10% 0%,rgba(212,165,93,.16),transparent 28rem),
+radial-gradient(circle at 90% 15%,rgba(169,79,108,.13),transparent 30rem),
+var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif}
+body.lock{overflow:hidden}button,input,select{font:inherit}button{border:0}
+a{color:inherit;text-decoration:none}.container{width:min(var(--max),calc(100% - 32px));margin:auto}
+.glass{background:var(--surface);border:1px solid rgba(255,255,255,.72);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.nav{position:sticky;top:0;z-index:40;background:rgba(248,244,239,.72);border-bottom:1px solid var(--line);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.navin{height:74px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.logo{font-family:"Playfair Display",serif;font-size:25px;font-weight:700;letter-spacing:-.03em}
+.logo em{color:var(--brand);font-style:italic}.navlinks{display:flex;gap:26px;font-size:14px;color:var(--muted)}.navlinks a:hover{color:var(--brand)}
+.actions{display:flex;align-items:center;gap:8px}.iconbtn,.pillbtn{min-width:46px;height:46px;border-radius:16px;background:rgba(255,255,255,.65);border:1px solid var(--line);cursor:pointer;transition:.2s ease;display:grid;place-items:center;color:var(--ink)}
+.iconbtn:hover,.pillbtn:hover{transform:translateY(-2px);box-shadow:0 9px 25px rgba(70,42,48,.12)}.count{position:absolute;top:-4px;right:-3px;background:var(--brand);color:white;border-radius:999px;font-size:10px;min-width:18px;height:18px;display:grid;place-items:center}
+.hero{padding:44px 0 26px}.heroGrid{display:grid;grid-template-columns:1.04fr .96fr;gap:28px;align-items:stretch}
+.heroCopy{padding:58px 10px}.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--brand);font-weight:700}
+h1{font-family:"Playfair Display",serif;font-size:clamp(46px,7vw,82px);line-height:.94;letter-spacing:-.055em;margin:15px 0 22px;max-width:760px}
+.heroCopy p{font-size:17px;line-height:1.65;color:var(--muted);max-width:570px}.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.btn{height:50px;padding:0 20px;border-radius:17px;cursor:pointer;font-weight:700;transition:.2s ease;display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.btn.primary{background:var(--ink);color:#fff}.btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(33,27,29,.2)}
+.btn.soft{background:rgba(255,255,255,.66);border:1px solid var(--line)}.btn.soft:hover{transform:translateY(-2px)}
+.heroVisual{min-height:520px;border-radius:36px;position:relative;overflow:hidden;background:
+linear-gradient(145deg,rgba(109,37,66,.96),rgba(164,77,105,.72)),
+radial-gradient(circle at 65% 30%,rgba(255,255,255,.28),transparent 12rem)}
+.heroVisual:before{content:"";position:absolute;inset:12%;border:1px solid rgba(255,255,255,.22);border-radius:50%;transform:rotate(-12deg) scaleX(.78)}
+.heroVisual:after{content:"AMANE";position:absolute;bottom:25px;right:30px;color:rgba(255,255,255,.15);font-size:12px;letter-spacing:.4em}
+.fashionShape{position:absolute;left:17%;top:10%;width:58%;height:74%;border-radius:46% 46% 20% 20%;background:linear-gradient(135deg,#ead9c7,#b58a78 45%,#704050);filter:drop-shadow(0 35px 30px rgba(0,0,0,.18));transform:rotate(-4deg);animation:float 6s ease-in-out infinite}
+.fashionShape:before{content:"";position:absolute;left:18%;top:7%;width:64%;height:19%;border-radius:50%;background:#c69b83;box-shadow:0 25px 0 -9px rgba(77,44,52,.25)}
+.fashionShape:after{content:"";position:absolute;left:10%;bottom:11%;width:80%;height:2px;background:rgba(255,255,255,.35)}
+.floatTag{position:absolute;left:25px;top:25px;color:white;padding:11px 14px;border-radius:15px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(12px);font-size:12px}
+@keyframes float{50%{transform:rotate(-1deg) translateY(-10px)}}
+.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 55px}.trustItem{padding:16px;border-radius:18px;text-align:center;font-size:12px;color:var(--muted)}.trustItem b{display:block;color:var(--ink);margin-bottom:4px}
+.section{padding:34px 0}.sectionHead{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}.sectionHead h2{font-family:"Playfair Display",serif;font-size:35px;margin:0;letter-spacing:-.03em}.sectionHead p{color:var(--muted);margin:7px 0 0}
+.categories{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.cat{height:170px;border-radius:25px;position:relative;overflow:hidden;padding:18px;display:flex;align-items:end;color:white;background:linear-gradient(145deg,#7b3a4e,#c58b91)}
+.cat:nth-child(2){background:linear-gradient(145deg,#7b5a3c,#d5b08b)}.cat:nth-child(3){background:linear-gradient(145deg,#3d4658,#9aa4b5)}.cat:nth-child(4){background:linear-gradient(145deg,#4f5d48,#aab38d)}
+.cat:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 72% 20%,rgba(255,255,255,.25),transparent 9rem)}.cat>*{position:relative;z-index:1}.cat h3{margin:0;font-family:"Playfair Display",serif;font-size:25px}.cat small{opacity:.82}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.search{flex:1;min-width:220px;height:48px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.65);padding:0 16px;outline:none}.search:focus{box-shadow:0 0 0 4px rgba(109,37,66,.10);border-color:rgba(109,37,66,.35)}
+.select{height:48px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.7);padding:0 14px;color:var(--ink)}
+.chips{display:flex;gap:8px;overflow:auto;padding:3px 0 13px;scrollbar-width:none}.chip{white-space:nowrap;border:1px solid var(--line);background:rgba(255,255,255,.55);border-radius:999px;padding:10px 15px;cursor:pointer;color:var(--muted);font-weight:700;font-size:12px}.chip.active{background:var(--ink);color:white;border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.product{position:relative;border-radius:25px;overflow:hidden;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.85);box-shadow:0 12px 35px rgba(70,42,48,.08);content-visibility:auto;contain-intrinsic-size:0 430px;transition:transform .25s ease,box-shadow .25s ease}.product:hover{transform:translateY(-5px);box-shadow:0 24px 48px rgba(70,42,48,.14)}
+.pic{aspect-ratio:3/4;position:relative;overflow:hidden;background:linear-gradient(145deg,#eaded4,#caa7a5)}.pic:before{content:"";position:absolute;width:72%;height:78%;left:14%;top:9%;border-radius:48% 48% 20% 20%;background:linear-gradient(140deg,#f2e5da,#ad6b7d 58%,#6e2f49);transform:rotate(-4deg);transition:transform .5s ease}.product:hover .pic:before{transform:rotate(-1deg) scale(1.035)}
+.pic.alt1{background:linear-gradient(145deg,#e6dccd,#a8a09a)}.pic.alt1:before{background:linear-gradient(140deg,#ece6d7,#7c8b91 58%,#404a50)}
+.pic.alt2{background:linear-gradient(145deg,#e4d7cf,#d0a2a4)}.pic.alt2:before{background:linear-gradient(140deg,#f6d8d7,#bc6376 60%,#793f56)}
+.pic.alt3{background:linear-gradient(145deg,#d9dfd2,#99a47e)}.pic.alt3:before{background:linear-gradient(140deg,#dce4cb,#77815c 60%,#3e4633)}
+.wish{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.7);backdrop-filter:blur(10px);cursor:pointer;display:grid;place-items:center;z-index:2}.wish.on{color:var(--brand)}
+.badge{position:absolute;left:12px;top:12px;padding:7px 9px;border-radius:999px;background:rgba(255,255,255,.78);font-size:10px;font-weight:800;z-index:2}
+.pinfo{padding:14px}.pname{font-weight:700;margin:0 0 5px}.meta{font-size:12px;color:var(--muted)}.price{margin-top:10px;font-weight:800}.mrp{text-decoration:line-through;color:#a49b9d;font-size:11px;margin-left:6px;font-weight:500}.quick{width:100%;height:40px;border-radius:13px;margin-top:12px;background:var(--ink);color:#fff;cursor:pointer;font-weight:700}
+.product.hidden{display:none}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}.reveal.show{opacity:1;transform:none}
+.newsletter{padding:34px;border-radius:30px;display:flex;justify-content:space-between;gap:20px;align-items:center;background:linear-gradient(135deg,rgba(109,37,66,.96),rgba(82,30,49,.9));color:white;overflow:hidden;position:relative}.newsletter h2{font-family:"Playfair Display",serif;margin:0;font-size:30px}.newsletter p{color:rgba(255,255,255,.72);margin:7px 0 0}.newsletter form{display:flex;gap:8px;min-width:min(100%,440px)}.newsletter input{height:48px;flex:1;border:0;border-radius:15px;padding:0 15px;outline:none}.newsletter .btn{background:white;color:var(--ink)}
+.footer{padding:60px 0 110px;color:var(--muted)}.footgrid{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:30px}.footer h3{color:var(--ink);font-size:13px}.footer a{display:block;font-size:13px;margin:10px 0}.copyright{border-top:1px solid var(--line);padding-top:20px;margin-top:35px;font-size:12px}
+.overlay{position:fixed;inset:0;background:rgba(27,20,22,.42);backdrop-filter:blur(5px);z-index:80;display:none}.overlay.open{display:block}
+.drawer{position:fixed;z-index:90;right:0;top:0;height:100dvh;width:min(460px,100%);background:rgba(251,248,245,.92);border-left:1px solid rgba(255,255,255,.8);backdrop-filter:blur(22px);transform:translateX(102%);transition:transform .35s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}.drawer.open{transform:none}.drawerHead{padding:20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.drawerHead h2{font-family:"Playfair Display",serif;margin:0}.drawerBody{padding:18px;overflow:auto;flex:1}.cartrow{display:grid;grid-template-columns:74px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.thumb{width:74px;aspect-ratio:3/4;border-radius:15px;background:linear-gradient(145deg,#e8ddd4,#9f6273)}.qty{display:flex;align-items:center;gap:8px;margin-top:8px}.qty button{width:30px;height:30px;border-radius:10px;background:#fff;border:1px solid var(--line);cursor:pointer}.cartFoot{padding:18px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;margin:7px 0;font-size:13px}.total{font-size:18px;font-weight:800}.empty{text-align:center;color:var(--muted);padding:50px 20px}
+.modal{position:fixed;z-index:100;inset:0;display:none;place-items:center;padding:18px}.modal.open{display:grid}.modalCard{width:min(920px,100%);max-height:92dvh;overflow:auto;border-radius:30px;background:rgba(251,248,245,.94);border:1px solid rgba(255,255,255,.8);backdrop-filter:blur(22px);box-shadow:0 30px 100px rgba(0,0,0,.25)}.modalGrid{display:grid;grid-template-columns:1fr 1fr}.detailVisual{min-height:560px;background:linear-gradient(145deg,#e6d8cf,#8f4e62);position:relative;overflow:hidden}.detailVisual:before{content:"";position:absolute;width:70%;height:80%;left:15%;top:10%;border-radius:48% 48% 18% 18%;background:linear-gradient(135deg,#f2e7dc,#b4687c 55%,#692d47);transform:rotate(-4deg);box-shadow:0 35px 50px rgba(60,30,40,.18)}.detailInfo{padding:30px}.close{position:absolute;right:18px;top:18px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.78);z-index:2;cursor:pointer}.stars{color:#a56d2e;letter-spacing:2px}.sizes{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 22px}.size{min-width:48px;height:44px;border:1px solid var(--line);border-radius:13px;background:white;cursor:pointer}.size.selected{background:var(--ink);color:#fff}.detailPrice{font-size:27px;font-weight:800;margin:14px 0}.note{font-size:12px;color:var(--muted);line-height:1.55}
+.checkout{position:fixed;z-index:110;inset:0;display:none;place-items:center;padding:18px}.checkout.open{display:grid}.checkoutCard{width:min(760px,100%);max-height:92dvh;overflow:auto;border-radius:30px;background:rgba(251,248,245,.97);border:1px solid rgba(255,255,255,.85);backdrop-filter:blur(22px);padding:26px;box-shadow:0 30px 100px rgba(0,0,0,.25)}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:700}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px;outline:none}.pay{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.pay button{height:46px;border:1px solid var(--line);background:white;border-radius:13px;cursor:pointer}.pay button.selected{background:var(--ink);color:white}
+.toast{position:fixed;left:50%;bottom:24px;z-index:200;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:rgba(33,27,29,.94);color:#fff;padding:12px 16px;border-radius:14px;font-size:12px;transition:.25s ease}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){.heroGrid{grid-template-columns:1fr}.heroCopy{padding:24px 4px}.heroVisual{min-height:420px}.grid{grid-template-columns:repeat(3,1fr)}.categories{grid-template-columns:repeat(2,1fr)}.footgrid{grid-template-columns:1.5fr 1fr 1fr}.navlinks{display:none}}
+@media(max-width:640px){.container{width:min(var(--max),calc(100% - 20px))}.navin{height:64px}.logo{font-size:22px}.hero{padding-top:20px}.heroVisual{min-height:350px;border-radius:28px}h1{font-size:51px}.trust{grid-template-columns:repeat(2,1fr);margin-bottom:35px}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.product{border-radius:20px}.pinfo{padding:11px}.quick{height:38px}.sectionHead h2{font-size:29px}.newsletter{display:block;padding:25px}.newsletter form{margin-top:18px}.footgrid{grid-template-columns:1fr 1fr}.modalGrid{grid-template-columns:1fr}.detailVisual{min-height:390px}.detailInfo{padding:22px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.pay{grid-template-columns:1fr}.actions .desktopOnly{display:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
 </head>
-    <body class="bg-[#FAF7F2] text-slate-800 font-sans pb-32 min-h-screen relative">
-
-    <!-- Header / Navbar -->
-    <header class="site-nav sticky top-0 z-30">
-        <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
-            <div class="flex flex-col leading-none">
-                <h1 class="font-display text-lg font-semibold tracking-tight text-slate-900">Amane <span class="italic text-rose-600">Store</span></h1>
-                <span class="text-[9px] font-bold tracking-[0.2em] uppercase text-[color:var(--gold)] mt-0.5">Est. for the everyday elegant</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <a id="customerAccBtn" href="customerlogin.html" class="text-xs text-slate-500 font-bold hover:text-rose-600 transition flex items-center gap-1">
-                    <i class="fa-solid fa-user text-[10px]"></i> <span>Login</span>
-                </a>
-                <a href="admin.html" class="text-xs text-slate-500 font-bold hover:text-rose-600 transition">
-                    <i class="fa-solid fa-lock text-[10px] mr-0.5"></i> Admin
-                </a>
-                <button onclick="openCartDrawer()" class="relative bg-slate-900/90 hover:bg-slate-900 active:scale-95 text-white p-2 rounded-2xl text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer transition">
-                    <i class="fa-solid fa-bag-shopping text-sm"></i>
-                    <span id="cartItemCount" class="bg-rose-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">0</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Store Content -->
-    <main class="relative z-10 max-w-3xl mx-auto px-4 mt-4 space-y-4">
-        <!-- Banner -->
-        <div class="fade-in-up bg-gradient-to-br from-[#4A1226] via-[#6B1B38] to-[#8B2645] rounded-3xl p-6 text-white shadow-2xl shadow-[#4A1226]/30 relative overflow-hidden">
-            <svg class="absolute inset-0 w-full h-full opacity-[0.08] pointer-events-none" preserveAspectRatio="xMidYMid slice">
-                <pattern id="weave" width="18" height="18" patternUnits="userSpaceOnUse">
-                    <path d="M0 9 L9 0 M9 18 L18 9" stroke="white" stroke-width="1" fill="none"/>
-                </pattern>
-                <rect width="100%" height="100%" fill="url(#weave)"/>
-            </svg>
-            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-[color:var(--gold)]/25 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -left-6 -top-10 w-28 h-28 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-            <span class="relative inline-flex items-center gap-1.5 text-[10px] font-extrabold tracking-[0.25em] uppercase text-[color:var(--gold)]">
-                <span class="w-4 h-px bg-[color:var(--gold)]"></span> New Designer Collection
-            </span>
-            <h2 class="relative font-display text-[28px] font-semibold mt-2 leading-[1.15]">Everyday elegance,<br>cut for you</h2>
-            <p class="relative text-xs text-rose-100/85 mt-2.5">Handpicked exclusive styles · Cash on Delivery available</p>
-            <button onclick="document.getElementById('storeProductsGrid').scrollIntoView({behavior:'smooth', block:'start'})" class="relative mt-4 bg-white text-[color:var(--wine-deep)] text-xs font-extrabold px-5 py-2.5 rounded-2xl shadow-md active:scale-95 transition cursor-pointer">
-                Shop Now <i class="fa-solid fa-arrow-right text-[10px] ml-1"></i>
-            </button>
-        </div>
-
-        <!-- Trust Strip -->
-        <div class="fade-in-up grid grid-cols-3 gap-2 text-center" style="animation-delay: 0.03s">
-            <div class="card rounded-2xl py-2.5 px-1.5">
-                <i class="fa-solid fa-truck-fast text-[color:var(--wine)] text-sm"></i>
-                <p class="text-[9px] font-bold text-slate-600 mt-1 leading-tight">Cash on<br>Delivery</p>
-            </div>
-            <div class="card rounded-2xl py-2.5 px-1.5">
-                <i class="fa-solid fa-rotate-left text-[color:var(--wine)] text-sm"></i>
-                <p class="text-[9px] font-bold text-slate-600 mt-1 leading-tight">Easy<br>Returns</p>
-            </div>
-            <div class="card rounded-2xl py-2.5 px-1.5">
-                <i class="fa-solid fa-gem text-[color:var(--wine)] text-sm"></i>
-                <p class="text-[9px] font-bold text-slate-600 mt-1 leading-tight">Handpicked<br>Quality</p>
-            </div>
-        </div>
-
-        <!-- Shop by Category (image tiles) -->
-        <div id="categoryTilesWrap" class="hidden fade-in-up" style="animation-delay: 0.04s">
-            <h3 class="font-display text-sm font-semibold text-slate-900 mb-2">Shop by Category</h3>
-            <div id="categoryTiles" class="flex gap-3 overflow-x-auto pb-1 no-scrollbar"></div>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="fade-in-up relative" style="animation-delay: 0.05s">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-                <i class="fa-solid fa-magnifying-glass text-xs"></i>
-            </span>
-            <input type="text" id="searchInput" oninput="handleSearchProducts()" placeholder="Search by product name, code, or category..." class="w-full card pl-10 pr-4 py-3 rounded-2xl text-xs outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 shadow-sm transition">
-        </div>
-
-        <!-- Filter Categories -->
-        <div id="categoryFilters" class="fade-in-up flex gap-2 overflow-x-auto pb-1 text-xs no-scrollbar" style="animation-delay: 0.1s">
-            <button onclick="filterCategory('all')" class="category-btn active px-4 py-2 rounded-2xl font-bold bg-slate-900 text-white shrink-0 cursor-pointer shadow-sm transition">All Items</button>
-        </div>
-
-        <!-- Result count + Sort -->
-        <div class="flex items-center justify-between text-[10px] font-bold text-slate-500 px-0.5">
-            <span id="resultCountLabel"></span>
-            <select id="sortSelect" onchange="handleSortChange()" class="card border border-slate-100 rounded-xl px-2 py-1.5 text-[10px] font-bold text-slate-700 outline-none cursor-pointer">
-                <option value="default">Sort: Featured</option>
-                <option value="price_low">Price: Low to High</option>
-                <option value="price_high">Price: High to Low</option>
-                <option value="newest">Newest First</option>
-            </select>
-        </div>
-
-        <!-- Product Grid -->
-        <div id="storeProductsGrid" class="grid grid-cols-2 gap-3.5">
-            <!-- Skeleton loading placeholders shown until products fetch from the database -->
-            <div class="card rounded-3xl p-3 border border-slate-100"><div class="shimmer bg-slate-200/60 aspect-[3/4] rounded-2xl mb-2.5"></div><div class="shimmer bg-slate-200/60 h-2.5 w-2/3 rounded mb-1.5"></div><div class="shimmer bg-slate-200/60 h-3 w-1/2 rounded"></div></div>
-            <div class="card rounded-3xl p-3 border border-slate-100"><div class="shimmer bg-slate-200/60 aspect-[3/4] rounded-2xl mb-2.5"></div><div class="shimmer bg-slate-200/60 h-2.5 w-2/3 rounded mb-1.5"></div><div class="shimmer bg-slate-200/60 h-3 w-1/2 rounded"></div></div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="fade-in-up pt-6 pb-2 text-center border-t border-slate-200/60 mt-6">
-            <h3 class="font-display text-base font-semibold text-slate-900">Amane <span class="italic text-rose-600">Store</span></h3>
-            <p class="text-[10px] text-slate-400 mt-1 max-w-[240px] mx-auto leading-relaxed">Handpicked, everyday elegant clothing — made with care, delivered with love.</p>
-            <div class="flex items-center justify-center gap-3 mt-3">
-                <a href="#" class="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 hover:text-rose-600 transition text-xs"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 hover:text-rose-600 transition text-xs"><i class="fa-brands fa-whatsapp"></i></a>
-            </div>
-            <p class="text-[9px] text-slate-300 font-bold uppercase tracking-widest mt-4">© Amane Store · Made with care</p>
-        </footer>
-    </main>
-
-    <!-- Product Detail Modal with Glassmorphism & Image Slider -->
-    <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/50 hidden flex items-center justify-center p-4 transition-all">
-        <div id="productDetailModalPanel" class="modal-panel w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl max-h-[92vh] flex flex-col border border-slate-100">
-            <!-- Modal Header -->
-            <div class="p-3.5 border-b border-slate-200/60 flex justify-between items-center bg-slate-50">
-                <span id="modalProdCode" class="text-[10px] font-black bg-slate-900 text-white px-2.5 py-1 rounded-xl tracking-wider"></span>
-                <div class="flex items-center gap-2">
-                    <button id="modalWishlistBtn" onclick="toggleModalWishlist()" class="w-7 h-7 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 cursor-pointer shadow-xs transition"><i class="fa-regular fa-heart text-sm"></i></button>
-                    <button onclick="closeProductDetail()" class="w-7 h-7 bg-white rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 cursor-pointer shadow-xs transition"><i class="fa-solid fa-xmark text-sm"></i></button>
-                </div>
-            </div>
-
-            <!-- Modal Content (Scrollable) -->
-            <div class="overflow-y-auto p-4 space-y-3.5 no-scrollbar">
-                <!-- Image Slider Container -->
-                <div class="relative aspect-[3/4] bg-slate-100 rounded-2xl overflow-hidden shadow-inner border border-white">
-                    <div id="modalImageSlider" class="flex h-full overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth">
-                        <!-- Images injected dynamically -->
-                    </div>
-                    <!-- Slider Dots Indicator -->
-                    <div id="modalSliderDots" class="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
-                        <!-- Dots injected dynamically -->
-                    </div>
-                </div>
-
-                <!-- Product Info -->
-                <div>
-                    <span id="modalProdCategoryColor" class="text-[10px] text-rose-600 font-extrabold uppercase tracking-wider"></span>
-                    <h3 id="modalProdTitle" class="font-display text-base font-semibold text-slate-900 mt-0.5 leading-snug"></h3>
-                </div>
-
-                <!-- Pricing & Discount Badge -->
-                <div class="flex items-center gap-2.5 flex-wrap">
-                    <span id="modalProdPrice" class="font-display text-lg font-semibold text-slate-900"></span>
-                    <span id="modalProdMrp" class="text-xs text-slate-400 line-through"></span>
-                    <span id="modalProdDiscount" class="text-[10px] font-extrabold bg-[color:var(--gold)]/15 text-[color:var(--gold)] px-2 py-0.5 rounded-lg"></span>
-                </div>
-
-                <!-- Custom Delivery Info Box -->
-                <div class="card p-3 rounded-2xl border border-slate-100 text-xs space-y-1.5 text-slate-700 shadow-xs">
-                    <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-truck-fast text-rose-600 mt-0.5"></i>
-                        <div><strong class="text-slate-900">Delivery:</strong> <span id="modalProdDelivery">Free Delivery across India</span></div>
-                    </div>
-                    <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-rotate-left text-rose-600 mt-0.5"></i>
-                        <div><strong class="text-slate-900">Returns:</strong> <span id="modalProdReturns">Easy 7-day returns & exchange</span></div>
-                    </div>
-                </div>
-
-                <!-- Size Selection -->
-                <div>
-                    <label class="block text-xs font-black text-slate-700 mb-1.5">Select Size:</label>
-                    <div id="modalSizeContainer" class="flex flex-wrap gap-1.5">
-                        <!-- Sizes injected dynamically -->
-                    </div>
-                </div>
-
-                <!-- Reviews Section -->
-                <div class="pt-3 border-t border-slate-200/60">
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="text-xs font-black text-slate-700">Customer Reviews</label>
-                        <span id="modalReviewSummary" class="text-[10px] text-slate-400 font-bold"></span>
-                    </div>
-                    <div id="modalReviewsList" class="space-y-2 mb-3"></div>
-
-                    <div id="modalReviewFormWrap"></div>
-                </div>
-            </div>
-
-            <!-- Modal Footer Button -->
-            <div class="p-3.5 border-t border-slate-200/60 bg-slate-50 flex gap-2">
-                <button onclick="addCurrentToCartFromModal()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer text-xs">
-                    Add to Bag
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation Bar -->
-    <div class="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40">
-        <nav class="site-nav rounded-2xl shadow-2xl px-5 py-3 flex items-center justify-around border border-slate-100">
-            <a href="index.html" class="flex flex-col items-center text-rose-600 text-[10px] font-extrabold gap-0.5 cursor-pointer">
-                <i class="fa-solid fa-house text-base"></i>
-                <span>Home</span>
-            </a>
-            <button onclick="scrollToCategories()" class="flex flex-col items-center text-slate-600 hover:text-rose-600 text-[10px] font-extrabold gap-0.5 cursor-pointer">
-                <i class="fa-solid fa-layer-group text-base"></i>
-                <span>Categories</span>
-            </button>
-            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-slate-600 hover:text-rose-600 text-[10px] font-extrabold gap-0.5 cursor-pointer">
-                <i class="fa-solid fa-shop text-base"></i>
-                <span>Shop</span>
-            </button>
-        </nav>
-    </div>
-
-    <!-- Cart Drawer Modal -->
-    <div id="cartDrawer" class="fixed inset-0 z-50 bg-black/50 hidden flex justify-end transition-all">
-        <div class="modal-panel w-full max-w-sm h-full flex flex-col shadow-2xl border-l border-slate-100">
-            <div class="p-4 border-b border-slate-200/60 flex items-center justify-between bg-slate-50">
-                <h3 class="text-xs font-black tracking-wider text-slate-900 uppercase">Your Shopping Bag</h3>
-                <button onclick="closeCartDrawer()" class="w-7 h-7 bg-white rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 cursor-pointer shadow-xs"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="cartDrawerItems" class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar"></div>
-            <div class="p-4 border-t border-slate-200/60 bg-slate-50 space-y-3">
-                <div class="flex justify-between text-xs font-extrabold text-slate-900">
-                    <span>Subtotal:</span>
-                    <span id="cartSubtotal">₹0</span>
-                </div>
-                <button onclick="proceedToCheckout()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer text-xs">
-                    Proceed to Checkout
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Checkout Modal -->
-    <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/50 hidden flex items-center justify-center p-4">
-        <div class="modal-panel w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto border border-slate-100 no-scrollbar">
-            <div class="flex justify-between items-center border-b border-slate-200/60 pb-2">
-                <h3 class="text-xs font-black uppercase text-slate-900">Complete Your Order</h3>
-                <button onclick="closeCheckoutModal()" class="w-7 h-7 bg-white rounded-full flex items-center justify-center text-slate-500 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="submitCustomerOrder(event)" class="space-y-3 text-xs">
-                <!-- Honeypot field: invisible to real users, bots tend to fill every field -->
-                <div class="hidden" aria-hidden="true">
-                    <label>Leave this field empty</label>
-                    <input type="text" id="custWebsite" name="website" tabindex="-1" autocomplete="off">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Full Name</label>
-                    <input type="text" id="custName" required placeholder="Enter your name" class="w-full p-3 card rounded-2xl outline-none focus:border-rose-600 border border-slate-100">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Phone Number</label>
-                        <input type="tel" id="custPhone" required placeholder="10-digit mobile" pattern="[6-9][0-9]{9}" maxlength="10" oninput="clearFieldError('custPhoneError')" class="w-full p-3 card rounded-2xl outline-none focus:border-rose-600 border border-slate-100">
-                        <p id="custPhoneError" class="text-rose-600 text-[10px] font-bold mt-1 hidden"></p>
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Selected Size</label>
-                        <input type="text" id="custSize" readonly class="w-full p-3 bg-slate-50 card rounded-2xl outline-none font-bold text-rose-600 border border-slate-100">
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Address Line</label>
-                    <input type="text" id="custAddress" required placeholder="House No, Street" class="w-full p-3 card rounded-2xl outline-none focus:border-rose-600 border border-slate-100">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Landmark</label>
-                        <input type="text" id="custLandmark" placeholder="Near temple..." class="w-full p-3 card rounded-2xl outline-none focus:border-rose-600 border border-slate-100">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Pincode</label>
-                        <input type="text" id="custPincode" required placeholder="6-digit" pattern="[0-9]{6}" maxlength="6" oninput="handlePincodeInput()" class="w-full p-3 card rounded-2xl outline-none focus:border-rose-600 border border-slate-100">
-                        <p id="custPincodeStatus" class="text-[10px] font-bold mt-1 hidden"></p>
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">City & State</label>
-                    <input type="text" id="custCityState" required readonly placeholder="Auto-filled from pincode" class="w-full p-3 bg-slate-50 card rounded-2xl outline-none font-bold text-slate-700 border border-slate-100">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Payment Mode</label>
-                    <select id="custPaymentMode" class="w-full p-3 card rounded-2xl outline-none focus:border-rose-600 font-bold text-rose-600 border border-slate-100">
-                        <option value="COD">Cash on Delivery (COD)</option>
-                        <option value="Online / UPI">Online Payment / UPI</option>
-                    </select>
-                </div>
-                <div class="card p-3 rounded-2xl border border-slate-100 text-[11px] space-y-1">
-                    <div class="flex justify-between font-bold text-slate-900"><span>Total Amount:</span><span id="checkoutTotalAmount">₹0</span></div>
-                </div>
-                <button type="submit" id="placeOrderBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3 rounded-2xl shadow-lg transition cursor-pointer">
-                    Place Order Now
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div id="successModal" class="fixed inset-0 z-50 bg-black/50 hidden flex items-center justify-center p-4">
-        <div class="modal-panel w-full max-w-sm rounded-3xl p-6 text-center space-y-3 shadow-2xl border border-slate-100">
-            <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-sm">
-                <i class="fa-solid fa-check"></i>
-            </div>
-            <h3 class="text-base font-black text-slate-900">Order Placed Successfully!</h3>
-            <p class="text-xs text-slate-500">Thank you for shopping with Amane Store. We will dispatch your order soon.</p>
-            <button onclick="location.reload()" class="w-full bg-slate-900 text-white font-extrabold py-3 rounded-2xl text-xs mt-2 cursor-pointer shadow-md">
-                Back to Store
-            </button>
-        </div>
-    </div>
-
-    <script>
-        const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // ---- EmailJS setup (for automatic order-notification emails) ----
-        const EMAILJS_PUBLIC_KEY = 'LxuaFnLtYqBKmLpX5';
-        const EMAILJS_SERVICE_ID = 'service_i6jrdol';
-        const EMAILJS_TEMPLATE_ID = 'template_0huv5ro';
-        if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
-            emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-        }
-
-        let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
-        let currentFilter = 'all';
-        let selectedProductForDetail = null;
-        let selectedSizeForOrder = 'Free Size';
-        let currentCustomer = null;      // Supabase Auth user object, or null if logged out
-        let currentWishlist = [];        // array of product_id strings the customer has wishlisted
-        let selectedReviewRating = 0;    // star rating chosen in the "write a review" form
-        let currentSort = 'default';
-        let productRatings = {};         // { product_id: { avg: number, count: number } }
-
-        // Safely parse the `images` field. New products store a JSON array.
-        // Older/legacy products may have a broken comma-joined string
-        // (since base64 data-URLs contain their own comma) — fall back
-        // gracefully to `img` (or first image) in that case.
-        function getImagesArray(p) {
-            if (!p) return [];
-            if (Array.isArray(p.images)) return p.images;
-            if (typeof p.images === 'string' && p.images.trim().startsWith('[')) {
-                try {
-                    const arr = JSON.parse(p.images);
-                    if (Array.isArray(arr) && arr.length) return arr;
-                } catch (e) { /* fall through */ }
-            }
-            return p.img ? [p.img] : [];
-        }
-
-        window.onload = async function() {
-            await loadProducts();
-            renderStoreProducts();
-            updateCartUI();
-        };
-
-        let cachedProducts = [];
-
-        // Converts a database row (snake_case) into the product object
-        // shape the rest of the storefront UI already expects (camelCase).
-        function dbRowToProduct(row) {
-            return {
-                id: row.id,
-                title: row.title,
-                code: row.code,
-                price: row.price,
-                mrp: row.mrp,
-                discount: row.discount,
-                category: row.category,
-                color: row.color,
-                images: row.images,
-                img: Array.isArray(row.images) && row.images.length ? row.images[0] : null,
-                deliveryText: row.delivery_text,
-                returnText: row.return_text,
-                sizes: row.sizes,
-                inStock: row.in_stock
-            };
-        }
-
-        // Fetches products from Supabase once and caches them in memory.
-        // Filtering/searching then reads from this cache (fast, no repeat DB calls).
-        async function loadProducts() {
-            const { data, error } = await _supabase
-                .from('products')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                console.error('Failed to load products:', error);
-                document.getElementById('storeProductsGrid').innerHTML =
-                    `<p class="text-xs text-rose-500 col-span-2 text-center py-10">Could not load products. Please refresh the page.</p>`;
-                return [];
-            }
-            cachedProducts = (data || []).map(dbRowToProduct);
-            await loadProductRatings();
-            return cachedProducts;
-        }
-
-        // Fetches all approved reviews in ONE query and aggregates average
-        // rating + count per product client-side — much cheaper than
-        // querying per-product-card.
-        async function loadProductRatings() {
-            const { data, error } = await _supabase
-                .from('reviews')
-                .select('product_id, rating')
-                .eq('approved', true);
-
-            productRatings = {};
-            if (error || !data) return;
-
-            const grouped = {};
-            data.forEach(r => {
-                if (!grouped[r.product_id]) grouped[r.product_id] = [];
-                grouped[r.product_id].push(r.rating);
-            });
-            Object.keys(grouped).forEach(pid => {
-                const ratings = grouped[pid];
-                productRatings[pid] = {
-                    avg: (ratings.reduce((a, b) => a + b, 0) / ratings.length),
-                    count: ratings.length
-                };
-            });
-        }
-
-        function getProducts() {
-            return cachedProducts;
-        }
-
-        function renderCategoryTiles(products) {
-            const wrap = document.getElementById('categoryTilesWrap');
-            const tilesEl = document.getElementById('categoryTiles');
-            const categories = [...new Set(products.map(p => p.category))];
-
-            if (categories.length < 2) {
-                wrap.classList.add('hidden');
-                return;
-            }
-            wrap.classList.remove('hidden');
-
-            tilesEl.innerHTML = categories.map(cat => {
-                const sampleProduct = products.find(p => p.category === cat);
-                const imgArr = sampleProduct ? getImagesArray(sampleProduct) : [];
-                const img = imgArr[0] || sampleProduct?.img || '';
-                return `
-                    <button onclick="filterCategory('${cat}')" class="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer">
-                        <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${currentFilter === cat ? 'border-rose-600' : 'border-slate-100'} bg-slate-100 shadow-xs transition">
-                            <img src="${img}" loading="lazy" decoding="async" class="w-full h-full object-cover">
-                        </div>
-                        <span class="text-[9px] font-bold text-slate-600 capitalize">${cat}</span>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        function handleSortChange() {
-            currentSort = document.getElementById('sortSelect').value;
-            renderStoreProducts(currentFilter, document.getElementById('searchInput').value, { rebuildFilters: false, animate: false });
-        }
-
-        function applySorting(list) {
-            // cachedProducts is already fetched newest-first from Supabase,
-            // so "Newest First" just needs no re-sort — only price sorts
-            // need actual reordering.
-            if (currentSort === 'price_low') return [...list].sort((a, b) => a.price - b.price);
-            if (currentSort === 'price_high') return [...list].sort((a, b) => b.price - a.price);
-            return list;
-        }
-
-        function scrollToCategories() {
-            const el = document.getElementById('categoryFilters');
-            if(el) el.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function renderStoreProducts(filter = 'all', searchQuery = '', options = {}) {
-            const { rebuildFilters = true, animate = true } = options;
-            currentFilter = filter;
-            const products = getProducts();
-            const grid = document.getElementById('storeProductsGrid');
-
-            // Rebuilding the category pill row is skipped while the user is
-            // actively typing a search — it never needs to change mid-search
-            // and rebuilding it on every keystroke was extra reflow work.
-            if (rebuildFilters) {
-                const categories = ['all', ...new Set(products.map(p => p.category))];
-                const filterContainer = document.getElementById('categoryFilters');
-                filterContainer.innerHTML = categories.map(cat => `
-                    <button onclick="filterCategory('${cat}')" class="category-btn px-4 py-2 rounded-2xl font-bold active:scale-95 transition ${currentFilter === cat && !searchQuery ? 'bg-slate-900 text-white shadow-sm' : 'card text-slate-600 border border-slate-100'} shrink-0 cursor-pointer capitalize">
-                        ${cat === 'all' ? 'All Items' : cat}
-                    </button>
-                `).join('');
-                renderCategoryTiles(products);
-            }
-
-            let filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
-
-            if (searchQuery.trim() !== '') {
-                const query = searchQuery.toLowerCase().trim();
-                filtered = products.filter(p => 
-                    (p.title || '').toLowerCase().includes(query) ||
-                    (p.code || '').toLowerCase().includes(query) ||
-                    (p.category || '').toLowerCase().includes(query) ||
-                    (p.color || '').toLowerCase().includes(query)
-                );
-            }
-
-            filtered = applySorting(filtered);
-
-            const countLabel = document.getElementById('resultCountLabel');
-            if (countLabel) countLabel.innerText = `${filtered.length} item${filtered.length !== 1 ? 's' : ''}`;
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-2 flex flex-col items-center justify-center text-center py-14 px-6">
-                        <div class="w-14 h-14 rounded-full bg-rose-50 flex items-center justify-center mb-3">
-                            <i class="fa-solid fa-magnifying-glass text-rose-300 text-lg"></i>
-                        </div>
-                        <p class="font-display text-sm font-medium text-slate-700">Nothing matches yet</p>
-                        <p class="text-[11px] text-slate-400 mt-1">Try a different name, code, or category</p>
-                    </div>`;
-                return;
-            }
-
-            grid.innerHTML = filtered.map((p, idx) => {
-                const isOutOfStock = p.inStock === false;
-                // Support multiple images (first image as cover)
-                let imgArr = getImagesArray(p);
-                let coverImg = imgArr[0] || p.img;
-                // Only the very first screenful animates in with the stagger;
-                // re-filtering/searching swaps content in instantly so it
-                // doesn't feel like it's replaying a slow animation on every
-                // keystroke.
-                const animClass = animate ? 'fade-in-up' : '';
-                const animStyle = animate ? `style="animation-delay: ${Math.min(idx * 0.04, 0.3)}s"` : '';
-                const wishlisted = isWishlisted(p.id);
-
-                return `
-                    <div class="product-card ${animClass} card rounded-3xl p-3 flex flex-col justify-between relative overflow-hidden active:scale-[0.97] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#6B1B38]/15 transition-all duration-300" ${animStyle}>
-                        ${isOutOfStock ? '<div class="absolute inset-0 bg-white/90 z-10 flex items-center justify-center"><span class="bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-md">Out of Stock</span></div>' : ''}
-
-                        <button onclick="event.stopPropagation(); toggleWishlist('${p.id}', this)" data-wishlist-id="${p.id}" class="absolute top-2 right-2 z-20 w-7 h-7 rounded-full bg-white/95 shadow-md flex items-center justify-center cursor-pointer transition ${wishlisted ? 'text-rose-600' : 'text-slate-400'}">
-                            <i class="${wishlisted ? 'fa-solid' : 'fa-regular'} fa-heart text-xs"></i>
-                        </button>
-
-                        <!-- Clickable Area to Open Product Page -->
-                        <div onclick="openProductDetail('${p.id}')" class="cursor-pointer">
-                            <div class="relative rounded-2xl overflow-hidden aspect-[3/4] bg-slate-100 mb-2.5 shadow-xs border border-white">
-                                <img src="${coverImg}" loading="lazy" decoding="async" class="w-full h-full object-contain">
-                                <span class="absolute top-2 left-2 bg-slate-900/75 text-white text-[9px] font-bold px-2 py-0.5 rounded-lg tracking-wide">${p.code}</span>
-                                ${p.discount ? `<span class="absolute bottom-2 right-2 bg-[color:var(--gold)] text-white text-[9px] font-black px-2 py-0.5 rounded-lg shadow-xs">${p.discount}</span>` : ''}
-                            </div>
-                            <span class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">${p.category} • ${p.color}</span>
-                            <h4 class="text-xs font-bold text-slate-900 line-clamp-1 mt-0.5">${p.title}</h4>
-                            ${productRatings[p.id] ? `<span class="inline-flex items-center gap-0.5 text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded mt-1"><i class="fa-solid fa-star text-[8px]"></i> ${productRatings[p.id].avg.toFixed(1)} <span class="text-emerald-600 font-normal">(${productRatings[p.id].count})</span></span>` : ''}
-                        </div>
-
-                        <div class="mt-3 pt-2.5 border-t border-slate-200/40 flex items-center justify-between">
-                            <div>
-                                <span class="font-display text-sm font-semibold text-slate-900">₹${p.price}</span>
-                                <span class="text-[10px] text-slate-400 line-through ml-1">₹${p.mrp}</span>
-                            </div>
-                            <button onclick="openProductDetail('${p.id}')" class="bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-600 text-[11px] font-extrabold px-3 py-1.5 rounded-xl transition cursor-pointer shadow-xs">
-                                <i class="fa-solid fa-plus text-[10px]"></i> View
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function filterCategory(cat) {
-            document.getElementById('searchInput').value = '';
-            renderStoreProducts(cat, '');
-        }
-
-        // Debounced search — waits for a short pause in typing before
-        // re-filtering the grid, instead of re-rendering on every keystroke.
-        // This is the main fix for the "laggy while typing" feeling.
-        let searchDebounceTimer = null;
-        function handleSearchProducts() {
-            clearTimeout(searchDebounceTimer);
-            const query = document.getElementById('searchInput').value;
-            searchDebounceTimer = setTimeout(() => {
-                renderStoreProducts(currentFilter, query, { rebuildFilters: false, animate: false });
-            }, 250);
-        }
-
-        // Product Detail Page Modal with Image Slider & Customizations
-        function openProductDetail(prodId) {
-            const products = getProducts();
-            const product = products.find(p => p.id === prodId);
-            if (!product) return;
-
-            selectedProductForDetail = product;
-
-            document.getElementById('modalProdCode').innerText = product.code;
-            document.getElementById('modalProdCategoryColor').innerText = `${product.category} • ${product.color}`;
-            document.getElementById('modalProdTitle').innerText = product.title;
-            document.getElementById('modalProdPrice').innerText = `₹${product.price}`;
-            document.getElementById('modalProdMrp').innerText = `₹${product.mrp}`;
-            
-            const discountEl = document.getElementById('modalProdDiscount');
-            if (product.discount) {
-                discountEl.innerText = product.discount;
-                discountEl.classList.remove('hidden');
-            } else {
-                discountEl.classList.add('hidden');
-            }
-
-            // Custom Delivery & Returns
-            document.getElementById('modalProdDelivery').innerText = product.deliveryText || 'Free Delivery across India';
-            document.getElementById('modalProdReturns').innerText = product.returnText || 'Easy 7-day returns & exchange';
-
-            // Images Slider setup
-            let imgList = getImagesArray(product);
-            const sliderEl = document.getElementById('modalImageSlider');
-            const dotsEl = document.getElementById('modalSliderDots');
-
-            sliderEl.innerHTML = imgList.map((imgUrl, idx) => `
-                <div class="w-full h-full shrink-0 snap-center">
-                    <img src="${imgUrl}" loading="${idx === 0 ? 'eager' : 'lazy'}" decoding="async" class="w-full h-full object-contain">
-                </div>
-            `).join('');
-
-            dotsEl.innerHTML = imgList.map((_, idx) => `
-                <div class="w-1.5 h-1.5 rounded-full bg-white/70 shadow-xs transition-all ${idx === 0 ? 'bg-white w-3' : ''}"></div>
-            `).join('');
-
-            // Keep the dots in sync while the user swipes through images
-            sliderEl.onscroll = () => {
-                const activeIdx = Math.round(sliderEl.scrollLeft / sliderEl.clientWidth);
-                document.querySelectorAll('#modalSliderDots > div').forEach((dot, i) => {
-                    dot.className = `w-1.5 h-1.5 rounded-full bg-white/70 shadow-xs transition-all ${i === activeIdx ? 'bg-white w-3' : ''}`;
-                });
-            };
-
-            // Sizes setup
-            let sizesList = product.sizes ? product.sizes.split(',').map(s => s.trim()) : ['S', 'M', 'L', 'XL', 'XXL'];
-            selectedSizeForOrder = sizesList[0]; // default first size
-            const sizeContainer = document.getElementById('modalSizeContainer');
-            sizeContainer.innerHTML = sizesList.map((sz, idx) => `
-                <button type="button" onclick="selectSizeOption('${sz}', this)" class="size-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold border transition cursor-pointer ${idx === 0 ? 'bg-slate-900 text-white border-slate-900 shadow-sm' : 'card text-slate-700 border-slate-100'}">${sz}</button>
-            `).join('');
-
-            document.getElementById('productDetailModal').classList.remove('hidden');
-            const panel = document.getElementById('productDetailModalPanel');
-            panel.classList.remove('modal-pop-in');
-            void panel.offsetWidth; // restart animation
-            panel.classList.add('modal-pop-in');
-
-            renderModalWishlistBtn(product.id);
-            loadProductReviews(product.id);
-        }
-
-        function renderModalWishlistBtn(productId) {
-            const btn = document.getElementById('modalWishlistBtn');
-            const wishlisted = isWishlisted(productId);
-            btn.setAttribute('data-wishlist-id', productId);
-            btn.classList.toggle('text-rose-600', wishlisted);
-            btn.classList.toggle('text-slate-400', !wishlisted);
-            btn.querySelector('i').className = `${wishlisted ? 'fa-solid' : 'fa-regular'} fa-heart text-sm`;
-        }
-
-        async function toggleModalWishlist() {
-            if (!selectedProductForDetail) return;
-            await toggleWishlist(selectedProductForDetail.id, null);
-            renderModalWishlistBtn(selectedProductForDetail.id);
-        }
-
-        async function loadProductReviews(productId) {
-            const listEl = document.getElementById('modalReviewsList');
-            const summaryEl = document.getElementById('modalReviewSummary');
-            listEl.innerHTML = `<p class="text-[11px] text-slate-400">Loading reviews...</p>`;
-
-            const { data, error } = await _supabase
-                .from('reviews')
-                .select('*')
-                .eq('product_id', productId)
-                .eq('approved', true)
-                .order('created_at', { ascending: false });
-
-            const reviews = (!error && data) ? data : [];
-
-            if (reviews.length === 0) {
-                summaryEl.innerText = 'No reviews yet';
-                listEl.innerHTML = `<p class="text-[11px] text-slate-400">Be the first to review this product.</p>`;
-            } else {
-                const avg = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
-                summaryEl.innerHTML = `<i class="fa-solid fa-star text-[color:var(--gold)]"></i> ${avg} · ${reviews.length} review${reviews.length > 1 ? 's' : ''}`;
-                listEl.innerHTML = reviews.map(r => `
-                    <div class="card rounded-2xl p-2.5 border border-slate-100">
-                        <div class="flex items-center justify-between">
-                            <span class="text-[11px] font-bold text-slate-800">${r.customer_name}</span>
-                            <span class="text-[10px] text-[color:var(--gold)]">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
-                        </div>
-                        ${r.review_text ? `<p class="text-[11px] text-slate-600 mt-1 leading-relaxed">${r.review_text}</p>` : ''}
-                    </div>
-                `).join('');
-            }
-
-            renderReviewForm(productId, reviews);
-        }
-
-        function renderReviewForm(productId, existingReviews) {
-            const wrap = document.getElementById('modalReviewFormWrap');
-
-            if (!currentCustomer) {
-                wrap.innerHTML = `<a href="customerlogin.html" class="block text-center text-[11px] font-bold text-rose-600 py-2 cursor-pointer">Login to write a review</a>`;
-                return;
-            }
-
-            const myReview = existingReviews.find(r => r.customer_id === currentCustomer.id);
-            if (myReview) {
-                wrap.innerHTML = `<p class="text-[11px] text-slate-400 text-center py-1">You've already reviewed this product.</p>`;
-                return;
-            }
-
-            selectedReviewRating = 0;
-            wrap.innerHTML = `
-                <div class="card rounded-2xl p-3 border border-slate-100 space-y-2">
-                    <label class="text-[11px] font-bold text-slate-700">Write a Review</label>
-                    <div id="reviewStarPicker" class="flex gap-1 text-lg text-slate-300"></div>
-                    <textarea id="reviewTextInput" rows="2" placeholder="Share your experience (optional)" class="w-full p-2 rounded-xl border border-slate-100 text-xs outline-none focus:border-rose-600 transition"></textarea>
-                    <button onclick="submitReview('${productId}')" class="w-full bg-slate-900 hover:bg-rose-600 text-white text-xs font-extrabold py-2 rounded-xl transition cursor-pointer">Submit Review</button>
-                </div>
-            `;
-
-            const starPicker = document.getElementById('reviewStarPicker');
-            starPicker.innerHTML = [1, 2, 3, 4, 5].map(n => `<i class="fa-regular fa-star cursor-pointer" data-star="${n}" onclick="selectReviewStar(${n})"></i>`).join('');
-        }
-
-        function selectReviewStar(n) {
-            selectedReviewRating = n;
-            document.querySelectorAll('#reviewStarPicker i').forEach(star => {
-                const val = parseInt(star.getAttribute('data-star'));
-                star.className = val <= n ? 'fa-solid fa-star cursor-pointer text-[color:var(--gold)]' : 'fa-regular fa-star cursor-pointer text-slate-300';
-            });
-        }
-
-        async function submitReview(productId) {
-            if (selectedReviewRating === 0) {
-                alert('Please select a star rating.');
-                return;
-            }
-            const reviewText = document.getElementById('reviewTextInput').value.trim();
-            const customerName = currentCustomer.user_metadata?.full_name || currentCustomer.email.split('@')[0];
-
-            const { error } = await _supabase.from('reviews').insert({
-                product_id: productId,
-                customer_id: currentCustomer.id,
-                customer_name: customerName,
-                rating: selectedReviewRating,
-                review_text: reviewText || null
-            });
-
-            if (error) {
-                alert('Could not submit review: ' + error.message);
-                return;
-            }
-
-            document.getElementById('modalReviewFormWrap').innerHTML = `<p class="text-[11px] text-emerald-600 text-center py-1 font-bold">Thanks! Your review is awaiting approval.</p>`;
-        }
-
-        function selectSizeOption(size, btnElem) {
-            selectedSizeForOrder = size;
-            document.querySelectorAll('.size-btn').forEach(b => {
-                b.className = "size-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold border card text-slate-700 border-slate-100 transition cursor-pointer";
-            });
-            btnElem.className = "size-btn px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white border-slate-900 shadow-sm transition cursor-pointer";
-        }
-
-        function closeProductDetail() {
-            document.getElementById('productDetailModal').classList.add('hidden');
-            selectedProductForDetail = null;
-        }
-
-        function addCurrentToCartFromModal() {
-            if (!selectedProductForDetail) return;
-            addToCart(selectedProductForDetail.id, selectedSizeForOrder);
-            closeProductDetail();
-        }
-
-        function addToCart(prodId, chosenSize = 'Free Size') {
-            const products = getProducts();
-            const product = products.find(p => p.id === prodId);
-            if (!product || product.inStock === false) {
-                alert('Sorry, this product is currently out of stock.');
-                return;
-            }
-
-            const existing = cart.find(item => item.id === prodId && item.size === chosenSize);
-            if (existing) {
-                existing.qty += 1;
-            } else {
-                // Store only what's needed to display the cart item —
-                // not the full product (which can carry several large
-                // base64 images and would bloat localStorage per cart line).
-                let imgArr = getImagesArray(product);
-                cart.push({
-                    id: product.id,
-                    title: product.title,
-                    code: product.code,
-                    price: product.price,
-                    img: imgArr[0],
-                    qty: 1,
-                    size: chosenSize
-                });
-            }
-            saveCart();
-            updateCartUI();
-            openCartDrawer();
-        }
-
-        function saveCart() {
-            localStorage.setItem('store_cart', JSON.stringify(cart));
-        }
-
-        function updateCartUI() {
-            const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
-            const countEl = document.getElementById('cartItemCount');
-            countEl.innerText = totalCount;
-            countEl.classList.remove('cart-bump');
-            void countEl.offsetWidth; // restart animation
-            countEl.classList.add('cart-bump');
-
-            const container = document.getElementById('cartDrawerItems');
-            if (cart.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-10">Your bag is empty.</p>`;
-                document.getElementById('cartSubtotal').innerText = '₹0';
-                return;
-            }
-
-            let subtotal = 0;
-            container.innerHTML = cart.map((item, index) => {
-                subtotal += item.price * item.qty;
-                return `
-                    <div class="flex items-center justify-between card p-3 rounded-2xl border border-slate-100 text-xs gap-2.5 shadow-xs">
-                        <img src="${item.img}" class="w-12 h-12 object-cover rounded-xl border border-white shrink-0">
-                        <div class="flex-1 truncate">
-                            <h5 class="font-bold text-slate-900 truncate">${item.title}</h5>
-                            <p class="text-[10px] text-slate-500">₹${item.price} x ${item.qty} | Size: <span class="font-bold text-rose-600">${item.size}</span></p>
-                        </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <button onclick="changeQty(${index}, -1)" class="w-6 h-6 bg-white border rounded-lg font-bold cursor-pointer shadow-xs">-</button>
-                            <span class="font-bold text-xs">${item.qty}</span>
-                            <button onclick="changeQty(${index}, 1)" class="w-6 h-6 bg-white border rounded-lg font-bold cursor-pointer shadow-xs">+</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            document.getElementById('cartSubtotal').innerText = `₹${subtotal}`;
-        }
-
-        function changeQty(index, delta) {
-            cart[index].qty += delta;
-            if (cart[index].qty <= 0) {
-                cart.splice(index, 1);
-            }
-            saveCart();
-            updateCartUI();
-        }
-
-        function openCartDrawer() {
-            document.getElementById('cartDrawer').classList.remove('hidden');
-        }
-
-        function closeCartDrawer() {
-            document.getElementById('cartDrawer').classList.add('hidden');
-        }
-
-        function proceedToCheckout() {
-            if (cart.length === 0) {
-                alert('Your cart is empty!');
-                return;
-            }
-            let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            let sizesSummary = cart.map(i => `${i.size} (x${i.qty})`).join(', ');
-            
-            document.getElementById('custSize').value = sizesSummary;
-            document.getElementById('checkoutTotalAmount').innerText = `₹${totalAmount}`;
-
-            closeCartDrawer();
-            document.getElementById('checkoutModal').classList.remove('hidden');
-        }
-
-        function closeCheckoutModal() {
-            document.getElementById('checkoutModal').classList.add('hidden');
-        }
-
-        function clearFieldError(elId) {
-            const el = document.getElementById(elId);
-            el.classList.add('hidden');
-            el.innerText = '';
-        }
-
-        // Rejects obviously fake numbers: all-same-digit (9999999999),
-        // simple ascending/descending sequences (1234567890), etc.
-        // Combined with the HTML pattern [6-9][0-9]{9}, this catches the
-        // most common junk/spam entries without needing paid SMS OTP.
-        function isPhoneNumberGenuine(phone) {
-            if (!/^[6-9][0-9]{9}$/.test(phone)) return false;
-            if (/^(\d)\1{9}$/.test(phone)) return false; // all same digit
-
-            const ascending = '0123456789';
-            const descending = '9876543210';
-            if (ascending.includes(phone) || descending.includes(phone)) return false;
-
-            return true;
-        }
-
-        let pincodeLookupTimer = null;
-        let pincodeVerified = false;
-
-        // Looks up the pincode against India Post's free public API and
-        // auto-fills City & State with the real district/state on file —
-        // this stops customers typing a random/mismatched city manually.
-        function handlePincodeInput() {
-            const pincode = document.getElementById('custPincode').value.trim();
-            const statusEl = document.getElementById('custPincodeStatus');
-            const cityStateEl = document.getElementById('custCityState');
-            pincodeVerified = false;
-            cityStateEl.value = '';
-
-            clearTimeout(pincodeLookupTimer);
-
-            if (pincode.length !== 6) {
-                statusEl.classList.add('hidden');
-                return;
-            }
-
-            statusEl.classList.remove('hidden');
-            statusEl.className = 'text-slate-500 text-[10px] font-bold mt-1';
-            statusEl.innerText = 'Checking pincode...';
-
-            pincodeLookupTimer = setTimeout(async () => {
-                try {
-                    const res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
-                    const data = await res.json();
-                    const result = data && data[0];
-
-                    if (result && result.Status === 'Success' && result.PostOffice && result.PostOffice.length > 0) {
-                        const po = result.PostOffice[0];
-                        cityStateEl.value = `${po.District}, ${po.State}`;
-                        pincodeVerified = true;
-                        statusEl.className = 'text-emerald-600 text-[10px] font-bold mt-1';
-                        statusEl.innerText = `✓ Verified: ${po.District}, ${po.State}`;
-                    } else {
-                        statusEl.className = 'text-rose-600 text-[10px] font-bold mt-1';
-                        statusEl.innerText = 'Pincode not found. Please check and re-enter.';
-                    }
-                } catch (err) {
-                    // Network hiccup — don't hard-block a genuine customer,
-                    // just let them type the city/state manually.
-                    console.error('Pincode lookup failed:', err);
-                    cityStateEl.removeAttribute('readonly');
-                    cityStateEl.classList.remove('bg-slate-50');
-                    cityStateEl.placeholder = 'Could not auto-verify — enter City, State';
-                    pincodeVerified = true; // don't block checkout on a network issue
-                    statusEl.className = 'text-amber-600 text-[10px] font-bold mt-1';
-                    statusEl.innerText = 'Could not auto-verify pincode — please enter city/state manually.';
-                }
-            }, 500);
-        }
-
-        async function submitCustomerOrder(e) {
-            e.preventDefault();
-
-            // Honeypot check — real customers never fill this hidden field,
-            // only bots that blindly fill every input do.
-            const honeypot = document.getElementById('custWebsite').value.trim();
-            if (honeypot !== '') {
-                // Silently pretend success so the bot doesn't learn anything —
-                // but nothing actually gets saved.
-                document.getElementById('checkoutModal').classList.add('hidden');
-                document.getElementById('successModal').classList.remove('hidden');
-                return;
-            }
-
-            const name = document.getElementById('custName').value.trim();
-            const phone = document.getElementById('custPhone').value.trim();
-            const size = document.getElementById('custSize').value;
-            const address = document.getElementById('custAddress').value.trim();
-            const landmark = document.getElementById('custLandmark').value.trim();
-            const pincode = document.getElementById('custPincode').value.trim();
-            const cityState = document.getElementById('custCityState').value.trim();
-            const paymentMode = document.getElementById('custPaymentMode').value;
-
-            // Genuine phone number check
-            if (!isPhoneNumberGenuine(phone)) {
-                const errEl = document.getElementById('custPhoneError');
-                errEl.innerText = 'Please enter a valid, genuine mobile number.';
-                errEl.classList.remove('hidden');
-                document.getElementById('custPhone').focus();
-                return;
-            }
-
-            // Genuine location check — pincode must have been verified
-            // against India Post, or city/state must be manually filled
-            // after a lookup failure.
-            if (!pincodeVerified || cityState === '') {
-                const statusEl = document.getElementById('custPincodeStatus');
-                statusEl.classList.remove('hidden');
-                statusEl.className = 'text-rose-600 text-[10px] font-bold mt-1';
-                statusEl.innerText = 'Please enter a valid pincode and wait for it to verify.';
-                document.getElementById('custPincode').focus();
-                return;
-            }
-
-            const btn = document.getElementById('placeOrderBtn');
-            btn.innerText = "Placing Order...";
-            btn.disabled = true;
-
-            let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            let itemsSummary = cart.map(i => `${i.title} (${i.code}) x ${i.qty} [Size: ${i.size}]`).join(', ');
-
-            const orderData = {
-                customer_name: name,
-                phone: phone,
-                size: size,
-                address: address,
-                landmark: landmark,
-                pincode: pincode,
-                city_state: cityState,
-                items: itemsSummary,
-                total_amount: totalAmount,
-                payment_mode: paymentMode,
-                status: 'Pending'
-            };
-
-            // Link this order to the logged-in customer's account (if any)
-            // so it shows up in their "My Account → Orders" history. Guest
-            // checkouts (not logged in) still work exactly as before.
-            if (currentCustomer) {
-                orderData.customer_id = currentCustomer.id;
-            }
-
-            const { error } = await _supabase.from('orders').insert([orderData]);
-
-            if (error) {
-                alert('Failed to place order: ' + error.message);
-                btn.innerText = "Place Order Now";
-                btn.disabled = false;
-                return;
-            }
-
-            // Fire-and-forget email notification to the admin — order is
-            // already saved in the database either way, so a failure here
-            // should never block the customer's success screen.
-            if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
-                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-                    customer_name: name,
-                    phone: phone,
-                    address: `${address}${landmark ? ', ' + landmark : ''}, ${cityState} - ${pincode}`,
-                    items: itemsSummary,
-                    total_amount: `₹${totalAmount}`,
-                    payment_mode: paymentMode,
-                    size: size
-                }).catch(err => console.error('Order email notification failed:', err));
-            }
-
-            cart = [];
-            saveCart();
-            document.getElementById('checkoutModal').classList.add('hidden');
-            document.getElementById('successModal').classList.remove('hidden');
-        }
-  </script>
-    <!-- Customer session / account button -->
-    <script>
-        document.addEventListener("DOMContentLoaded", async function() {
-            const { data: { session } } = await _supabase.auth.getSession();
-            currentCustomer = session ? session.user : null;
-
-            const accBtn = document.getElementById('customerAccBtn');
-            if (accBtn) {
-                if (currentCustomer) {
-                    accBtn.href = 'account.html';
-                    accBtn.innerHTML = `<i class="fa-solid fa-user-check text-[color:var(--gold)]"></i> <span>My Account</span>`;
-                } else {
-                    accBtn.href = 'customerlogin.html';
-                    accBtn.innerHTML = `<i class="fa-solid fa-user text-[color:var(--gold)]"></i> <span>Login</span>`;
-                }
-            }
-
-            if (currentCustomer) {
-                await loadCustomerWishlist();
-            }
-
-            // Deep-link support: account.html's wishlist "View" links open the
-            // product straight into its detail modal via ?product=ID
-            const urlParams = new URLSearchParams(window.location.search);
-            const deepLinkProductId = urlParams.get('product');
-            if (deepLinkProductId) {
-                setTimeout(() => openProductDetail(deepLinkProductId), 300);
-            }
-        });
-
-        async function loadCustomerWishlist() {
-            const { data, error } = await _supabase
-                .from('wishlist')
-                .select('product_id')
-                .eq('customer_id', currentCustomer.id);
-            if (!error && data) {
-                currentWishlist = data.map(row => row.product_id);
-            }
-        }
-
-        function isWishlisted(productId) {
-            return currentWishlist.includes(productId);
-        }
-
-        async function toggleWishlist(productId, btnElem) {
-            if (!currentCustomer) {
-                if (confirm('Please login to save items to your wishlist. Go to login page now?')) {
-                    window.location.href = 'customerlogin.html';
-                }
-                return;
-            }
-
-            const alreadyIn = isWishlisted(productId);
-            if (alreadyIn) {
-                const { error } = await _supabase
-                    .from('wishlist')
-                    .delete()
-                    .eq('customer_id', currentCustomer.id)
-                    .eq('product_id', productId);
-                if (!error) {
-                    currentWishlist = currentWishlist.filter(id => id !== productId);
-                }
-            } else {
-                const { error } = await _supabase
-                    .from('wishlist')
-                    .insert({ customer_id: currentCustomer.id, product_id: productId });
-                if (!error) {
-                    currentWishlist.push(productId);
-                }
-            }
-
-            // Refresh any wishlist heart icons currently on screen
-            document.querySelectorAll(`[data-wishlist-id="${productId}"]`).forEach(el => {
-                const nowIn = isWishlisted(productId);
-                el.classList.toggle('text-rose-600', nowIn);
-                el.classList.toggle('text-slate-400', !nowIn);
-                const icon = el.querySelector('i');
-                if (icon) {
-                    icon.classList.toggle('fa-solid', nowIn);
-                    icon.classList.toggle('fa-regular', !nowIn);
-                }
-            });
-        }
-    </script>
+<body>
+<div class="nav"><div class="container navin">
+  <a class="logo" href="#">Amane <em>Store</em></a>
+  <nav class="navlinks"><a href="#new">New In</a><a href="#shop">Shop</a><a href="#categories">Categories</a><a href="#about">About</a></nav>
+  <div class="actions">
+    <button class="iconbtn desktopOnly" onclick="focusSearch()" aria-label="Search">⌕</button>
+    <button class="iconbtn" onclick="toggleWishlist()" aria-label="Wishlist">♡</button>
+    <button class="iconbtn" onclick="openCart()" aria-label="Shopping bag" style="position:relative">♧<span id="cartCount" class="count">0</span></button>
+  </div>
+</div></div>
+
+<main>
+<section class="hero" id="new"><div class="container heroGrid">
+  <div class="heroCopy reveal">
+    <div class="eyebrow">New season · everyday elegance</div>
+    <h1>Wear the mood.<br><em style="color:var(--brand)">Own the moment.</em></h1>
+    <p>Thoughtfully selected women’s fashion with soft silhouettes, modern details and an easy-to-love price point.</p>
+    <div class="cta"><button class="btn primary" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Shop the collection →</button><button class="btn soft" onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})">Explore categories</button></div>
+  </div>
+  <div class="heroVisual glass reveal"><div class="floatTag">AMANE / 2026 COLLECTION</div><div class="fashionShape"></div></div>
+</div></section>
+
+<section class="container trust reveal">
+  <div class="trustItem glass"><b>Cash on Delivery</b>Pay your way</div>
+  <div class="trustItem glass"><b>Easy Returns</b>Simple & transparent</div>
+  <div class="trustItem glass"><b>Secure Checkout</b>Protected payments</div>
+  <div class="trustItem glass"><b>Fresh Drops</b>New styles regularly</div>
+</section>
+
+<section class="section" id="categories"><div class="container">
+  <div class="sectionHead reveal"><div><h2>Shop your way.</h2><p>From everyday kurtis to statement looks.</p></div></div>
+  <div class="categories">
+    <button class="cat reveal" onclick="setCategory('Kurtis')"><div><h3>Kurtis</h3><small>Easy everyday layers</small></div></button>
+    <button class="cat reveal" onclick="setCategory('Co-ords')"><div><h3>Co-ords</h3><small>Effortless matching sets</small></div></button>
+    <button class="cat reveal" onclick="setCategory('Dresses')"><div><h3>Dresses</h3><small>Soft statement pieces</small></div></button>
+    <button class="cat reveal" onclick="setCategory('Sets')"><div><h3>Sets</h3><small>Complete looks</small></div></button>
+  </div>
+</div></section>
+
+<section class="section" id="shop"><div class="container">
+  <div class="sectionHead reveal"><div><h2>Best of Amane.</h2><p id="resultText">Showing the collection</p></div></div>
+  <div class="toolbar reveal"><input id="search" class="search" placeholder="Search styles, categories, product codes…" oninput="render()"><select id="sort" class="select" onchange="render()"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="new">Newest</option></select></div>
+  <div id="chips" class="chips" style="margin-top:12px"></div>
+  <div id="products" class="grid"></div>
+</div></section>
+
+<section class="section"><div class="container"><div class="newsletter reveal"><div><h2>10% off your first Amane order.</h2><p>Join for new drops, private offers and styling notes.</p></div><form onsubmit="subscribe(event)"><input required type="email" placeholder="Your email address"><button class="btn">Join Amane</button></form></div></div></section>
+</main>
+
+<footer class="footer" id="about"><div class="container">
+  <div class="footgrid">
+    <div><div class="logo">Amane <em>Store</em></div><p style="max-width:300px;line-height:1.7;font-size:13px">Modern women’s clothing designed around real wardrobes, real days and little moments worth dressing for.</p></div>
+    <div><h3>Shop</h3><a href="#shop">New In</a><a href="#shop">Kurtis</a><a href="#shop">Dresses</a><a href="#shop">Sets</a></div>
+    <div><h3>Help</h3><a href="#" onclick="showToast('Returns flow can be connected to your policy page.')">Returns</a><a href="#" onclick="showToast('Shipping info can be connected here.')">Shipping</a><a href="#" onclick="showToast('Support: connect WhatsApp/email here.')">Contact</a></div>
+    <div><h3>Account</h3><a href="#" onclick="showToast('Account/auth can be connected to Supabase.')">My account</a><a href="#" onclick="toggleWishlist()">Wishlist</a><a href="#" onclick="openCart()">Bag</a></div>
+  </div>
+  <div class="copyright">© 2026 Amane Store · Built as a mobile-first storefront prototype.</div>
+</div></footer>
+
+<div id="overlay" class="overlay" onclick="closeAll()"></div>
+<aside id="cart" class="drawer" aria-label="Shopping bag"><div class="drawerHead"><h2>Your bag</h2><button class="iconbtn" onclick="closeCart()">×</button></div><div id="cartBody" class="drawerBody"></div><div class="cartFoot"><div class="row"><span>Subtotal</span><b id="subtotal">₹0</b></div><div class="row"><span>Shipping</span><span id="shipping">Calculated at checkout</span></div><div class="row total"><span>Total</span><span id="total">₹0</span></div><button class="btn primary" style="width:100%;margin-top:12px" onclick="openCheckout()">Proceed to checkout →</button></div></aside>
+
+<div id="productModal" class="modal"><div class="modalCard"><div class="modalGrid"><div id="detailVisual" class="detailVisual"><button class="close" onclick="closeProduct()">×</button></div><div class="detailInfo"><div class="eyebrow" id="detailCat"></div><h2 id="detailName" style="font-family:'Playfair Display',serif;font-size:38px;line-height:1;margin:10px 0"></h2><div class="stars">★★★★★ <span style="color:var(--muted);font-size:12px;letter-spacing:0">4.8 · 124 reviews</span></div><div id="detailPrice" class="detailPrice"></div><p id="detailDesc" class="note"></p><b style="font-size:13px">Choose size</b><div id="sizes" class="sizes"></div><div class="cta"><button class="btn primary" style="flex:1" onclick="addDetailToCart()">Add to bag</button><button class="btn soft" onclick="toggleDetailWish()">♡</button></div><p class="note" style="margin-top:18px">Free delivery above ₹999 · COD available · Easy returns subject to policy.</p></div></div></div></div>
+
+<div id="checkout" class="checkout"><div class="checkoutCard"><div class="sectionHead"><div><h2 style="font-family:'Playfair Display',serif;margin:0">Checkout</h2><p>Complete your order securely.</p></div><button class="iconbtn" onclick="closeCheckout()">×</button></div><form onsubmit="placeOrder(event)"><div class="formgrid"><div class="field"><label>Full name</label><input required name="name" placeholder="Your name"></div><div class="field"><label>Phone</label><input required name="phone" inputmode="tel" placeholder="+91 …"></div><div class="field full"><label>Address</label><textarea required name="address" rows="3" placeholder="House / street / area"></textarea></div><div class="field"><label>City</label><input required name="city"></div><div class="field"><label>PIN code</label><input required name="pin" inputmode="numeric"></div></div><p style="font-weight:800;font-size:13px;margin-bottom:6px">Payment method</p><div class="pay"><button type="button" class="selected" onclick="selectPay(this)">Cash on Delivery</button><button type="button" onclick="selectPay(this)">UPI</button><button type="button" onclick="selectPay(this)">Card</button></div><p class="note">UPI/Card are visual checkout options in this prototype. Connect Razorpay/Stripe or your preferred gateway before accepting live payments.</p><button class="btn primary" style="width:100%;margin-top:16px">Place order · <span id="checkoutTotal">₹0</span></button></form></div></div>
+
+<div id="toast" class="toast"></div>
+<script>
+const products=[
+ {id:'AM-101',name:'Blush Bloom Kurti',cat:'Kurtis',price:899,mrp:1299,tag:'Bestseller',desc:'A soft everyday silhouette with an easy drape and polished finish.',sizes:['S','M','L','XL']},
+ {id:'AM-102',name:'Olive Ease Co-ord',cat:'Co-ords',price:1199,mrp:1699,tag:'New',desc:'A relaxed two-piece look built for effortless styling.',sizes:['S','M','L','XL']},
+ {id:'AM-103',name:'Rose Midi Dress',cat:'Dresses',price:1299,mrp:1899,tag:'New',desc:'A feminine midi with a clean neckline and easy movement.',sizes:['S','M','L']},
+ {id:'AM-104',name:'Sage Everyday Set',cat:'Sets',price:999,mrp:1499,tag:'Popular',desc:'A comfortable coordinated set for days that need less thinking.',sizes:['M','L','XL','XXL']},
+ {id:'AM-105',name:'Ivory Petal Kurti',cat:'Kurtis',price:949,mrp:1399,tag:'Soft edit',desc:'Minimal detailing, airy feel and an elegant everyday shape.',sizes:['S','M','L','XL']},
+ {id:'AM-106',name:'Berry Studio Set',cat:'Sets',price:1399,mrp:1999,tag:'Limited',desc:'A statement-ready set with a flattering relaxed fit.',sizes:['S','M','L','XL']},
+ {id:'AM-107',name:'Stone Weekend Dress',cat:'Dresses',price:1099,mrp:1599,tag:'Easy wear',desc:'A clean neutral dress for brunches, errands and slow weekends.',sizes:['S','M','L','XL']},
+ {id:'AM-108',name:'Mauve Match Co-ord',cat:'Co-ords',price:1249,mrp:1799,tag:'Trending',desc:'A polished matching look that works with flats or heels.',sizes:['S','M','L','XL']}
+];
+let cart=JSON.parse(localStorage.getItem('amane-cart')||'[]'), wish=JSON.parse(localStorage.getItem('amane-wish')||'[]'), activeCat='All', detail=null, selectedSize=null;
+const money=n=>'₹'+n.toLocaleString('en-IN');
+function save(){localStorage.setItem('amane-cart',JSON.stringify(cart));localStorage.setItem('amane-wish',JSON.stringify(wish));updateCount()}
+function updateCount(){document.getElementById('cartCount').textContent=cart.reduce((a,x)=>a+x.qty,0)}
+function setCategory(c){activeCat=c;document.getElementById('shop').scrollIntoView({behavior:'smooth'});render()}
+function render(){
+ const q=document.getElementById('search').value.toLowerCase().trim(), sort=document.getElementById('sort').value;
+ const cats=['All','Kurtis','Co-ords','Dresses','Sets'];document.getElementById('chips').innerHTML=cats.map(c=>`<button class="chip ${activeCat===c?'active':''}" onclick="setCategory('${c}')">${c}</button>`).join('');
+ let list=products.filter(p=>(activeCat==='All'||p.cat===activeCat)&&(!q||`${p.name} ${p.cat} ${p.id}`.toLowerCase().includes(q)));
+ if(sort==='low')list.sort((a,b)=>a.price-b.price); if(sort==='high')list.sort((a,b)=>b.price-a.price); if(sort==='new')list.reverse();
+ document.getElementById('resultText').textContent=`${list.length} styles · curated for you`;
+ document.getElementById('products').innerHTML=list.map((p,i)=>`<article class="product reveal show"><div class="pic ${i%4?'alt'+(i%4):''}"><span class="badge">${p.tag}</span><button class="wish ${wish.includes(p.id)?'on':''}" onclick="toggleWish('${p.id}')" aria-label="Wishlist">${wish.includes(p.id)?'♥':'♡'}</button></div><div class="pinfo"><p class="pname">${p.name}</p><div class="meta">${p.cat} · ${p.id}</div><div class="price">${money(p.price)} <span class="mrp">${money(p.mrp)}</span></div><button class="quick" onclick="openProduct('${p.id}')">View details</button></div></article>`).join('')||'<div class="empty" style="grid-column:1/-1">No styles found. Try another search or category.</div>';
+}
+function toggleWish(id){wish=wish.includes(id)?wish.filter(x=>x!==id):[...wish,id];save();render();showToast(wish.includes(id)?'Added to wishlist':'Removed from wishlist')}
+function toggleDetailWish(){if(detail)toggleWish(detail.id)}
+function toggleWishlist(){const ids=wish.map(id=>products.find(p=>p.id===id)).filter(Boolean);if(!ids.length)return showToast('Your wishlist is empty');activeCat='All';document.getElementById('search').value=ids[0].name;render();document.getElementById('shop').scrollIntoView({behavior:'smooth'})}
+function openProduct(id){detail=products.find(p=>p.id===id);selectedSize=detail.sizes[0];document.getElementById('detailCat').textContent=detail.cat+' · '+detail.id;document.getElementById('detailName').textContent=detail.name;document.getElementById('detailPrice').innerHTML=money(detail.price)+' <span class="mrp">'+money(detail.mrp)+'</span>';document.getElementById('detailDesc').textContent=detail.desc;document.getElementById('sizes').innerHTML=detail.sizes.map(s=>`<button class="size ${s===selectedSize?'selected':''}" onclick="chooseSize('${s}')">${s}</button>`).join('');document.getElementById('productModal').classList.add('open');document.getElementById('overlay').classList.add('open');document.body.classList.add('lock')}
+function chooseSize(s){selectedSize=s;document.querySelectorAll('.size').forEach(x=>x.classList.toggle('selected',x.textContent===s))}
+function closeProduct(){document.getElementById('productModal').classList.remove('open');if(!document.getElementById('cart').classList.contains('open')){document.getElementById('overlay').classList.remove('open');document.body.classList.remove('lock')}}
+function addDetailToCart(){if(!detail)return;addToCart(detail.id,selectedSize);closeProduct();openCart()}
+function addToCart(id,size='M'){const p=products.find(x=>x.id===id);const key=id+'-'+size;const found=cart.find(x=>x.key===key);if(found)found.qty++;else cart.push({key,id,size,qty:1});save();showToast('Added to your bag')}
+function openCart(){renderCart();document.getElementById('cart').classList.add('open');document.getElementById('overlay').classList.add('open');document.body.classList.add('lock')}
+function closeCart(){document.getElementById('cart').classList.remove('open');if(!document.getElementById('productModal').classList.contains('open')){document.getElementById('overlay').classList.remove('open');document.body.classList.remove('lock')}}
+function renderCart(){const body=document.getElementById('cartBody');if(!cart.length){body.innerHTML='<div class="empty">Your bag is waiting for its first favorite piece.</div>'}else body.innerHTML=cart.map(x=>{const p=products.find(z=>z.id===x.id);return `<div class="cartrow"><div class="thumb"></div><div><b>${p.name}</b><div class="meta">${p.cat} · Size ${x.size}</div><div class="qty"><button onclick="changeQty('${x.key}',-1)">−</button><span>${x.qty}</span><button onclick="changeQty('${x.key}',1)">+</button></div></div><strong>${money(p.price*x.qty)}</strong></div>`}).join('');const sub=cart.reduce((a,x)=>a+products.find(p=>p.id===x.id).price*x.qty,0);document.getElementById('subtotal').textContent=money(sub);document.getElementById('total').textContent=money(sub);document.getElementById('checkoutTotal').textContent=money(sub)}
+function changeQty(key,d){const x=cart.find(a=>a.key===key);if(!x)return;x.qty+=d;if(x.qty<=0)cart=cart.filter(a=>a.key!==key);save();renderCart()}
+function openCheckout(){if(!cart.length)return showToast('Add something to your bag first');document.getElementById('checkout').classList.add('open');closeCart();document.getElementById('overlay').classList.remove('open')}
+function closeCheckout(){document.getElementById('checkout').classList.remove('open');document.body.classList.remove('lock')}
+function selectPay(btn){document.querySelectorAll('.pay button').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected')}
+function placeOrder(e){e.preventDefault();const data=Object.fromEntries(new FormData(e.target));const order='AMN-'+Date.now().toString().slice(-8);localStorage.setItem('amane-last-order',JSON.stringify({order,data,cart,total:document.getElementById('total').textContent}));cart=[];save();closeCheckout();showToast('Order '+order+' placed successfully');}
+function subscribe(e){e.preventDefault();showToast('Welcome to Amane — your 10% offer is noted.')}
+function focusSearch(){document.getElementById('search').focus();document.getElementById('shop').scrollIntoView({behavior:'smooth'})}
+function closeAll(){closeCart();closeProduct();document.getElementById('overlay').classList.remove('open');document.body.classList.remove('lock')}
+function showToast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>x.classList.remove('show'),2200)}
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add('show')),{threshold:.08});document.querySelectorAll('.reveal').forEach(x=>io.observe(x));updateCount();render();
+</script>
 </body>
 </html>
