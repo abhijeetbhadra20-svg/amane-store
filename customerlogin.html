@@ -90,7 +90,14 @@
             </button>
         </form>
 
+        <div class="my-5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-gray-400"><span class="h-px flex-1 bg-gray-100"></span>or<span class="h-px flex-1 bg-gray-100"></span></div>
+        <button type="button" onclick="signInWithGoogle()" class="w-full py-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 font-semibold text-sm flex items-center justify-center gap-2 transition">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5"><path fill="#4285F4" d="M21.35 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.52h3.14c1.84-1.7 2.91-4.2 2.91-7.29Z"/><path fill="#34A853" d="M12 21.74c2.63 0 4.83-.87 6.44-2.36l-3.14-2.43c-.87.59-1.99.94-3.3.94-2.54 0-4.7-1.72-5.47-4.03H3.29v2.51A9.73 9.73 0 0 0 12 21.74Z"/><path fill="#FBBC05" d="M6.53 13.86a5.85 5.85 0 0 1 0-3.72V7.63H3.29a9.73 9.73 0 0 0 0 8.74l3.24-2.51Z"/><path fill="#EA4335" d="M12 6.11c1.43 0 2.71.49 3.72 1.45l2.78-2.77C16.82 3.22 14.62 2.26 12 2.26a9.73 9.73 0 0 0-8.71 5.37l3.24 2.51C7.3 7.83 9.46 6.11 12 6.11Z"/></svg>
+            Continue with Google
+        </button>
+        <p id="authMessage" class="hidden text-center text-xs mt-3" role="status"></p>
         <div class="text-center mt-6 pt-4 border-t border-gray-100">
+            <button type="button" onclick="sendPasswordReset()" class="text-xs text-gray-500 hover:text-[#6B1B38] font-medium transition-colors mb-3">Forgot password?</button><br>
             <a href="index.html" class="text-xs text-gray-500 hover:text-[#6B1B38] font-medium transition-colors">
                 <i class="fa-solid fa-store mr-1"></i> Back to Storefront
             </a>
@@ -103,6 +110,20 @@
         const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function showAuthMessage(message, isError = false) { const el = document.getElementById('authMessage'); el.textContent = message; el.className = `text-center text-xs mt-3 ${isError ? 'text-rose-600' : 'text-emerald-600'}`; }
+
+        async function signInWithGoogle() {
+            const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, '')}index.html` } });
+            if (error) showAuthMessage(error.message, true);
+        }
+
+        async function sendPasswordReset() {
+            const email = document.getElementById('loginEmail').value.trim();
+            if (!email) { showAuthMessage('Enter your email above first, then choose Forgot password.', true); return; }
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+            showAuthMessage(error ? error.message : 'Password reset email sent. Please check your inbox.', Boolean(error));
+        }
 
         function switchTab(tab) {
             const loginForm = document.getElementById('loginForm');
@@ -137,7 +158,7 @@
             try {
                 const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-                alert('Login Successful!');
+                showAuthMessage('Signed in successfully. Opening your account…');
                 window.location.href = 'index.html';
             } catch (err) {
                 alert('Login Failed: ' + err.message);
@@ -161,8 +182,9 @@
                     email, password, options: { data: { full_name: name } }
                 });
                 if (error) throw error;
-                alert('Account Created Successfully!');
-                window.location.href = 'index.html';
+                showAuthMessage('Account created. Check your email to confirm your address, then sign in.');
+                btn.disabled = false;
+                btn.innerHTML = `<span>Create Account</span> <i class="fa-solid fa-user-plus text-xs"></i>`;
             } catch (err) {
                 alert('Signup Failed: ' + err.message);
                 btn.disabled = false;
