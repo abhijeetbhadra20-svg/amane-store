@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Amane Store — effortless women's fashion, new arrivals and everyday essentials." />
+  <title>Amane Store — Effortless Style, Every Day</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="announcement">
+    <span>🚚 Free Shipping on orders above ₹999</span>
+    <span class="announcement-link">Track Order <span>·</span> Help &amp; Support</span>
+  </div>
+
+  <header class="site-header glass">
+    <div class="header-main">
+      <button class="icon-btn menu-btn" aria-label="Open menu" id="menuBtn">☰</button>
+      <a class="brand" href="#top" aria-label="Amane Store home">
+        <span class="brand-mark">✦</span>
+        <span>amane store</span>
+      </a>
+
+      <nav class="desktop-actions" aria-label="Quick actions">
+        <button class="icon-btn" aria-label="Wishlist">♡<span class="badge" id="wishBadge">0</span></button>
+        <button class="icon-btn" aria-label="Cart">♧<span class="badge" id="cartBadge">0</span></button>
+        <button class="icon-btn" aria-label="Account">♙</button>
+      </nav>
+    </div>
+
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input id="searchInput" type="search" placeholder="Search for dresses, tops, skirts..." aria-label="Search products" />
+      <button class="filter-btn" aria-label="Filters">☷</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero glass-card">
+      <div class="hero-copy">
+        <span class="pill">NEW COLLECTION</span>
+        <h1>Effortless Style,<br><em>Every Day.</em></h1>
+        <p>Timeless pieces. Made for you.</p>
+        <a class="primary-btn" href="#new-arrivals">SHOP NEW ARRIVALS <span>→</span></a>
+      </div>
+      <div class="hero-image media-placeholder" data-image="assets/hero.jpg" aria-label="Hero image placeholder">
+        <div class="image-hint">YOUR HERO IMAGE<br><small>Replace with assets/hero.jpg</small></div>
+      </div>
+      <button class="slider-arrow left" aria-label="Previous slide">‹</button>
+      <button class="slider-arrow right" aria-label="Next slide">›</button>
+      <div class="dots" aria-hidden="true"><span class="active"></span><span></span><span></span><span></span></div>
+    </section>
+
+    <section class="benefits glass-card" aria-label="Store benefits">
+      <div><strong>Free Shipping</strong><span>On orders above ₹999</span></div>
+      <div><strong>Easy Returns</strong><span>Within 7 days</span></div>
+      <div><strong>Secure Payments</strong><span>100% secure checkout</span></div>
+      <div><strong>COD Available</strong><span>Pay on delivery</span></div>
+    </section>
+
+    <section class="section" id="categories">
+      <div class="section-head"><h2>Shop by Category</h2><a href="#categories">View All →</a></div>
+      <div class="category-row">
+        <a class="category glass-card" href="#new-arrivals"><div class="media-placeholder" data-image="assets/category-dresses.jpg"><span>DRESSES</span></div><strong>Dresses</strong></a>
+        <a class="category glass-card" href="#new-arrivals"><div class="media-placeholder" data-image="assets/category-tops.jpg"><span>TOPS</span></div><strong>Tops</strong></a>
+        <a class="category glass-card" href="#new-arrivals"><div class="media-placeholder" data-image="assets/category-bottoms.jpg"><span>BOTTOMS</span></div><strong>Bottoms</strong></a>
+        <a class="category glass-card" href="#new-arrivals"><div class="media-placeholder" data-image="assets/category-coords.jpg"><span>CO-ORDS</span></div><strong>Co-ords</strong></a>
+        <a class="category glass-card" href="#new-arrivals"><div class="media-placeholder" data-image="assets/category-accessories.jpg"><span>ACCESSORIES</span></div><strong>Accessories</strong></a>
+        <a class="category glass-card" href="#new-arrivals"><div class="media-placeholder" data-image="assets/category-sale.jpg"><span>SALE</span></div><strong>Sale</strong></a>
+      </div>
+    </section>
+
+    <section class="section" id="new-arrivals">
+      <div class="section-head"><h2>New Arrivals</h2><a href="#new-arrivals">View All →</a></div>
+      <div class="products" id="productGrid">
+        <article class="product glass-card" data-name="linen blend shirt dress">
+          <button class="wish" data-wish aria-label="Add Linen Blend Shirt Dress to wishlist">♡</button>
+          <div class="product-img media-placeholder" data-image="assets/product-1.jpg"><span>PRODUCT IMAGE</span></div>
+          <div class="product-body"><h3>Linen Blend Shirt Dress</h3><p>₹1,699</p><div class="swatches"><i></i><i></i><i></i></div><button class="add-btn" data-add>Add to Bag</button></div>
+        </article>
+        <article class="product glass-card" data-name="ribbed tank top">
+          <button class="wish" data-wish aria-label="Add Ribbed Tank Top to wishlist">♡</button>
+          <div class="product-img media-placeholder" data-image="assets/product-2.jpg"><span>PRODUCT IMAGE</span></div>
+          <div class="product-body"><h3>Ribbed Tank Top</h3><p>₹799</p><div class="swatches"><i></i><i></i><i></i></div><button class="add-btn" data-add>Add to Bag</button></div>
+        </article>
+        <article class="product glass-card" data-name="relaxed wide leg pants">
+          <button class="wish" data-wish aria-label="Add Relaxed Wide Leg Pants to wishlist">♡</button>
+          <div class="product-img media-placeholder" data-image="assets/product-3.jpg"><span>PRODUCT IMAGE</span></div>
+          <div class="product-body"><h3>Relaxed Wide Leg Pants</h3><p>₹1,299</p><div class="swatches"><i></i><i></i><i></i></div><button class="add-btn" data-add>Add to Bag</button></div>
+        </article>
+        <article class="product glass-card" data-name="linen co-ord set">
+          <button class="wish" data-wish aria-label="Add Linen Co-ord Set to wishlist">♡</button>
+          <div class="product-img media-placeholder" data-image="assets/product-4.jpg"><span>PRODUCT IMAGE</span></div>
+          <div class="product-body"><h3>Linen Co-ord Set</h3><p>₹2,199</p><div class="swatches"><i></i><i></i><i></i></div><button class="add-btn" data-add>Add to Bag</button></div>
+        </article>
+        <article class="product glass-card" data-name="minimal shoulder bag">
+          <button class="wish" data-wish aria-label="Add Minimal Shoulder Bag to wishlist">♡</button>
+          <div class="product-img media-placeholder" data-image="assets/product-5.jpg"><span>PRODUCT IMAGE</span></div>
+          <div class="product-body"><h3>Minimal Shoulder Bag</h3><p>₹1,099</p><div class="swatches"><i></i><i></i><i></i></div><button class="add-btn" data-add>Add to Bag</button></div>
+        </article>
+      </div>
+      <p class="no-results" id="noResults" hidden>No products found. Try another search.</p>
+    </section>
+
+    <section class="newsletter glass-card">
+      <div><span class="eyebrow">AMANE COMMUNITY</span><h2>Get 10% off your first order</h2><p>Be the first to know about new arrivals and exclusive offers.</p></div>
+      <form id="subscribeForm"><input type="email" placeholder="Enter your email" aria-label="Email address" required><button class="primary-btn" type="submit">SUBSCRIBE</button></form>
+    </section>
+
+    <section class="trust glass-card">
+      <div><span>✓</span><strong>Quality Assured</strong><small>Premium materials</small></div>
+      <div><span>↻</span><strong>Easy Exchange</strong><small>Hassle free</small></div>
+      <div><span>□</span><strong>Secure Packaging</strong><small>Safe &amp; chic</small></div>
+      <div><span>♧</span><strong>24/7 Support</strong><small>We're here to help</small></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav glass" aria-label="Mobile navigation">
+    <a class="active" href="#top"><span>⌂</span>Home</a>
+    <a href="#categories"><span>▦</span>Categories</a>
+    <a href="#new-arrivals"><span>✧</span>New In</a>
+    <a href="#new-arrivals"><span>♡</span>Wishlist</a>
+    <a href="#top"><span>♙</span>Account</a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
