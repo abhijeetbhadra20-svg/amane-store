@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Femme &amp; Co.</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="admin" data-no-nav data-no-footer>
+
+<div id="content"></div>
+
+<script src="js/store.js"></script>
+<script>
+  const content = document.getElementById("content");
+
+  function renderLogin(){
+    content.innerHTML = `
+    <section class="max-w-sm mx-auto px-5 py-24">
+      <a href="index.html" class="display text-xl block text-center mb-10">Femme &amp; Co. — Admin</a>
+      <div class="card p-6">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="admin@femme.demo">
+        <label class="mt-3">Password</label>
+        <input type="password" id="password" placeholder="admin123">
+        <button class="btn btn-primary btn-block mt-5" onclick="login()">Log in</button>
+        <p class="text-xs mt-3" style="color:var(--plum-soft)">Demo credentials: admin@femme.demo / admin123</p>
+      </div>
+    </section>`;
+  }
+
+  function login(){
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    if(Store.adminLogin(email, password)){ renderDashboard(); }
+    else Store.toast("Invalid credentials");
+  }
+
+  function renderDashboard(tab){
+    tab = tab || "orders";
+    content.innerHTML = `
+    <div class="border-b" style="border-color:var(--line)">
+      <div class="max-w-6xl mx-auto px-5 py-4 flex justify-between items-center">
+        <span class="display text-lg">Femme &amp; Co. — Admin</span>
+        <button class="btn btn-outline" style="padding:0.4rem 0.9rem" onclick="Store.adminLogout(); renderLogin();">Log out</button>
+      </div>
+      <div class="max-w-6xl mx-auto px-5 flex gap-6 text-sm font-bold">
+        ${["orders","products","reviews"].map(t=>`
+          <button onclick="renderDashboard('${t}')" class="pb-3 ${tab===t?'border-b-2':''}" style="border-color:var(--rose-deep)">${t[0].toUpperCase()+t.slice(1)}</button>
+        `).join("")}
+      </div>
+    </div>
+    <div class="max-w-6xl mx-auto px-5 py-8" id="tab-body"></div>`;
+
+    if(tab==="orders") renderOrders();
+    if(tab==="products") renderProducts();
+    if(tab==="reviews") renderReviews();
+  }
+
+  function renderOrders(){
+    const orders = Store.getOrders().slice().reverse();
+    const body = document.getElementById("tab-body");
+    if(!orders.length){ body.innerHTML = `<p class="text-sm" style="color:var(--plum-soft)">No orders yet.</p>`; return; }
+    body.innerHTML = `
+    <div class="flex flex-col gap-4">
+      ${orders.map(o=>`
+        <div class="card p-4">
+          <div class="flex flex-wrap justify-between gap-2 items-start">
+            <div>
+              <div class="mono text-sm font-bold">${o.id}</div>
+              <div class="text-xs mt-1" style="color:var(--plum-soft)">${o.name} · ${o.phone} · ${o.city}, ${o.state}</div>
+              <div class="text-xs mt-1" style="color:var(--plum-soft)">${o.items.map(i=>i.name+' ('+i.size+') ×'+i.qty).join(", ")}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm font-bold">₹${o.total}</div>
+              <span class="status-pill status-${o.status.toLowerCase().replace(/\s/g,'')}">${o.status}</span>
+            </div>
+          </div>
+          <div class="flex gap-2 mt-3 items-center flex-wrap">
+            <select onchange="setStatus('${o.id}', this.value)" class="w-auto text-xs">
+              ${Store.ORDER_STAGES.map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join("")}
+              <option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
+            </select>
+            <input type="text" placeholder="Tracking no." value="${o.trackingNo||''}" class="w-40 text-xs" id="track-${o.id}">
+            <button class="btn btn-outline" style="padding:0.3rem 0.8rem" onclick="saveTracking('${o.id}')">Save tracking</button>
+          </div>
+        </div>`).join("")}
+    </div>`;
+  }
+  function setStatus(id, status){ Store.updateOrderStatus(id, status); Store.toast("Status updated"); renderOrders(); }
+  function saveTracking(id){ const val = document.getElementById("track-"+id).value.trim(); Store.updateOrderStatus(id, Store.getOrders().find(o=>o.id===id).status, val); Store.toast("Tracking saved"); }
+
+  function renderProducts(){
+    const body = document.getElementById("tab-body");
+    body.innerHTML = `
+    <p class="text-sm mb-4" style="color:var(--plum-soft)">This demo's catalog lives in <span class="mono">js/store.js</span>. In production, swap this list for Supabase queries and this form for real inserts (see README.md).</p>
+    <div class="grid md:grid-cols-2 gap-4">
+      ${PRODUCTS.map(p=>`
+        <div class="card p-4 flex gap-3">
+          <img src="${p.img}" class="w-16 h-20 object-cover">
+          <div class="flex-1">
+            <div class="text-sm font-bold">${p.name}</div>
+            <div class="text-xs" style="color:var(--plum-soft)">${p.category} · ₹${p.price}</div>
+            <div class="text-xs mt-1">SKU: <span class="mono">${p.id}</span></div>
+          </div>
+        </div>`).join("")}
+    </div>`;
+  }
+
+  function renderReviews(){
+    const pending = Store.pendingReviews();
+    const body = document.getElementById("tab-body");
+    if(!pending.length){ body.innerHTML = `<p class="text-sm" style="color:var(--plum-soft)">No reviews awaiting approval.</p>`; return; }
+    body.innerHTML = `
+    <div class="flex flex-col gap-3">
+      ${pending.map(r=>`
+        <div class="card p-4 flex justify-between items-start gap-3">
+          <div>
+            <div class="text-sm font-bold">${r.name} — ${Store.getProduct(r.pid)?.name || r.pid}</div>
+            <div class="text-xs mt-1">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+            <p class="text-sm mt-2" style="color:var(--plum-soft)">${r.text}</p>
+          </div>
+          <button class="btn btn-primary" style="padding:0.4rem 0.9rem" onclick="approve('${r.pid}', ${r.idx})">Approve</button>
+        </div>`).join("")}
+    </div>`;
+  }
+  function approve(pid, idx){ Store.approveReview(pid, idx); Store.toast("Review approved"); renderReviews(); }
+
+  Store.isAdmin() ? renderDashboard() : renderLogin();
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Femme &amp; Co.</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="login" data-no-nav data-no-footer>
+
+<section class="max-w-sm mx-auto px-5 py-20">
+  <a href="index.html" class="display text-xl block text-center mb-10">Femme &amp; Co.</a>
+  <div class="card p-6">
+    <div id="step-phone">
+      <div class="eyebrow mb-2">Login</div>
+      <h1 class="display text-xl mb-4">Enter your phone number</h1>
+      <label>Mobile number</label>
+      <div class="flex gap-2">
+        <span class="flex items-center px-3 border text-sm" style="border-color:var(--line)">+91</span>
+        <input type="tel" id="phone" maxlength="10" placeholder="10-digit number">
+      </div>
+      <button class="btn btn-primary btn-block mt-5" onclick="sendOtp()">Send OTP</button>
+    </div>
+
+    <div id="step-otp" class="hidden">
+      <div class="eyebrow mb-2">Verify</div>
+      <h1 class="display text-xl mb-1">Enter OTP</h1>
+      <p class="text-xs mb-4" style="color:var(--plum-soft)">Sent to +91 <span id="phone-display"></span>. Demo code: <b>123456</b></p>
+      <input type="text" id="otp" maxlength="6" placeholder="6-digit code">
+      <button class="btn btn-primary btn-block mt-5" onclick="verifyOtp()">Verify &amp; continue</button>
+      <button class="btn btn-outline btn-block mt-2" onclick="back()">Change number</button>
+    </div>
+  </div>
+  <p class="text-xs text-center mt-4" style="color:var(--plum-soft)">This demo uses a fixed OTP so you can test without an SMS account. Swap in MSG91 for production — see README.md.</p>
+</section>
+
+<script src="js/store.js"></script>
+<script>
+  let phone = "";
+  function sendOtp(){
+    const val = document.getElementById("phone").value.trim();
+    if(val.length !== 10){ Store.toast("Enter a valid 10-digit number"); return; }
+    phone = "+91" + val;
+    Store.sendOtp(phone);
+    document.getElementById("phone-display").textContent = val;
+    document.getElementById("step-phone").classList.add("hidden");
+    document.getElementById("step-otp").classList.remove("hidden");
+  }
+  function verifyOtp(){
+    const otp = document.getElementById("otp").value.trim();
+    if(Store.verifyOtp(phone, otp)){
+      Store.toast("Welcome!");
+      const redirect = new URLSearchParams(location.search).get("redirect") || "account.html";
+      setTimeout(()=>location.href = redirect, 400);
+    } else {
+      Store.toast("Incorrect OTP, try 123456");
+    }
+  }
+  function back(){
+    document.getElementById("step-otp").classList.add("hidden");
+    document.getElementById("step-phone").classList.remove("hidden");
+  }
+</script>
+</body>
+</html>

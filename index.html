@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Femme &amp; Co. — Everyday Fashion, Delivered</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+
+<section class="max-w-6xl mx-auto px-5 pt-10 md:pt-16 pb-14 grid md:grid-cols-5 gap-10 items-center">
+  <div class="md:col-span-3">
+    <div class="tag mb-5">new season / 01</div>
+    <h1 class="display text-4xl md:text-6xl leading-[1.05]">Clothes that<br>arrive as good<br>as they looked.</h1>
+    <p class="mt-5 text-base md:text-lg max-w-md" style="color:var(--plum-soft)">Kurtis, sarees and everyday sets, packed with care and tracked door to door — from our fitting room to yours.</p>
+    <div class="flex gap-3 mt-8">
+      <a href="shop.html" class="btn btn-primary">Shop the edit</a>
+      <a href="#categories" class="btn btn-outline">Browse categories</a>
+    </div>
+  </div>
+  <div class="md:col-span-2 relative">
+    <img src="https://picsum.photos/seed/hero-femme/700/850" alt="Model wearing a rosewood anarkali kurti" class="w-full aspect-[4/5] object-cover">
+    <div class="absolute -bottom-4 -left-4 bg-white border card px-4 py-3 hidden sm:block">
+      <div class="eyebrow">Bestseller</div>
+      <div class="text-sm font-bold">Rosewood Anarkali — ₹1,499</div>
+    </div>
+  </div>
+</section>
+
+<hr class="stitch max-w-6xl mx-auto">
+
+<section id="categories" class="max-w-6xl mx-auto px-5 py-14">
+  <div class="flex items-end justify-between mb-6">
+    <div>
+      <div class="eyebrow mb-2">Shop by category</div>
+      <h2 class="display text-2xl md:text-3xl">Find your fit</h2>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="category-tiles"></div>
+</section>
+
+<section class="max-w-6xl mx-auto px-5 py-14">
+  <div class="flex items-end justify-between mb-6">
+    <div>
+      <div class="eyebrow mb-2">Fresh in</div>
+      <h2 class="display text-2xl md:text-3xl">Featured pieces</h2>
+    </div>
+    <a href="shop.html" class="nav-link">View all &rarr;</a>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-5" id="featured-grid"></div>
+</section>
+
+<hr class="stitch max-w-6xl mx-auto">
+
+<section class="max-w-6xl mx-auto px-5 py-14 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+  <div><i class="fa-solid fa-truck-fast text-xl" style="color:var(--rose-deep)"></i><div class="text-sm font-bold mt-2">Doorstep delivery</div><div class="text-xs mt-1" style="color:var(--plum-soft)">Tracked, 3–6 days</div></div>
+  <div><i class="fa-solid fa-rotate-left text-xl" style="color:var(--rose-deep)"></i><div class="text-sm font-bold mt-2">Easy returns</div><div class="text-xs mt-1" style="color:var(--plum-soft)">7-day exchange</div></div>
+  <div><i class="fa-solid fa-lock text-xl" style="color:var(--rose-deep)"></i><div class="text-sm font-bold mt-2">Secure checkout</div><div class="text-xs mt-1" style="color:var(--plum-soft)">UPI, cards, COD</div></div>
+  <div><i class="fa-solid fa-hand-holding-heart text-xl" style="color:var(--rose-deep)"></i><div class="text-sm font-bold mt-2">Made with care</div><div class="text-xs mt-1" style="color:var(--plum-soft)">Small-batch stitched</div></div>
+</section>
+
+<script src="js/store.js"></script>
+<script src="js/layout.js"></script>
+<script>
+  const catIcons = {"Kurtis":"fa-shirt","Dresses":"fa-person-dress","Sarees":"fa-ribbon","Co-ord Sets":"fa-vest","Tops":"fa-shirt"};
+  document.getElementById("category-tiles").innerHTML = CATEGORIES.map(c => `
+    <a href="shop.html?category=${encodeURIComponent(c)}" class="card p-5 flex flex-col items-center gap-3 hover:shadow-sm transition">
+      <i class="fa-solid ${catIcons[c]||'fa-shirt'} text-2xl" style="color:var(--rose-deep)"></i>
+      <span class="text-sm font-bold text-center">${c}</span>
+    </a>`).join("");
+
+  function productCard(p){
+    const inWish = Store.getWishlist().includes(p.id);
+    return `
+    <div class="product-card card">
+      <a href="product.html?id=${p.id}">
+        <img src="${p.img}" alt="${p.name}">
+      </a>
+      <div class="wish-btn ${inWish?'active':''}" onclick="toggleWish('${p.id}', this)">
+        <i class="fa-${inWish?'solid':'regular'} fa-heart"></i>
+      </div>
+      <div class="p-3">
+        <div class="eyebrow">${p.category}</div>
+        <a href="product.html?id=${p.id}" class="text-sm font-bold block mt-1">${p.name}</a>
+        <div class="price text-sm mt-1">₹${p.price} <span class="line-through text-xs" style="color:var(--plum-soft)">₹${p.mrp}</span></div>
+      </div>
+    </div>`;
+  }
+  function toggleWish(id, el){
+    const active = Store.toggleWishlist(id);
+    el.classList.toggle('active', active);
+    el.querySelector('i').className = `fa-${active?'solid':'regular'} fa-heart`;
+    Store.toast(active ? "Added to wishlist" : "Removed from wishlist");
+  }
+  document.getElementById("featured-grid").innerHTML = PRODUCTS.slice(0,4).map(productCard).join("");
+</script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product — Femme &amp; Co.</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="product">
+
+<div id="content" class="max-w-6xl mx-auto px-5 py-10"></div>
+
+<script src="js/store.js"></script>
+<script src="js/layout.js"></script>
+<script>
+  const id = new URLSearchParams(location.search).get("id");
+  const p = Store.getProduct(id);
+  const content = document.getElementById("content");
+
+  if(!p){
+    content.innerHTML = `<div class="text-center py-20">Product not found. <a href="shop.html" class="underline">Back to shop</a></div>`;
+  } else {
+    const inWish = Store.getWishlist().includes(p.id);
+    const related = PRODUCTS.filter(x=>x.category===p.category && x.id!==p.id).slice(0,4);
+    content.innerHTML = `
+      <div class="text-xs mb-6" style="color:var(--plum-soft)">
+        <a href="shop.html">Shop</a> / <a href="shop.html?category=${encodeURIComponent(p.category)}">${p.category}</a> / ${p.name}
+      </div>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <img src="${p.img}" alt="${p.name}" class="w-full aspect-[3/4] object-cover card">
+        </div>
+        <div>
+          <div class="eyebrow mb-2">${p.category} · ${p.color}</div>
+          <h1 class="display text-2xl md:text-3xl">${p.name}</h1>
+          <div class="text-xs mt-2"><i class="fa-solid fa-star" style="color:var(--brass)"></i> ${p.rating} (${p.reviews} reviews)</div>
+          <div class="price text-xl mt-4">₹${p.price} <span class="line-through text-sm" style="color:var(--plum-soft)">₹${p.mrp}</span></div>
+          <p class="text-sm mt-4 max-w-md" style="color:var(--plum-soft)">${p.desc}</p>
+
+          <div class="mt-6">
+            <label>Select size</label>
+            <div class="flex gap-2 mt-2" id="size-picker">
+              ${SIZES.map(s=>`<button type="button" class="btn btn-outline size-opt" data-size="${s}" style="padding:0.5rem 0.9rem">${s}</button>`).join("")}
+            </div>
+            <a href="#" class="text-xs underline mt-2 inline-block" style="color:var(--plum-soft)">Size guide</a>
+          </div>
+
+          <div class="flex gap-3 mt-6">
+            <button class="btn btn-primary" onclick="addToCart()"><i class="fa-solid fa-bag-shopping"></i> Add to cart</button>
+            <button class="btn btn-outline ${inWish?'active':''}" id="wish-btn" onclick="toggleWish()">
+              <i class="fa-${inWish?'solid':'regular'} fa-heart"></i> Wishlist
+            </button>
+          </div>
+
+          <hr class="stitch my-6">
+          <div class="flex gap-6 text-xs" style="color:var(--plum-soft)">
+            <div><i class="fa-solid fa-truck-fast"></i> Delivered in 3–6 days</div>
+            <div><i class="fa-solid fa-rotate-left"></i> 7-day easy return</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="stitch my-14">
+
+      <div class="max-w-2xl">
+        <h2 class="display text-xl mb-5">Reviews</h2>
+        <div id="review-list" class="flex flex-col gap-4 mb-8"></div>
+        <div class="card p-5">
+          <div class="eyebrow mb-3">Write a review</div>
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <input type="text" id="rv-name" placeholder="Your name">
+            <select id="rv-rating">
+              <option value="5">5 stars</option><option value="4">4 stars</option>
+              <option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option>
+            </select>
+          </div>
+          <textarea id="rv-text" rows="3" placeholder="Share your experience..."></textarea>
+          <button class="btn btn-primary mt-3" onclick="submitReview()">Submit for review</button>
+          <p class="text-xs mt-2" style="color:var(--plum-soft)">Reviews are checked by our team before they go live.</p>
+        </div>
+      </div>
+
+      ${related.length ? `
+      <hr class="stitch my-14">
+      <h2 class="display text-xl mb-5">You may also like</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+        ${related.map(r=>`
+        <div class="product-card card">
+          <a href="product.html?id=${r.id}"><img src="${r.img}" alt="${r.name}"></a>
+          <div class="p-3">
+            <div class="eyebrow">${r.category}</div>
+            <a href="product.html?id=${r.id}" class="text-sm font-bold block mt-1">${r.name}</a>
+            <div class="price text-sm mt-1">₹${r.price}</div>
+          </div>
+        </div>`).join("")}
+      </div>` : ""}
+    `;
+
+    let selectedSize = null;
+    document.querySelectorAll(".size-opt").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll(".size-opt").forEach(b=>b.classList.remove("btn-primary"));
+        btn.classList.add("btn-primary");
+        selectedSize = btn.dataset.size;
+      });
+    });
+
+    window.addToCart = function(){
+      if(!selectedSize){ Store.toast("Please select a size"); return; }
+      Store.addToCart(p.id, selectedSize, 1);
+      Store.toast("Added to cart");
+    };
+    window.toggleWish = function(){
+      const active = Store.toggleWishlist(p.id);
+      const btn = document.getElementById("wish-btn");
+      btn.querySelector("i").className = `fa-${active?'solid':'regular'} fa-heart`;
+      Store.toast(active ? "Added to wishlist" : "Removed from wishlist");
+    };
+    window.submitReview = function(){
+      const name = document.getElementById("rv-name").value.trim();
+      const text = document.getElementById("rv-text").value.trim();
+      const rating = +document.getElementById("rv-rating").value;
+      if(!name || !text){ Store.toast("Please fill in your name and review"); return; }
+      Store.addReview(p.id, {name, text, rating});
+      document.getElementById("rv-name").value = "";
+      document.getElementById("rv-text").value = "";
+      Store.toast("Thanks! Your review is pending approval.");
+    };
+
+    function renderReviews(){
+      const reviews = Store.getReviews(p.id);
+      document.getElementById("review-list").innerHTML = reviews.length ? reviews.map(r=>`
+        <div class="card p-4">
+          <div class="flex justify-between">
+            <span class="text-sm font-bold">${r.name}</span>
+            <span class="text-xs">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+          </div>
+          <p class="text-sm mt-2" style="color:var(--plum-soft)">${r.text}</p>
+        </div>`).join("") : `<p class="text-sm" style="color:var(--plum-soft)">No reviews yet — be the first.</p>`;
+    }
+    renderReviews();
+  }
+</script>
+</body>
+</html>
