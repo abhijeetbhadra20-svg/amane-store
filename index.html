@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amane Store — Effortless Style, Every Day</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7F1E8;
+    --cream-dark:#EDE3D3;
+    --ink:#1F1B16;
+    --ink-soft:#4A423A;
+    --line:#E4D9C7;
+    --accent:#8A7350;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:'DM Sans', sans-serif;
+    color:var(--ink);
+    background:#fff;
+    -webkit-font-smoothing:antialiased;
+  }
+  .font-serif{font-family:'Playfair Display', serif;}
+  .no-scrollbar::-webkit-scrollbar{display:none;}
+  .no-scrollbar{-ms-overflow-style:none; scrollbar-width:none;}
+  .heart-btn{transition:transform .15s ease, color .15s ease;}
+  .heart-btn:active{transform:scale(0.85);}
+  .swatch{width:14px;height:14px;border-radius:9999px;border:1px solid rgba(0,0,0,.15);}
+  .hero-slide{scroll-snap-align:start;}
+  .hero-track{scroll-snap-type:x mandatory;}
+  .cat-card, .product-card{transition:transform .2s ease;}
+  .cat-card:active, .product-card:active{transform:scale(0.97);}
+  .nav-item.active{color:var(--ink);}
+  .nav-item{color:#9C9284;}
+</style>
+</head>
+<body class="pb-20">
+
+<!-- Top promo strip -->
+<div class="bg-[var(--cream-dark)] text-[var(--ink-soft)] text-xs sm:text-sm px-4 py-2 flex items-center justify-between">
+  <div class="flex items-center gap-2">
+    <i class="fa-solid fa-truck-fast"></i>
+    <span>Free Shipping on orders above ₹999</span>
+  </div>
+  <a href="#" class="underline underline-offset-2 whitespace-nowrap">Track Order</a>
+</div>
+
+<!-- Header -->
+<header class="sticky top-0 z-40 bg-white border-b border-[var(--line)]">
+  <div class="flex items-center justify-between px-4 py-4">
+    <button aria-label="Menu" class="text-xl w-8">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <a href="#" class="flex items-center gap-2">
+      <i class="fa-solid fa-clover text-2xl"></i>
+      <span class="font-serif text-2xl tracking-wide">amane store</span>
+    </a>
+    <div class="flex items-center gap-4 text-lg">
+      <button aria-label="Wishlist" class="relative">
+        <i class="fa-regular fa-heart"></i>
+        <span class="absolute -top-2 -right-2 bg-[var(--ink)] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+      </button>
+      <button aria-label="Bag" class="relative">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span class="absolute -top-2 -right-2 bg-[var(--ink)] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+      </button>
+      <button aria-label="Account">
+        <i class="fa-regular fa-circle-user"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="px-4 pb-4">
+    <label class="flex items-center gap-3 border border-[var(--line)] rounded-full px-4 py-3 text-[var(--ink-soft)]">
+      <i class="fa-solid fa-magnifying-glass text-sm"></i>
+      <input type="text" placeholder="Search for dresses, tops, skirts..." class="bg-transparent outline-none text-sm w-full placeholder:text-[var(--ink-soft)]/70">
+    </label>
+  </div>
+</header>
+
+<main>
+
+  <!-- Hero carousel -->
+  <section class="relative">
+    <div id="heroTrack" class="hero-track flex overflow-x-auto no-scrollbar">
+      <div class="hero-slide relative w-full flex-shrink-0 bg-[var(--cream-dark)] overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1200&auto=format&fit=crop"
+             alt="Model wearing linen shirt set" class="absolute inset-0 w-full h-full object-cover opacity-90">
+        <div class="absolute inset-0 bg-gradient-to-r from-[var(--cream)]/95 via-[var(--cream)]/40 to-transparent"></div>
+        <div class="relative px-6 py-16 sm:py-24 max-w-xs">
+          <h1 class="font-serif text-4xl sm:text-5xl leading-[1.1]">Effortless Style,<br><em class="italic">Every Day.</em></h1>
+          <p class="mt-4 text-[var(--ink-soft)] text-sm">Timeless pieces. Made for you.</p>
+          <button class="mt-6 bg-[var(--ink)] text-white text-xs tracking-widest uppercase px-6 py-3.5 rounded">Shop New Arrivals</button>
+        </div>
+      </div>
+
+      <div class="hero-slide relative w-full flex-shrink-0 bg-[var(--cream-dark)] overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?q=80&w=1200&auto=format&fit=crop"
+             alt="Co-ord set" class="absolute inset-0 w-full h-full object-cover opacity-90">
+        <div class="absolute inset-0 bg-gradient-to-r from-[var(--cream)]/95 via-[var(--cream)]/40 to-transparent"></div>
+        <div class="relative px-6 py-16 sm:py-24 max-w-xs">
+          <h1 class="font-serif text-4xl sm:text-5xl leading-[1.1]">New Season,<br><em class="italic">New Co-ords.</em></h1>
+          <p class="mt-4 text-[var(--ink-soft)] text-sm">Fresh linen, softer tones.</p>
+          <button class="mt-6 bg-[var(--ink)] text-white text-xs tracking-widest uppercase px-6 py-3.5 rounded">Explore Co-ords</button>
+        </div>
+      </div>
+
+      <div class="hero-slide relative w-full flex-shrink-0 bg-[var(--cream-dark)] overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1200&auto=format&fit=crop"
+             alt="Accessories" class="absolute inset-0 w-full h-full object-cover opacity-90">
+        <div class="absolute inset-0 bg-gradient-to-r from-[var(--cream)]/95 via-[var(--cream)]/40 to-transparent"></div>
+        <div class="relative px-6 py-16 sm:py-24 max-w-xs">
+          <h1 class="font-serif text-4xl sm:text-5xl leading-[1.1]">Finish The<br><em class="italic">Look.</em></h1>
+          <p class="mt-4 text-[var(--ink-soft)] text-sm">Accessories, made to layer.</p>
+          <button class="mt-6 bg-[var(--ink)] text-white text-xs tracking-widest uppercase px-6 py-3.5 rounded">Shop Accessories</button>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="scrollHero(-1)" aria-label="Previous slide" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center">
+      <i class="fa-solid fa-chevron-left text-xs"></i>
+    </button>
+    <button onclick="scrollHero(1)" aria-label="Next slide" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center">
+      <i class="fa-solid fa-chevron-right text-xs"></i>
+    </button>
+
+    <div id="heroDots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+      <span class="dot w-5 h-1.5 rounded-full bg-[var(--ink)]"></span>
+      <span class="dot w-1.5 h-1.5 rounded-full bg-white/80"></span>
+      <span class="dot w-1.5 h-1.5 rounded-full bg-white/80"></span>
+    </div>
+  </section>
+
+  <!-- Trust badges -->
+  <section class="grid grid-cols-2 sm:grid-cols-4 gap-y-6 gap-x-2 px-4 py-8 border-b border-[var(--line)] text-center sm:text-left">
+    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
+      <i class="fa-solid fa-truck-fast text-xl"></i>
+      <div>
+        <p class="text-sm font-semibold">Free Shipping</p>
+        <p class="text-xs text-[var(--ink-soft)]">On orders above ₹999</p>
+      </div>
+    </div>
+    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
+      <i class="fa-solid fa-rotate-left text-xl"></i>
+      <div>
+        <p class="text-sm font-semibold">Easy Returns</p>
+        <p class="text-xs text-[var(--ink-soft)]">Within 7 days</p>
+      </div>
+    </div>
+    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
+      <i class="fa-solid fa-wallet text-xl"></i>
+      <div>
+        <p class="text-sm font-semibold">Secure Payments</p>
+        <p class="text-xs text-[var(--ink-soft)]">100% secure checkout</p>
+      </div>
+    </div>
+    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
+      <i class="fa-solid fa-briefcase text-xl"></i>
+      <div>
+        <p class="text-sm font-semibold">COD Available</p>
+        <p class="text-xs text-[var(--ink-soft)]">Pay on delivery</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shop by category -->
+  <section class="px-4 py-8">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-serif text-2xl">Shop by Category</h2>
+      <a href="#" class="text-sm underline underline-offset-2">View All</a>
+    </div>
+    <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+      <a href="#" class="cat-card block">
+        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
+          <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Dresses">
+        </div>
+        <p class="text-xs sm:text-sm mt-2 text-center">Dresses</p>
+      </a>
+      <a href="#" class="cat-card block">
+        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
+          <img src="https://images.unsplash.com/photo-1591369822096-ffd140ec948f?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Tops">
+        </div>
+        <p class="text-xs sm:text-sm mt-2 text-center">Tops</p>
+      </a>
+      <a href="#" class="cat-card block">
+        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
+          <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Bottoms">
+        </div>
+        <p class="text-xs sm:text-sm mt-2 text-center">Bottoms</p>
+      </a>
+      <a href="#" class="cat-card block">
+        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
+          <img src="https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Co-ords">
+        </div>
+        <p class="text-xs sm:text-sm mt-2 text-center">Co-ords</p>
+      </a>
+      <a href="#" class="cat-card block">
+        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)] flex items-center justify-center">
+          <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Accessories">
+        </div>
+        <p class="text-xs sm:text-sm mt-2 text-center">Accessories</p>
+      </a>
+      <a href="#" class="cat-card block">
+        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)] flex items-center justify-center relative">
+          <img src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Sale">
+        </div>
+        <p class="text-xs sm:text-sm mt-2 text-center">Sale</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- New Arrivals -->
+  <section class="px-4 py-8">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-serif text-2xl">New Arrivals</h2>
+      <a href="#" class="text-sm underline underline-offset-2">View All</a>
+    </div>
+    <div class="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 sm:grid sm:grid-cols-5 sm:gap-4 sm:mx-0 sm:px-0">
+
+      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
+        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
+          <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Linen Blend Shirt Dress">
+          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+        </div>
+        <p class="text-sm mt-2 leading-snug">Linen Blend Shirt Dress</p>
+        <p class="text-sm font-semibold mt-0.5">₹1,699</p>
+        <div class="flex gap-1.5 mt-1.5">
+          <span class="swatch" style="background:#D8C6A8"></span>
+          <span class="swatch" style="background:#C9BEB2"></span>
+          <span class="swatch" style="background:#1F1B16"></span>
+        </div>
+      </div>
+
+      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
+        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
+          <img src="https://images.unsplash.com/photo-1554568218-0f1715e72254?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Ribbed Tank Top">
+          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+        </div>
+        <p class="text-sm mt-2 leading-snug">Ribbed Tank Top</p>
+        <p class="text-sm font-semibold mt-0.5">₹799</p>
+        <div class="flex gap-1.5 mt-1.5">
+          <span class="swatch" style="background:#F1E7D8"></span>
+          <span class="swatch" style="background:#9C9284"></span>
+          <span class="swatch" style="background:#5A3E2B"></span>
+        </div>
+      </div>
+
+      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
+        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
+          <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Relaxed Wide Leg Pants">
+          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+        </div>
+        <p class="text-sm mt-2 leading-snug">Relaxed Wide Leg Pants</p>
+        <p class="text-sm font-semibold mt-0.5">₹1,299</p>
+        <div class="flex gap-1.5 mt-1.5">
+          <span class="swatch" style="background:#E4D9C7"></span>
+          <span class="swatch" style="background:#9C9284"></span>
+          <span class="swatch" style="background:#5A3E2B"></span>
+        </div>
+      </div>
+
+      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
+        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
+          <img src="https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Linen Co-ord Set">
+          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+        </div>
+        <p class="text-sm mt-2 leading-snug">Linen Co-ord Set</p>
+        <p class="text-sm font-semibold mt-0.5">₹2,199</p>
+        <div class="flex gap-1.5 mt-1.5">
+          <span class="swatch" style="background:#D8C6A8"></span>
+          <span class="swatch" style="background:#8A7350"></span>
+          <span class="swatch" style="background:#DCD3C4"></span>
+        </div>
+      </div>
+
+      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
+        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
+          <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Minimal Shoulder Bag">
+          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+        </div>
+        <p class="text-sm mt-2 leading-snug">Minimal Shoulder Bag</p>
+        <p class="text-sm font-semibold mt-0.5">₹1,099</p>
+        <div class="flex gap-1.5 mt-1.5">
+          <span class="swatch" style="background:#5A3E2B"></span>
+          <span class="swatch" style="background:#1F1B16"></span>
+          <span class="swatch" style="background:#DCD3C4"></span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="mx-4 my-8 rounded-xl bg-[var(--cream)] p-6 sm:p-8">
+    <h3 class="font-serif text-2xl">Join the Amane Community</h3>
+    <p class="text-sm text-[var(--ink-soft)] mt-2 max-w-md">Get 10% off your first order &amp; be the first to know about new arrivals and exclusive offers.</p>
+    <form class="mt-4 flex flex-col sm:flex-row gap-3" onsubmit="return false;">
+      <input type="email" required placeholder="Enter your email" class="flex-1 bg-white border border-[var(--line)] rounded px-4 py-3 text-sm outline-none">
+      <button type="submit" class="bg-[var(--ink)] text-white text-xs tracking-widest uppercase px-6 py-3.5 rounded">Subscribe</button>
+    </form>
+  </section>
+
+</main>
+
+<!-- Bottom nav (mobile) -->
+<nav class="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-[var(--line)] grid grid-cols-5 text-[10px] sm:hidden">
+  <a href="#" class="nav-item active flex flex-col items-center gap-1 py-2.5">
+    <i class="fa-solid fa-house text-base"></i>Home
+  </a>
+  <a href="#" class="nav-item flex flex-col items-center gap-1 py-2.5">
+    <i class="fa-solid fa-table-cells-large text-base"></i>Categories
+  </a>
+  <a href="#" class="nav-item flex flex-col items-center gap-1 py-2.5">
+    <i class="fa-solid fa-sparkles text-base"></i>New In
+  </a>
+  <a href="#" class="nav-item flex flex-col items-center gap-1 py-2.5">
+    <i class="fa-regular fa-heart text-base"></i>Wishlist
+  </a>
+  <a href="#" class="nav-item flex flex-col items-center gap-1 py-2.5">
+    <i class="fa-regular fa-user text-base"></i>Account
+  </a>
+</nav>
+
+<script>
+  const track = document.getElementById('heroTrack');
+  const dots = document.querySelectorAll('#heroDots .dot');
+  function scrollHero(dir){
+    const w = track.clientWidth;
+    track.scrollBy({left: dir * w, behavior: 'smooth'});
+  }
+  track.addEventListener('scroll', () => {
+    const idx = Math.round(track.scrollLeft / track.clientWidth);
+    dots.forEach((d,i) => {
+      d.classList.toggle('w-5', i === idx);
+      d.classList.toggle('w-1.5', i !== idx);
+      d.classList.toggle('bg-[var(--ink)]', i === idx);
+      d.classList.toggle('bg-white/80', i !== idx);
+    });
+  });
+  document.querySelectorAll('.heart-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const icon = btn.querySelector('i');
+      icon.classList.toggle('fa-regular');
+      icon.classList.toggle('fa-solid');
+      icon.classList.toggle('text-[var(--accent)]');
+    });
+  });
+</script>
+
+</body>
+</html>
