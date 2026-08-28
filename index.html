@@ -1,366 +1,795 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amane Store — Effortless Style, Every Day</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --cream:#F7F1E8;
-    --cream-dark:#EDE3D3;
-    --ink:#1F1B16;
-    --ink-soft:#4A423A;
-    --line:#E4D9C7;
-    --accent:#8A7350;
-  }
-  *{box-sizing:border-box;}
-  body{
-    font-family:'DM Sans', sans-serif;
-    color:var(--ink);
-    background:#fff;
-    -webkit-font-smoothing:antialiased;
-  }
-  .font-serif{font-family:'Playfair Display', serif;}
-  .no-scrollbar::-webkit-scrollbar{display:none;}
-  .no-scrollbar{-ms-overflow-style:none; scrollbar-width:none;}
-  .heart-btn{transition:transform .15s ease, color .15s ease;}
-  .heart-btn:active{transform:scale(0.85);}
-  .swatch{width:14px;height:14px;border-radius:9999px;border:1px solid rgba(0,0,0,.15);}
-  .hero-slide{scroll-snap-align:start;}
-  .hero-track{scroll-snap-type:x mandatory;}
-  .cat-card, .product-card{transition:transform .2s ease;}
-  .cat-card:active, .product-card:active{transform:scale(0.97);}
-  .nav-item.active{color:var(--ink);}
-  .nav-item{color:#9C9284;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amane Store - Effortless Style</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #FAFAFA;
+      --card-bg: #F4EFEA;
+      --text-dark: #111111;
+      --text-muted: #666666;
+      --border-color: #EEEEEE;
+      --accent-black: #1A1A1A;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: #FFFFFF;
+      color: var(--text-dark);
+      line-height: 1.5;
+      padding-bottom: 70px; /* Space for bottom navigation */
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Announcement Bar */
+    .top-bar {
+      background-color: #F8F6F2;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #333;
+      border-bottom: 1px solid #EFEAE4;
+    }
+    .top-bar .announcement {
+      flex-grow: 1;
+      text-align: center;
+    }
+    .top-bar .track-order {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* Header Container */
+    header {
+      background: #FFFFFF;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .badge {
+      position: absolute;
+      top: -4px;
+      right: -6px;
+      background: #000;
+      color: #fff;
+      font-size: 9px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+    .logo-icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Search Bar */
+    .search-container {
+      padding: 0 16px 16px 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      color: #888;
+    }
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 48px;
+      border-radius: 30px;
+      border: 1px solid #E2E2E2;
+      font-size: 14px;
+      outline: none;
+      background: #FAFAFA;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus {
+      border-color: #111;
+      background: #FFF;
+    }
+
+    /* Common Layout Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Hero Banner Section */
+    .hero-banner {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 8px;
+      margin-bottom: 24px;
+      background-color: #EDE8E2;
+      min-height: 380px;
+      display: flex;
+      align-items: center;
+    }
+    .hero-img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 24px;
+      background: linear-gradient(90deg, rgba(245,241,236,0.85) 0%, rgba(245,241,236,0.4) 50%, rgba(245,241,236,0) 100%);
+      max-width: 50%;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 500;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      color: #1A1A1A;
+    }
+    .hero-title i {
+      font-style: italic;
+      display: block;
+    }
+    .hero-subtitle {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 24px;
+    }
+    .btn-primary {
+      background: var(--accent-black);
+      color: #FFF;
+      border: none;
+      padding: 12px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: fit-content;
+      text-transform: uppercase;
+    }
+
+    /* Carousel Navigation */
+    .slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      z-index: 2;
+    }
+    .slider-arrow.left { left: 12px; }
+    .slider-arrow.right { right: 12px; }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.3);
+    }
+    .dot.active {
+      background: #000;
+      width: 18px;
+      border-radius: 10px;
+    }
+
+    /* Features / Value Proposition Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 20px 0;
+      border-bottom: 1px solid #F0F0F0;
+      margin-bottom: 32px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+    .feature-text h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    .feature-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 500;
+    }
+    .view-all {
+      font-size: 13px;
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* Shop by Category Grid */
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .category-card {
+      text-decoration: none;
+      color: var(--text-dark);
+      text-align: center;
+    }
+    .category-img-wrapper {
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #F0EDE8;
+      margin-bottom: 8px;
+    }
+    .category-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .category-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* New Arrivals Section */
+    .products-slider-wrapper {
+      position: relative;
+      margin-bottom: 40px;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+    .product-card {
+      position: relative;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+    .product-img-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #F4F0EB;
+      margin-bottom: 10px;
+    }
+    .product-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .wishlist-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    .product-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .product-price {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .color-swatches {
+      display: flex;
+      gap: 4px;
+    }
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    /* Newsletter Card */
+    .newsletter-card {
+      background-color: #F7F3EE;
+      border-radius: 12px;
+      padding: 32px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .newsletter-content {
+      max-width: 480px;
+    }
+    .newsletter-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .newsletter-desc {
+      font-size: 12px;
+      color: #666;
+    }
+    .newsletter-form {
+      display: flex;
+      gap: 0;
+      width: 100%;
+      max-width: 400px;
+    }
+    .newsletter-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #E2DED8;
+      border-right: none;
+      border-radius: 4px 0 0 4px;
+      font-size: 12px;
+      outline: none;
+      background: #FFF;
+    }
+    .newsletter-btn {
+      background: #1C1C1C;
+      color: #FFF;
+      border: none;
+      padding: 12px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border-top: 1px solid #EEEEEE;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      z-index: 1000;
+    }
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #777777;
+      font-size: 10px;
+      gap: 4px;
+    }
+    .bottom-nav-item.active {
+      color: #1A1A1A;
+      font-weight: 600;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .hero-overlay { max-width: 80%; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .categories-grid { grid-template-columns: repeat(3, 1fr); }
+      .products-grid { grid-template-columns: repeat(3, 1fr); }
+      .newsletter-card { flex-direction: column; gap: 20px; text-align: center; }
+      .newsletter-form { max-width: 100%; }
+    }
+    @media (max-width: 600px) {
+      .hero-overlay { max-width: 100%; padding: 20px; }
+      .hero-title { font-size: 26px; }
+      .categories-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    }
+  </style>
 </head>
-<body class="pb-20">
+<body>
 
-<!-- Top promo strip -->
-<div class="bg-[var(--cream-dark)] text-[var(--ink-soft)] text-xs sm:text-sm px-4 py-2 flex items-center justify-between">
-  <div class="flex items-center gap-2">
-    <i class="fa-solid fa-truck-fast"></i>
-    <span>Free Shipping on orders above ₹999</span>
+  <!-- Top Announcement Bar -->
+  <div class="top-bar">
+    <span class="announcement">Free Shipping on orders above ₹999</span>
+    <a href="#" class="track-order">Track Order</a>
   </div>
-  <a href="#" class="underline underline-offset-2 whitespace-nowrap">Track Order</a>
-</div>
 
-<!-- Header -->
-<header class="sticky top-0 z-40 bg-white border-b border-[var(--line)]">
-  <div class="flex items-center justify-between px-4 py-4">
-    <button aria-label="Menu" class="text-xl w-8">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-    <a href="#" class="flex items-center gap-2">
-      <i class="fa-solid fa-clover text-2xl"></i>
-      <span class="font-serif text-2xl tracking-wide">amane store</span>
+  <!-- Header Navigation -->
+  <header>
+    <div class="main-nav">
+      <div class="nav-left">
+        <button class="icon-btn" aria-label="Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Brand Logo -->
+      <a href="#" class="logo">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM22 12C22 13.1 21.1 14 20 14C18.9 14 18 13.1 18 12C18 10.9 18.9 10 20 10C21.1 10 22 10.9 22 12ZM12 22C10.9 22 10 21.1 10 20C10 18.9 10.9 18 12 18C13.1 18 14 18.9 14 20C14 21.1 13.1 22 12 22ZM4 12C4 10.9 4.9 10 6 10C7.1 10 8 10.9 8 12C8 13.1 7.1 14 6 14C4.9 14 4 13.1 4 12Z"/>
+        </svg>
+        amane store
+      </a>
+
+      <div class="nav-right">
+        <button class="icon-btn" aria-label="Wishlist">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span class="badge">0</span>
+        </button>
+        <button class="icon-btn" aria-label="Cart">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="badge">0</span>
+        </button>
+        <button class="icon-btn" aria-label="Account">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Input -->
+    <div class="search-container">
+      <div class="search-wrapper">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" placeholder="Search for dresses, tops, skirts...">
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero Slider -->
+    <section class="hero-banner">
+      <button class="slider-arrow left" aria-label="Previous">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <img class="hero-img" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80" alt="Effortless Style Banner">
+
+      <div class="hero-overlay">
+        <h1 class="hero-title">Effortless Style,<br><i>Every Day.</i></h1>
+        <p class="hero-subtitle">Timeless pieces. Made for you.</p>
+        <button class="btn-primary">SHOP NEW ARRIVALS</button>
+      </div>
+
+      <button class="slider-arrow right" aria-label="Next">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <div class="slider-dots">
+        <span class="dot"></span>
+        <span class="dot active"></span>
+        <span class="dot"></span>
+      </div>
+    </section>
+
+    <!-- Value Propositions -->
+    <section class="features-grid">
+      <div class="feature-item">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <div class="feature-text">
+          <h4>Free Shipping</h4>
+          <p>On orders above ₹999</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        <div class="feature-text">
+          <h4>Easy Returns</h4>
+          <p>Within 7 days</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <div class="feature-text">
+          <h4>Secure Payments</h4>
+          <p>100% secure checkout</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        <div class="feature-text">
+          <h4>COD Available</h4>
+          <p>Pay on delivery</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shop by Category -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Shop by Category</h2>
+        <a href="#" class="view-all">View All</a>
+      </div>
+
+      <div class="categories-grid">
+        <a href="#" class="category-card">
+          <div class="category-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&q=80" alt="Dresses">
+          </div>
+          <span class="category-name">Dresses</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1534126511673-b6899657816a?auto=format&fit=crop&w=400&q=80" alt="Tops">
+          </div>
+          <span class="category-name">Tops</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1509551388413-e18d0ac5d495?auto=format&fit=crop&w=400&q=80" alt="Bottoms">
+          </div>
+          <span class="category-name">Bottoms</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&w=400&q=80" alt="Co-ords">
+          </div>
+          <span class="category-name">Co-ords</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1611591475281-a1d9d806f936?auto=format&fit=crop&w=400&q=80" alt="Accessories">
+          </div>
+          <span class="category-name">Accessories</span>
+        </a>
+        <a href="#" class="category-card">
+          <div class="category-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=400&q=80" alt="Sale">
+          </div>
+          <span class="category-name">Sale</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- New Arrivals -->
+    <section class="products-slider-wrapper">
+      <div class="section-header">
+        <h2 class="section-title">New Arrivals</h2>
+        <a href="#" class="view-all">View All</a>
+      </div>
+
+      <button class="slider-arrow right" style="right: -18px;" aria-label="Next Products">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <div class="products-grid">
+        <!-- Product Card 1 -->
+        <a href="#" class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80" alt="Linen Blend Shirt Dress">
+            <button class="wishlist-btn" aria-label="Wishlist">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+          <h3 class="product-title">Linen Blend Shirt Dress</h3>
+          <div class="product-price">₹1,699</div>
+          <div class="color-swatches">
+            <span class="swatch" style="background: #E5DCCB;"></span>
+            <span class="swatch" style="background: #CBBCA8;"></span>
+            <span class="swatch" style="background: #222222;"></span>
+          </div>
+        </a>
+
+        <!-- Product Card 2 -->
+        <a href="#" class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80" alt="Ribbed Tank Top">
+            <button class="wishlist-btn" aria-label="Wishlist">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+          <h3 class="product-title">Ribbed Tank Top</h3>
+          <div class="product-price">₹799</div>
+          <div class="color-swatches">
+            <span class="swatch" style="background: #E8E2D9;"></span>
+            <span class="swatch" style="background: #A69082;"></span>
+            <span class="swatch" style="background: #4A3022;"></span>
+          </div>
+        </a>
+
+        <!-- Product Card 3 -->
+        <a href="#" class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1509551388413-e18d0ac5d495?auto=format&fit=crop&w=400&q=80" alt="Relaxed Wide Leg Pants">
+            <button class="wishlist-btn" aria-label="Wishlist">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+          <h3 class="product-title">Relaxed Wide Leg Pants</h3>
+          <div class="product-price">₹1,299</div>
+          <div class="color-swatches">
+            <span class="swatch" style="background: #DFD7CD;"></span>
+            <span class="swatch" style="background: #BCB0A0;"></span>
+            <span class="swatch" style="background: #685747;"></span>
+          </div>
+        </a>
+
+        <!-- Product Card 4 -->
+        <a href="#" class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&w=400&q=80" alt="Linen Co-ord Set">
+            <button class="wishlist-btn" aria-label="Wishlist">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+          <h3 class="product-title">Linen Co-ord Set</h3>
+          <div class="product-price">₹2,199</div>
+          <div class="color-swatches">
+            <span class="swatch" style="background: #CBBCA8;"></span>
+            <span class="swatch" style="background: #DDD5C7;"></span>
+            <span class="swatch" style="background: #EAF0EC;"></span>
+          </div>
+        </a>
+
+        <!-- Product Card 5 -->
+        <a href="#" class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=400&q=80" alt="Minimal Shoulder Bag">
+            <button class="wishlist-btn" aria-label="Wishlist">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+          <h3 class="product-title">Minimal Shoulder Bag</h3>
+          <div class="product-price">₹1,099</div>
+          <div class="color-swatches">
+            <span class="swatch" style="background: #8B4513;"></span>
+            <span class="swatch" style="background: #111111;"></span>
+            <span class="swatch" style="background: #D2B48C;"></span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Newsletter Community Card -->
+    <section class="newsletter-card">
+      <div class="newsletter-content">
+        <h2 class="newsletter-title">Join the Amane Community</h2>
+        <p class="newsletter-desc">Get 10% off your first order & be the first to know about new arrivals and exclusive offers.</p>
+      </div>
+      <form class="newsletter-form" onsubmit="event.preventDefault();">
+        <input type="email" class="newsletter-input" placeholder="Enter your email">
+        <button type="submit" class="newsletter-btn">SUBSCRIBE</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <a href="#" class="bottom-nav-item active">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
     </a>
-    <div class="flex items-center gap-4 text-lg">
-      <button aria-label="Wishlist" class="relative">
-        <i class="fa-regular fa-heart"></i>
-        <span class="absolute -top-2 -right-2 bg-[var(--ink)] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
-      </button>
-      <button aria-label="Bag" class="relative">
-        <i class="fa-solid fa-bag-shopping"></i>
-        <span class="absolute -top-2 -right-2 bg-[var(--ink)] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
-      </button>
-      <button aria-label="Account">
-        <i class="fa-regular fa-circle-user"></i>
-      </button>
-    </div>
-  </div>
-
-  <!-- Search -->
-  <div class="px-4 pb-4">
-    <label class="flex items-center gap-3 border border-[var(--line)] rounded-full px-4 py-3 text-[var(--ink-soft)]">
-      <i class="fa-solid fa-magnifying-glass text-sm"></i>
-      <input type="text" placeholder="Search for dresses, tops, skirts..." class="bg-transparent outline-none text-sm w-full placeholder:text-[var(--ink-soft)]/70">
-    </label>
-  </div>
-</header>
-
-<main>
-
-  <!-- Hero carousel -->
-  <section class="relative">
-    <div id="heroTrack" class="hero-track flex overflow-x-auto no-scrollbar">
-      <div class="hero-slide relative w-full flex-shrink-0 bg-[var(--cream-dark)] overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1200&auto=format&fit=crop"
-             alt="Model wearing linen shirt set" class="absolute inset-0 w-full h-full object-cover opacity-90">
-        <div class="absolute inset-0 bg-gradient-to-r from-[var(--cream)]/95 via-[var(--cream)]/40 to-transparent"></div>
-        <div class="relative px-6 py-16 sm:py-24 max-w-xs">
-          <h1 class="font-serif text-4xl sm:text-5xl leading-[1.1]">Effortless Style,<br><em class="italic">Every Day.</em></h1>
-          <p class="mt-4 text-[var(--ink-soft)] text-sm">Timeless pieces. Made for you.</p>
-          <button class="mt-6 bg-[var(--ink)] text-white text-xs tracking-widest uppercase px-6 py-3.5 rounded">Shop New Arrivals</button>
-        </div>
-      </div>
-
-      <div class="hero-slide relative w-full flex-shrink-0 bg-[var(--cream-dark)] overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?q=80&w=1200&auto=format&fit=crop"
-             alt="Co-ord set" class="absolute inset-0 w-full h-full object-cover opacity-90">
-        <div class="absolute inset-0 bg-gradient-to-r from-[var(--cream)]/95 via-[var(--cream)]/40 to-transparent"></div>
-        <div class="relative px-6 py-16 sm:py-24 max-w-xs">
-          <h1 class="font-serif text-4xl sm:text-5xl leading-[1.1]">New Season,<br><em class="italic">New Co-ords.</em></h1>
-          <p class="mt-4 text-[var(--ink-soft)] text-sm">Fresh linen, softer tones.</p>
-          <button class="mt-6 bg-[var(--ink)] text-white text-xs tracking-widest uppercase px-6 py-3.5 rounded">Explore Co-ords</button>
-        </div>
-      </div>
-
-      <div class="hero-slide relative w-full flex-shrink-0 bg-[var(--cream-dark)] overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1200&auto=format&fit=crop"
-             alt="Accessories" class="absolute inset-0 w-full h-full object-cover opacity-90">
-        <div class="absolute inset-0 bg-gradient-to-r from-[var(--cream)]/95 via-[var(--cream)]/40 to-transparent"></div>
-        <div class="relative px-6 py-16 sm:py-24 max-w-xs">
-          <h1 class="font-serif text-4xl sm:text-5xl leading-[1.1]">Finish The<br><em class="italic">Look.</em></h1>
-          <p class="mt-4 text-[var(--ink-soft)] text-sm">Accessories, made to layer.</p>
-          <button class="mt-6 bg-[var(--ink)] text-white text-xs tracking-widest uppercase px-6 py-3.5 rounded">Shop Accessories</button>
-        </div>
-      </div>
-    </div>
-
-    <button onclick="scrollHero(-1)" aria-label="Previous slide" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center">
-      <i class="fa-solid fa-chevron-left text-xs"></i>
-    </button>
-    <button onclick="scrollHero(1)" aria-label="Next slide" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center">
-      <i class="fa-solid fa-chevron-right text-xs"></i>
-    </button>
-
-    <div id="heroDots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-      <span class="dot w-5 h-1.5 rounded-full bg-[var(--ink)]"></span>
-      <span class="dot w-1.5 h-1.5 rounded-full bg-white/80"></span>
-      <span class="dot w-1.5 h-1.5 rounded-full bg-white/80"></span>
-    </div>
-  </section>
-
-  <!-- Trust badges -->
-  <section class="grid grid-cols-2 sm:grid-cols-4 gap-y-6 gap-x-2 px-4 py-8 border-b border-[var(--line)] text-center sm:text-left">
-    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
-      <i class="fa-solid fa-truck-fast text-xl"></i>
-      <div>
-        <p class="text-sm font-semibold">Free Shipping</p>
-        <p class="text-xs text-[var(--ink-soft)]">On orders above ₹999</p>
-      </div>
-    </div>
-    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
-      <i class="fa-solid fa-rotate-left text-xl"></i>
-      <div>
-        <p class="text-sm font-semibold">Easy Returns</p>
-        <p class="text-xs text-[var(--ink-soft)]">Within 7 days</p>
-      </div>
-    </div>
-    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
-      <i class="fa-solid fa-wallet text-xl"></i>
-      <div>
-        <p class="text-sm font-semibold">Secure Payments</p>
-        <p class="text-xs text-[var(--ink-soft)]">100% secure checkout</p>
-      </div>
-    </div>
-    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
-      <i class="fa-solid fa-briefcase text-xl"></i>
-      <div>
-        <p class="text-sm font-semibold">COD Available</p>
-        <p class="text-xs text-[var(--ink-soft)]">Pay on delivery</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Shop by category -->
-  <section class="px-4 py-8">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-serif text-2xl">Shop by Category</h2>
-      <a href="#" class="text-sm underline underline-offset-2">View All</a>
-    </div>
-    <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
-      <a href="#" class="cat-card block">
-        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
-          <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Dresses">
-        </div>
-        <p class="text-xs sm:text-sm mt-2 text-center">Dresses</p>
-      </a>
-      <a href="#" class="cat-card block">
-        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
-          <img src="https://images.unsplash.com/photo-1591369822096-ffd140ec948f?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Tops">
-        </div>
-        <p class="text-xs sm:text-sm mt-2 text-center">Tops</p>
-      </a>
-      <a href="#" class="cat-card block">
-        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
-          <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Bottoms">
-        </div>
-        <p class="text-xs sm:text-sm mt-2 text-center">Bottoms</p>
-      </a>
-      <a href="#" class="cat-card block">
-        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
-          <img src="https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Co-ords">
-        </div>
-        <p class="text-xs sm:text-sm mt-2 text-center">Co-ords</p>
-      </a>
-      <a href="#" class="cat-card block">
-        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)] flex items-center justify-center">
-          <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Accessories">
-        </div>
-        <p class="text-xs sm:text-sm mt-2 text-center">Accessories</p>
-      </a>
-      <a href="#" class="cat-card block">
-        <div class="aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)] flex items-center justify-center relative">
-          <img src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Sale">
-        </div>
-        <p class="text-xs sm:text-sm mt-2 text-center">Sale</p>
-      </a>
-    </div>
-  </section>
-
-  <!-- New Arrivals -->
-  <section class="px-4 py-8">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-serif text-2xl">New Arrivals</h2>
-      <a href="#" class="text-sm underline underline-offset-2">View All</a>
-    </div>
-    <div class="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 sm:grid sm:grid-cols-5 sm:gap-4 sm:mx-0 sm:px-0">
-
-      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
-        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
-          <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Linen Blend Shirt Dress">
-          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
-            <i class="fa-regular fa-heart"></i>
-          </button>
-        </div>
-        <p class="text-sm mt-2 leading-snug">Linen Blend Shirt Dress</p>
-        <p class="text-sm font-semibold mt-0.5">₹1,699</p>
-        <div class="flex gap-1.5 mt-1.5">
-          <span class="swatch" style="background:#D8C6A8"></span>
-          <span class="swatch" style="background:#C9BEB2"></span>
-          <span class="swatch" style="background:#1F1B16"></span>
-        </div>
-      </div>
-
-      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
-        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
-          <img src="https://images.unsplash.com/photo-1554568218-0f1715e72254?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Ribbed Tank Top">
-          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
-            <i class="fa-regular fa-heart"></i>
-          </button>
-        </div>
-        <p class="text-sm mt-2 leading-snug">Ribbed Tank Top</p>
-        <p class="text-sm font-semibold mt-0.5">₹799</p>
-        <div class="flex gap-1.5 mt-1.5">
-          <span class="swatch" style="background:#F1E7D8"></span>
-          <span class="swatch" style="background:#9C9284"></span>
-          <span class="swatch" style="background:#5A3E2B"></span>
-        </div>
-      </div>
-
-      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
-        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
-          <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Relaxed Wide Leg Pants">
-          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
-            <i class="fa-regular fa-heart"></i>
-          </button>
-        </div>
-        <p class="text-sm mt-2 leading-snug">Relaxed Wide Leg Pants</p>
-        <p class="text-sm font-semibold mt-0.5">₹1,299</p>
-        <div class="flex gap-1.5 mt-1.5">
-          <span class="swatch" style="background:#E4D9C7"></span>
-          <span class="swatch" style="background:#9C9284"></span>
-          <span class="swatch" style="background:#5A3E2B"></span>
-        </div>
-      </div>
-
-      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
-        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
-          <img src="https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Linen Co-ord Set">
-          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
-            <i class="fa-regular fa-heart"></i>
-          </button>
-        </div>
-        <p class="text-sm mt-2 leading-snug">Linen Co-ord Set</p>
-        <p class="text-sm font-semibold mt-0.5">₹2,199</p>
-        <div class="flex gap-1.5 mt-1.5">
-          <span class="swatch" style="background:#D8C6A8"></span>
-          <span class="swatch" style="background:#8A7350"></span>
-          <span class="swatch" style="background:#DCD3C4"></span>
-        </div>
-      </div>
-
-      <div class="product-card flex-shrink-0 w-40 sm:w-auto">
-        <div class="relative aspect-[3/4] rounded-lg overflow-hidden bg-[var(--cream-dark)]">
-          <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Minimal Shoulder Bag">
-          <button class="heart-btn absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center text-xs">
-            <i class="fa-regular fa-heart"></i>
-          </button>
-        </div>
-        <p class="text-sm mt-2 leading-snug">Minimal Shoulder Bag</p>
-        <p class="text-sm font-semibold mt-0.5">₹1,099</p>
-        <div class="flex gap-1.5 mt-1.5">
-          <span class="swatch" style="background:#5A3E2B"></span>
-          <span class="swatch" style="background:#1F1B16"></span>
-          <span class="swatch" style="background:#DCD3C4"></span>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Newsletter -->
-  <section class="mx-4 my-8 rounded-xl bg-[var(--cream)] p-6 sm:p-8">
-    <h3 class="font-serif text-2xl">Join the Amane Community</h3>
-    <p class="text-sm text-[var(--ink-soft)] mt-2 max-w-md">Get 10% off your first order &amp; be the first to know about new arrivals and exclusive offers.</p>
-    <form class="mt-4 flex flex-col sm:flex-row gap-3" onsubmit="return false;">
-      <input type="email" required placeholder="Enter your email" class="flex-1 bg-white border border-[var(--line)] rounded px-4 py-3 text-sm outline-none">
-      <button type="submit" class="bg-[var(--ink)] text-white text-xs tracking-widest uppercase px-6 py-3.5 rounded">Subscribe</button>
-    </form>
-  </section>
-
-</main>
-
-<!-- Bottom nav (mobile) -->
-<nav class="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-[var(--line)] grid grid-cols-5 text-[10px] sm:hidden">
-  <a href="#" class="nav-item active flex flex-col items-center gap-1 py-2.5">
-    <i class="fa-solid fa-house text-base"></i>Home
-  </a>
-  <a href="#" class="nav-item flex flex-col items-center gap-1 py-2.5">
-    <i class="fa-solid fa-table-cells-large text-base"></i>Categories
-  </a>
-  <a href="#" class="nav-item flex flex-col items-center gap-1 py-2.5">
-    <i class="fa-solid fa-sparkles text-base"></i>New In
-  </a>
-  <a href="#" class="nav-item flex flex-col items-center gap-1 py-2.5">
-    <i class="fa-regular fa-heart text-base"></i>Wishlist
-  </a>
-  <a href="#" class="nav-item flex flex-col items-center gap-1 py-2.5">
-    <i class="fa-regular fa-user text-base"></i>Account
-  </a>
-</nav>
-
-<script>
-  const track = document.getElementById('heroTrack');
-  const dots = document.querySelectorAll('#heroDots .dot');
-  function scrollHero(dir){
-    const w = track.clientWidth;
-    track.scrollBy({left: dir * w, behavior: 'smooth'});
-  }
-  track.addEventListener('scroll', () => {
-    const idx = Math.round(track.scrollLeft / track.clientWidth);
-    dots.forEach((d,i) => {
-      d.classList.toggle('w-5', i === idx);
-      d.classList.toggle('w-1.5', i !== idx);
-      d.classList.toggle('bg-[var(--ink)]', i === idx);
-      d.classList.toggle('bg-white/80', i !== idx);
-    });
-  });
-  document.querySelectorAll('.heart-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const icon = btn.querySelector('i');
-      icon.classList.toggle('fa-regular');
-      icon.classList.toggle('fa-solid');
-      icon.classList.toggle('text-[var(--accent)]');
-    });
-  });
-</script>
+    <a href="#" class="bottom-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Categories</span>
+    </a>
+    <a href="#" class="bottom-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.6 6.6 2.4-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+      <span>New In</span>
+    </a>
+    <a href="#" class="bottom-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span>Wishlist</span>
+    </a>
+    <a href="#" class="bottom-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Account</span>
+    </a>
+  </nav>
 
 </body>
 </html>
