@@ -891,11 +891,12 @@ body.drawer-open, body.modal-open { overflow: hidden; }
     grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color:#666;">Loading store collection...</div>';
 
     try {
+      // Query uses 'code' column as present in Supabase table
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('is_active', true)
-        .neq('sku', 'TEST-001')
+        .neq('code', 'TEST-001')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -906,16 +907,27 @@ body.drawer-open, body.modal-open { overflow: hidden; }
         return;
       }
 
-      products = data.map((item, index) => ({
-        id: index,
-        dbId: item.sku || item.id,
-        title: item.title || item.name || 'Amane Design',
-        priceText: `₹${Number(item.price).toLocaleString('en-IN')}`,
-        price: Number(item.price),
-        image: item.image_url || item.image || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80',
-        colors: Array.isArray(item.colors) ? item.colors : ['#E5DCCB', '#CBBCA8', '#222222'],
-        category: item.category || 'New Arrivals'
-      }));
+      products = data.map((item, index) => {
+        let img = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80';
+        if (Array.isArray(item.images) && item.images.length > 0) {
+          img = item.images[0];
+        } else if (typeof item.images === 'string' && item.images.trim()) {
+          img = item.images.replace(/^\{|\}$/g, '').replace(/"/g, '').split(',')[0];
+        } else if (item.image_url) {
+          img = item.image_url;
+        }
+
+        return {
+          id: index,
+          dbId: item.code || item.id,
+          title: item.title || item.name || 'Amane Design',
+          priceText: `₹${Number(item.price).toLocaleString('en-IN')}`,
+          price: Number(item.price),
+          image: img,
+          colors: item.color ? [item.color] : (Array.isArray(item.colors) ? item.colors : ['#E5DCCB', '#CBBCA8', '#222222']),
+          category: item.category || 'New Arrivals'
+        };
+      });
 
       renderProductGrid();
       updateUI();
