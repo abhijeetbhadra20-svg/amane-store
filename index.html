@@ -911,7 +911,10 @@
         return;
       }
 
-      products = data.map((item) => {
+      // Filter out corrupted test data (empty titles, missing prices, or absurd test prices > 1 Lakh)
+      const validData = data.filter(item => item.title && item.price && Number(item.price) < 100000);
+
+      products = validData.map((item) => {
         let img = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80';
         if (Array.isArray(item.images) && item.images.length > 0) {
           img = item.images[0];
@@ -926,7 +929,7 @@
         return {
           id: prodCode, // SKU Identity (e.g., AMN-001) instead of array index
           dbId: prodCode,
-          title: item.title || item.name || 'Amane Design',
+          title: item.title || 'Amane Design',
           priceText: `₹${Number(item.price).toLocaleString('en-IN')}`,
           price: Number(item.price),
           mrp: item.mrp ? Number(item.mrp) : null,
@@ -936,6 +939,11 @@
           category: item.category || 'New Arrivals'
         };
       });
+
+      // Auto-Sanitize Cart & Wishlist against active database products
+      const validIds = new Set(products.map(p => p.id));
+      state.cart = state.cart.filter(item => validIds.has(item.id));
+      state.wishlist = state.wishlist.filter(id => validIds.has(id));
 
       renderDynamicCategories();
       renderProductGrid();
@@ -1034,7 +1042,14 @@
   ];
 
   function money(n) { return `₹${Number(n || 0).toLocaleString('en-IN')}`; }
-  function cartCount() { return state.cart.reduce((sum, item) => sum + item.qty, 0); }
+  
+  function cartCount() {
+    return state.cart.reduce((sum, item) => {
+      const p = getProductById(item.id);
+      return p ? sum + item.qty : sum;
+    }, 0);
+  }
+
   function wishlistCount() { return state.wishlist.length; }
   
   function cartSubtotal() {
@@ -1055,10 +1070,13 @@
   }
 
   function updateUI() {
-    setBadge('.nav-right .icon-btn[aria-label="Wishlist"] .badge', wishlistCount());
-    setBadge('.nav-right .icon-btn[aria-label="Cart"] .badge', cartCount());
-    setBadge('#drawerWishlistCount', wishlistCount());
-    setBadge('#drawerCartCount', cartCount());
+    const wCount = wishlistCount();
+    const cCount = cartCount();
+
+    setBadge('.nav-right .icon-btn[aria-label="Wishlist"] .badge', wCount);
+    setBadge('.nav-right .icon-btn[aria-label="Cart"] .badge', cCount);
+    setBadge('#drawerWishlistCount', wCount);
+    setBadge('#drawerCartCount', cCount);
 
     $$('.wishlist-btn').forEach(btn => {
       const id = btn.dataset.wishId;
@@ -1230,6 +1248,11 @@
     if (!grid) return;
     const q = query.trim().toLowerCase();
     let visible = 0;
+
+    const sectionHeader = grid.closest('section')?.querySelector('.section-title');
+    if (sectionHeader) {
+      sectionHeader.textContent = q ? `Results for "${query}"` : 'New Arrivals';
+    }
 
     $$('.product-card', grid).forEach(card => {
       const id = card.dataset.productId;
