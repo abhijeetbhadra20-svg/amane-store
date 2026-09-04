@@ -485,6 +485,21 @@
       font-weight: 600;
     }
 
+    /* Step 7 Custom Styling additions */
+    .gallery-container { display: flex; flex-direction: column; gap: 8px; }
+    .gallery-main { width: 100%; aspect-ratio: 3/4; border-radius: 12px; object-fit: cover; background: #f1eee9; }
+    .gallery-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .gallery-thumb { width: 48px; height: 60px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 1px solid #ddd; opacity: 0.6; transition: all 0.2s; }
+    .gallery-thumb.active { opacity: 1; border-color: #111; }
+    .stock-badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 4px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stock-badge.in-stock { background: #e6f4ea; color: #137333; }
+    .stock-badge.low-stock { background: #fce8e6; color: #c5221f; }
+    .size-selector-btn { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .size-btn { padding: 8px 14px; border: 1px solid #ddd; background: #fff; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .size-btn.active { border-color: #111; background: #111; color: #fff; }
+    .info-box { background: #f9f8f6; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 11px; color: #555; display: flex; flex-direction: column; gap: 6px; }
+    .info-item { display: flex; align-items: center; gap: 8px; }
+
     /* Responsive adjustments */
     @media (max-width: 900px) {
       .hero-overlay { max-width: 80%; }
@@ -537,8 +552,7 @@
     .modal-actions .solid { background:#111; color:#fff; }
     .modal-actions .soft { background:#f3f0eb; color:#111; }
     .quick-product { display:grid; grid-template-columns: minmax(0,1fr); gap:18px; }
-    .quick-product img { width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:12px; background:#f1eee9; }
-    .quick-price { font:600 16px var(--font-sans); margin:8px 0 16px; }
+    .quick-price { font:600 16px var(--font-sans); margin:8px 0 12px; }
     .qty-row { display:flex; align-items:center; gap:12px; margin:14px 0 18px; }
     .qty-row button { width:34px; height:34px; border:1px solid #ddd; background:#fff; border-radius:50%; cursor:pointer; }
     .qty-value { min-width:20px; text-align:center; font:600 13px var(--font-sans); }
@@ -556,7 +570,7 @@
     .empty-state { text-align:center; padding:28px 8px; color:#777; font-size:12px; }
     .product-card.hidden-search { display:none; }
     .search-empty { grid-column:1/-1; padding:30px 10px; text-align:center; font:400 12px var(--font-sans); color:#777; }
-    @media (min-width:901px) { .drawer { width:360px; } .quick-product { grid-template-columns: 190px 1fr; align-items:start; } .modal { padding:28px; } }
+    @media (min-width:901px) { .drawer { width:360px; } .quick-product { grid-template-columns: 220px 1fr; align-items:start; } .modal { padding:28px; } }
     @media (max-width:600px) { .toast-container { bottom:78px; } .modal { border-radius:16px; padding:20px; } .top-bar .announcement { padding-right:8px; } }
   </style>
 </head>
@@ -894,7 +908,6 @@
     grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color:#666;">Loading store collection...</div>';
 
     try {
-      // Step 6 Rule: Query active products, in stock, excluding TEST-001
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -911,36 +924,38 @@
         return;
       }
 
-      // Filter out corrupted test data (empty titles, missing prices, or absurd test prices > 1 Lakh)
       const validData = data.filter(item => item.title && item.price && Number(item.price) < 100000);
 
       products = validData.map((item) => {
-        let img = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80';
+        let imgs = ['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80'];
         if (Array.isArray(item.images) && item.images.length > 0) {
-          img = item.images[0];
+          imgs = item.images;
         } else if (typeof item.images === 'string' && item.images.trim()) {
-          img = item.images.replace(/^\{|\}$/g, '').replace(/"/g, '').split(',')[0];
+          imgs = item.images.replace(/^\{|\}$/g, '').replace(/"/g, '').split(',').map(s => s.trim()).filter(Boolean);
         } else if (item.image_url) {
-          img = item.image_url;
+          imgs = [item.image_url];
         }
 
         const prodCode = String(item.code || item.id || '').trim();
 
         return {
-          id: prodCode, // SKU Identity (e.g., AMN-001) instead of array index
+          id: prodCode,
           dbId: prodCode,
           title: item.title || 'Amane Design',
           priceText: `₹${Number(item.price).toLocaleString('en-IN')}`,
           price: Number(item.price),
           mrp: item.mrp ? Number(item.mrp) : null,
           discount: item.discount || null,
-          image: img,
+          images: imgs,
+          image: imgs[0],
           colors: item.color ? [item.color] : (Array.isArray(item.colors) ? item.colors : ['#E5DCCB', '#CBBCA8', '#222222']),
-          category: item.category || 'New Arrivals'
+          category: item.category || 'New Arrivals',
+          sizes: item.sizes ? (Array.isArray(item.sizes) ? item.sizes : String(item.sizes).split(',')) : ['XS', 'S', 'M', 'L', 'XL'],
+          deliveryText: item.delivery_text || 'Delivered in 3–5 business days',
+          returnText: item.return_text || '7 Days Easy Return & Exchange'
         };
       });
 
-      // Auto-Sanitize Cart & Wishlist against active database products
       const validIds = new Set(products.map(p => p.id));
       state.cart = state.cart.filter(item => validIds.has(item.id));
       state.wishlist = state.wishlist.filter(id => validIds.has(id));
@@ -1211,26 +1226,48 @@
     openCart();
   }
 
-  function productSizes() {
-    return ['XS', 'S', 'M', 'L', 'XL'];
-  }
-
+  /* Step 7: Richer Product Detail View */
   function openProduct(id) {
     const p = getProductById(id);
     if (!p) return;
-    const sizes = productSizes();
+    const sizes = p.sizes || ['XS', 'S', 'M', 'L', 'XL'];
+    let selectedSize = sizes[0];
+    
+    const thumbsHtml = p.images.length > 1 ? `
+      <div class="gallery-thumbs">
+        ${p.images.map((img, idx) => `<img src="${img}" class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img-idx="${idx}" alt="thumbnail">`).join('')}
+      </div>
+    ` : '';
+
     openModal(`
       <button class="modal-close" data-close-modal aria-label="Close">✕</button>
       <div class="quick-product">
-        <img src="${p.image}" alt="${p.title}">
+        <div class="gallery-container">
+          <img id="mainGalleryImg" class="gallery-main" src="${p.images[0]}" alt="${p.title}">
+          ${thumbsHtml}
+        </div>
         <div>
-          <div style="font:500 11px var(--font-sans);letter-spacing:.14em;text-transform:uppercase;color:#777;margin-bottom:7px">Amane Collection</div>
+          <span class="stock-badge in-stock">✓ In Stock — Ready to Ship</span>
+          <div style="font:500 11px var(--font-sans);letter-spacing:.14em;text-transform:uppercase;color:#777;margin-bottom:4px">Amane Collection • ${p.id}</div>
           <h2>${p.title}</h2>
-          <div class="quick-price">${p.priceText}</div>
-          <p>Refined everyday styling with an easy, versatile silhouette designed for the Amane wardrobe.</p>
-          <div class="form-field"><label>SIZE</label><select id="productSize">${sizes.map(s => `<option>${s}</option>`).join('')}</select></div>
+          <div class="quick-price">${p.priceText} ${p.mrp ? `<span style="text-decoration:line-through;color:#999;font-size:13px;margin-left:8px">₹${p.mrp}</span>` : ''}</div>
+          <p style="font-size:12px;color:#555;line-height:1.5">Refined everyday styling with an easy, versatile silhouette designed for the Amane wardrobe.</p>
+          
+          <div style="margin: 14px 0;">
+            <label style="font:600 11px var(--font-sans);letter-spacing:.2px;display:block;margin-bottom:6px">SELECT SIZE</label>
+            <div class="size-selector-btn">
+              ${sizes.map((s, idx) => `<button class="size-btn ${idx === 0 ? 'active' : ''}" data-size="${s.trim()}">${s.trim()}</button>`).join('')}
+            </div>
+          </div>
+
           <div class="qty-row"><button id="qtyMinus">−</button><span class="qty-value" id="qtyValue">1</span><button id="qtyPlus">+</button></div>
+          
           <div class="modal-actions"><button class="soft" id="quickWish">${state.wishlist.includes(p.id) ? '♥ Wishlisted' : '♡ Add to Wishlist'}</button><button class="solid" id="quickAdd">ADD TO BAG</button></div>
+
+          <div class="info-box">
+            <div class="info-item">🚚 <span>${p.deliveryText}</span></div>
+            <div class="info-item">🔄 <span>${p.returnText}</span></div>
+          </div>
         </div>
       </div>`, () => {
         let qty = 1;
@@ -1238,6 +1275,23 @@
         $('#qtyPlus').onclick = () => { qty += 1; $('#qtyValue').textContent = qty; };
         $('#quickWish').onclick = () => { toggleWishlist(p.id); $('#quickWish').textContent = state.wishlist.includes(p.id) ? '♥ Wishlisted' : '♡ Add to Wishlist'; };
         $('#quickAdd').onclick = () => { addToCart(p.id, qty); closeModal(); openCart(); };
+
+        $$('.size-btn').forEach(btn => {
+          btn.onclick = () => {
+            $$('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedSize = btn.dataset.size;
+          };
+        });
+
+        $$('.gallery-thumb').forEach(thumb => {
+          thumb.onclick = () => {
+            $$('.gallery-thumb').forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+            const idx = thumb.dataset.imgIdx;
+            $('#mainGalleryImg').src = p.images[idx];
+          };
+        });
       });
   }
 
@@ -1831,7 +1885,7 @@
   /* App Initialization */
   initAuth().finally(() => {
     updateUI();
-    fetchLiveProducts(); // Supabase Live Products Integration
+    fetchLiveProducts();
   });
 })();
 </script>
