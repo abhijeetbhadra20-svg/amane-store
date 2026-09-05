@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Razorpay Standard Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
   <style>
     :root {
@@ -32,7 +34,7 @@
       background-color: #FFFFFF;
       color: var(--text-dark);
       line-height: 1.5;
-      padding-bottom: 70px; /* Space for bottom navigation */
+      padding-bottom: 70px;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -525,11 +527,27 @@
     .info-box { background: #f9f8f6; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 11px; color: #555; display: flex; flex-direction: column; gap: 6px; }
     .info-item { display: flex; align-items: center; gap: 8px; }
 
-    /* Step 9 Coupon Box Styling */
+    /* Coupon Box Styling */
     .coupon-box { display: flex; gap: 8px; margin: 12px 0; }
     .coupon-input { flex: 1; padding: 10px 12px; border: 1px dashed #ccc; border-radius: 6px; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
     .coupon-btn { background: #111; color: #fff; border: 0; padding: 10px 16px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
     .coupon-applied-tag { display: flex; justify-content: space-between; align-items: center; background: #e6f4ea; color: #137333; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; margin: 8px 0; }
+
+    /* Step 11: Visual Order Lifecycle Stepper Styling */
+    .order-stepper { display: flex; justify-content: space-between; position: relative; margin: 16px 0 20px; padding: 0 8px; }
+    .order-stepper::before { content: ''; position: absolute; top: 12px; left: 24px; right: 24px; height: 2px; background: #e0e0e0; z-index: 1; }
+    .stepper-step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .step-circle { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 2px solid #ccc; font-size: 10px; font-weight: 700; color: #888; display: grid; place-items: center; }
+    .stepper-step.completed .step-circle { background: #111; border-color: #111; color: #fff; }
+    .stepper-step.active .step-circle { background: #137333; border-color: #137333; color: #fff; }
+    .step-label { font-size: 9px; font-weight: 600; text-transform: uppercase; color: #777; letter-spacing: 0.3px; }
+    .stepper-step.active .step-label { color: #137333; font-weight: 700; }
+    .order-badge-pill { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .badge-pending { background: #fef7e0; color: #b06000; }
+    .badge-confirmed { background: #e8f0fe; color: #1a73e8; }
+    .badge-dispatched { background: #f3e8fd; color: #9333ea; }
+    .badge-delivered { background: #e6f4ea; color: #137333; }
+    .badge-cancelled { background: #fce8e6; color: #c5221f; }
 
     /* Modal Close Button Layering Fix */
     .modal-close {
@@ -863,6 +881,7 @@
 
   const SUPABASE_FUNCTION_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co/functions/v1/create-order';
   const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
+  const RAZORPAY_KEY_ID = 'rzp_test_placeholder';
   const STORE_KEY = 'amane-store-v3';
   const { createClient } = window.supabase;
   const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
@@ -875,7 +894,6 @@
   });
   let currentUser = null;
 
-  /* Step 9: Promo Coupons Matrix */
   const VALID_COUPONS = {
     'AMANE10': { type: 'percent', value: 10, minOrder: 499, label: '10% OFF' },
     'WELCOME100': { type: 'flat', value: 100, minOrder: 999, label: '₹100 OFF' }
@@ -955,7 +973,7 @@
     }));
   }
 
-  /* STEP 8 & 9: Database Persistence & Discount Engine */
+  /* Database Persistence Hooks */
   async function syncCartAndWishlistFromDb() {
     if (!currentUser?.id) return;
 
@@ -1202,7 +1220,6 @@
     }, 0);
   }
 
-  /* Step 9: Discount Calculator */
   function cartDiscount() {
     if (!state.appliedCoupon) return 0;
     const coupon = VALID_COUPONS[state.appliedCoupon.toUpperCase()];
@@ -1331,7 +1348,7 @@
   $$('.hero-banner .dot').forEach((dot, idx) => dot.addEventListener('click', () => { setSlide(idx); restartSlider(); }));
   restartSlider();
 
-  /* Wishlist / Cart Actions with DB Sync Hooks */
+  /* Wishlist / Cart Actions */
   function toggleWishlist(id) {
     if (!currentUser) {
       toast('Please sign in to use your wishlist');
@@ -1505,7 +1522,7 @@
   }
   searchInput?.addEventListener('input', () => filterProducts());
 
-  /* Step 9 Cart View with Coupon Management */
+  /* Cart View */
   function openCart() {
     let hasOutOfStock = false;
 
@@ -1597,7 +1614,7 @@
     );
   }
 
-  /* Step 9 Strict Address Validation Checkout */
+  /* Step 10 Razorpay & COD Integrated Checkout */
   async function openCheckout() {
     if (!state.cart.length) { toast('Add a product before checkout'); return; }
 
@@ -1613,7 +1630,7 @@
     const c = state.customer;
     openModal(`<button class="modal-close" data-close-modal aria-label="Close">✕</button>
       <h2>Checkout</h2>
-      <p>Enter valid delivery details for Cash on Delivery verification.</p>
+      <p>Enter delivery details and select your preferred payment mode.</p>
       <div class="form-field"><label>FULL NAME</label><input id="coName" value="${c.name || ''}" autocomplete="name" placeholder="Full name (e.g. Rahul Sharma)"></div>
       <div class="form-field"><label>MOBILE NUMBER (10 Digits)</label><input id="coPhone" value="${c.phone || ''}" inputmode="tel" maxlength="10" placeholder="10-digit phone (e.g. 9876543210)"></div>
       <div class="form-field"><label>EMAIL</label><input id="coEmail" type="email" value="${c.email || ''}" autocomplete="email" placeholder="you@example.com"></div>
@@ -1621,7 +1638,7 @@
       <div class="form-field"><label>CITY</label><input id="coCity" value="${c.city || ''}" autocomplete="address-level2" placeholder="City"></div>
       <div class="form-field"><label>STATE</label><input id="coState" value="${c.state || ''}" autocomplete="address-level1" placeholder="State"></div>
       <div class="form-field"><label>PINCODE (6 Digits)</label><input id="coPincode" value="${c.pincode || ''}" inputmode="numeric" maxlength="6" placeholder="6-digit Pincode (e.g. 110001)"></div>
-      <div class="form-field"><label>PAYMENT METHOD</label><select id="paymentMethod"><option value="cod">Cash on Delivery (COD)</option><option value="online">Online Payment</option></select></div>
+      <div class="form-field"><label>PAYMENT METHOD</label><select id="paymentMethod"><option value="cod">Cash on Delivery (COD)</option><option value="online">Online Payment (UPI, Cards, NetBanking)</option></select></div>
       <div id="paymentNote" style="padding:11px 12px;border-radius:8px;background:#f7f3ee;font:400 11px/1.5 var(--font-sans);color:#666;margin:8px 0 14px">COD order verification active. Please provide an active phone number.</div>
       <div class="cart-total" style="border-top:1px solid #eee;padding-top:12px;margin-top:4px"><span>Payable Total</span><span>${money(cartTotal())}</span></div>
       <div class="modal-actions" style="margin-top:18px"><button class="solid" id="placeOrderBtn">PLACE ORDER</button></div>`, () => {
@@ -1630,7 +1647,7 @@
         method.onchange = () => {
           note.textContent = method.value === 'cod'
             ? 'COD order verification active. Please provide an active phone number.'
-            : 'Online payment via Razorpay gateway will be enabled in Step 10.';
+            : 'Online Payment via Razorpay (UPI, GPay, PhonePe, Cards, NetBanking). Secure 256-bit encryption.';
         };
 
         $('#placeOrderBtn').onclick = async () => {
@@ -1652,7 +1669,6 @@
             paymentMethod: method.value
           };
 
-          // Step 9 Strict Validations Regex
           const phoneRegex = /^[6-9]\d{9}$/;
           const pincodeRegex = /^[1-9]\d{5}$/;
 
@@ -1682,13 +1698,52 @@
           }
 
           if (values.paymentMethod === 'online') {
-            toast('Online payment will be enabled in Step 10. Please select Cash on Delivery.');
-            return;
+            triggerRazorpayPayment(values);
+          } else {
+            await placeOrder(values);
           }
-
-          await placeOrder(values);
         };
       });
+  }
+
+  function triggerRazorpayPayment(values) {
+    if (typeof window.Razorpay === 'undefined') {
+      toast('Razorpay payment gateway loading... Please try again in a moment.');
+      return;
+    }
+
+    const totalAmountInPaise = cartTotal() * 100;
+
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: totalAmountInPaise,
+      currency: "INR",
+      name: "Amane Store",
+      description: "Order Payment",
+      image: "https://mthkwrtfruhgcjmuwjih.supabase.co/storage/v1/object/public/assets/logo.png",
+      prefill: {
+        name: values.name,
+        email: values.email,
+        contact: values.phone
+      },
+      theme: {
+        color: "#111111"
+      },
+      handler: async function (response) {
+        if (response.razorpay_payment_id) {
+          toast('Payment successful! Confirming your order...');
+          await placeOrder({ ...values, paymentMethod: 'ONLINE', paymentId: response.razorpay_payment_id });
+        }
+      },
+      modal: {
+        ondismiss: function () {
+          toast('Payment cancelled. You can retry or choose Cash on Delivery.');
+        }
+      }
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   }
 
   async function placeOrder(values) {
@@ -1721,7 +1776,8 @@
       address: values.address,
       city_state: `${values.city}, ${values.state}`,
       pincode: values.pincode,
-      payment_method: 'COD',
+      payment_method: values.paymentMethod === 'ONLINE' ? 'ONLINE' : 'COD',
+      payment_id: values.paymentId || null,
       coupon_code: state.appliedCoupon || null,
       items: state.cart.map(item => {
         const p = getProductById(item.id);
@@ -1763,7 +1819,7 @@
         id: serverOrder.order_number,
         createdAt: serverOrder.created_at,
         status: serverOrder.order_status,
-        paymentMethod: 'cod',
+        paymentMethod: values.paymentMethod,
         total: Number(serverOrder.total_amount),
         items: state.cart.map(item => ({ ...item })),
         customer: { ...state.customer }
@@ -1794,7 +1850,7 @@
         <p>Thank you for shopping with Amane Store. Your order has been placed successfully.</p>
         <div style="background:#f7f3ee;border-radius:10px;padding:14px;margin:14px 0;text-align:left;font:500 12px/1.7 var(--font-sans)">
           <div><span style="color:#777">Order ID</span><br><strong>${order.id}</strong></div>
-          <div style="margin-top:7px"><span style="color:#777">Payment</span><br><strong>${order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}</strong></div>
+          <div style="margin-top:7px"><span style="color:#777">Payment</span><br><strong>${order.paymentMethod === 'ONLINE' ? 'Online Payment (Razorpay)' : 'Cash on Delivery'}</strong></div>
           <div style="margin-top:7px"><span style="color:#777">Amount</span><br><strong>${money(order.total)}</strong></div>
         </div>
         <div class="modal-actions"><button class="soft" id="viewOrdersBtn">MY ORDERS</button><button class="solid" id="continueShop">CONTINUE SHOPPING</button></div>
@@ -1847,6 +1903,16 @@
     }[ch]));
   }
 
+  /* Step 11: Dynamic Badge & Order Lifecycle Helper */
+  function getStatusBadge(status = '') {
+    const s = String(status).toLowerCase();
+    if (s.includes('deliver')) return `<span class="order-badge-pill badge-delivered">🟢 Delivered</span>`;
+    if (s.includes('dispatch') || s.includes('ship')) return `<span class="order-badge-pill badge-dispatched">🚚 Dispatched</span>`;
+    if (s.includes('confirm') || s.includes('pack')) return `<span class="order-badge-pill badge-confirmed">🔵 Confirmed</span>`;
+    if (s.includes('cancel')) return `<span class="order-badge-pill badge-cancelled">🔴 Cancelled</span>`;
+    return `<span class="order-badge-pill badge-pending">🟡 Order Placed</span>`;
+  }
+
   async function loadCustomerOrders() {
     const box = $('#accountOrders');
     if (!box) return;
@@ -1889,9 +1955,9 @@
         <div>
           <h4>${escapeHtml(o.order_number || `Order #${o.id}`)}</h4>
           <p>${new Date(o.created_at).toLocaleDateString('en-IN')} · ${money(o.total_amount)}</p>
-          <p style="margin-top:3px;color:#666">${escapeHtml(o.order_status || 'New')}${itemCount ? ` · ${itemCount} item${itemCount === 1 ? '' : 's'}` : ''}</p>
+          <p style="margin-top:4px">${getStatusBadge(o.order_status)}${itemCount ? `<span style="font-size:11px;color:#666;margin-left:6px">(${itemCount} items)</span>` : ''}</p>
         </div>
-        <button class="cart-remove" data-db-order-track="${escapeHtml(o.order_number || '')}">VIEW</button>
+        <button class="cart-remove" data-db-order-track="${escapeHtml(o.order_number || '')}">TRACK</button>
       </div>`;
     }).join('')}</div>`;
 
@@ -2026,9 +2092,11 @@
     });
   }
 
+  /* Step 11 Live Order Tracking with Visual Lifecycle Stepper */
   async function openOrderTracking(orderId = '') {
     openModal(`<button class="modal-close" data-close-modal aria-label="Close">✕</button><h2>Track Order</h2><p>Your order status is checked against your signed-in account.</p><div class="form-field"><label>ORDER NUMBER</label><input id="trackNo" value="${escapeHtml(orderId)}" placeholder="AMN-XXXXXXXX-XXXX"></div><div class="modal-actions"><button class="solid" id="trackBtn">TRACK ORDER</button></div><div id="trackResult"></div>`, async () => {
-      $('#trackBtn').onclick = async () => {
+      
+      const executeTrack = async () => {
         const id = $('#trackNo').value.trim();
         const result = $('#trackResult');
 
@@ -2065,16 +2133,57 @@
           return;
         }
 
-        const itemCount = Array.isArray(order.items)
-          ? order.items.reduce((sum, item) => sum + Number(item?.quantity || 0), 0)
-          : 0;
+        const s = String(order.order_status || '').toLowerCase();
+        let step1 = 'completed', step2 = '', step3 = '', step4 = '';
+
+        if (s.includes('confirm') || s.includes('pack')) { step1 = 'completed'; step2 = 'active'; }
+        else if (s.includes('dispatch') || s.includes('ship')) { step1 = 'completed'; step2 = 'completed'; step3 = 'active'; }
+        else if (s.includes('deliver')) { step1 = 'completed'; step2 = 'completed'; step3 = 'completed'; step4 = 'active'; }
+        else { step1 = 'active'; }
+
+        const stepperHtml = `
+          <div class="order-stepper">
+            <div class="stepper-step ${step1}">
+              <div class="step-circle">1</div>
+              <span class="step-label">Placed</span>
+            </div>
+            <div class="stepper-step ${step2}">
+              <div class="step-circle">2</div>
+              <span class="step-label">Packed</span>
+            </div>
+            <div class="stepper-step ${step3}">
+              <div class="step-circle">3</div>
+              <span class="step-label">Shipped</span>
+            </div>
+            <div class="stepper-step ${step4}">
+              <div class="step-circle">4</div>
+              <span class="step-label">Delivered</span>
+            </div>
+          </div>
+        `;
 
         const trackingLink = order.tracking_url
-          ? `<br><a href="${escapeHtml(order.tracking_url)}" target="_blank" rel="noopener noreferrer" style="color:#111;text-decoration:underline">OPEN TRACKING</a>`
+          ? `<br><a href="${escapeHtml(order.tracking_url)}" target="_blank" rel="noopener noreferrer" style="color:#111;text-decoration:underline;font-weight:600">OPEN COURIER TRACKING ↗</a>`
           : '';
 
-        result.innerHTML = `<div style="margin-top:16px;padding:14px;border-radius:10px;background:#f7f3ee;font:500 12px/1.8 var(--font-sans)"><strong>${escapeHtml(order.order_number)}</strong><br>Status: ${escapeHtml(order.order_status || 'New')}<br>Payment: ${escapeHtml(order.payment_status || 'Pending')}<br>Total: ${money(order.total_amount)}${itemCount ? `<br>Items: ${itemCount}` : ''}${order.tracking_number ? `<br>Tracking: ${escapeHtml(order.tracking_number)}` : ''}${order.shipping_provider ? `<br>Carrier: ${escapeHtml(order.shipping_provider)}` : ''}${trackingLink}<br>Placed: ${new Date(order.created_at).toLocaleString('en-IN')}</div>`;
+        result.innerHTML = `
+          <div style="margin-top:16px;padding:16px;border-radius:12px;background:#f7f3ee;font:500 12px/1.8 var(--font-sans)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>${escapeHtml(order.order_number)}</strong>
+              ${getStatusBadge(order.order_status)}
+            </div>
+            ${stepperHtml}
+            <div>Payment: <strong>${escapeHtml(order.payment_status || 'Pending')} (${escapeHtml(order.payment_method || 'COD')})</strong></div>
+            <div>Total: <strong>${money(order.total_amount)}</strong></div>
+            ${order.tracking_number ? `<div>Courier Tracking: <strong>${escapeHtml(order.tracking_number)}</strong> ${order.shipping_provider ? `via ${escapeHtml(order.shipping_provider)}` : ''}</div>` : ''}
+            ${trackingLink}
+            <div style="font-size:10px;color:#777;margin-top:6px">Order Placed: ${new Date(order.created_at).toLocaleString('en-IN')}</div>
+          </div>
+        `;
       };
+
+      $('#trackBtn').onclick = executeTrack;
+      if (orderId) executeTrack();
     });
   }
 
