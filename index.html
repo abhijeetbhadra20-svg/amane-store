@@ -525,6 +525,27 @@
     .info-box { background: #f9f8f6; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 11px; color: #555; display: flex; flex-direction: column; gap: 6px; }
     .info-item { display: flex; align-items: center; gap: 8px; }
 
+    /* Modal Close Button Layering Fix */
+    .modal-close {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      z-index: 100; /* Guarantees button stays on top of images/overlays */
+      font-size: 16px;
+      font-weight: 600;
+      color: #111111;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 900px) {
       .hero-overlay { max-width: 80%; }
@@ -569,7 +590,6 @@
     .modal-back { position:absolute; inset:0; background:rgba(17,17,17,.38); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
     .modal { position:relative; width:min(94vw,520px); max-height:min(86vh,720px); overflow:auto; background:#fff; border-radius:18px; box-shadow:0 24px 80px rgba(0,0,0,.22); transform:translateY(18px) scale(.97); transition:.28s cubic-bezier(.2,.8,.2,1); padding:24px; }
     .modal-wrap.show .modal { transform:translateY(0) scale(1); }
-    .modal-close { position:absolute; right:14px; top:14px; width:34px; height:34px; border:0; border-radius:50%; background:#f6f4f1; cursor:pointer; display:grid; place-items:center; }
     .modal h2 { font:600 28px/1.1 var(--font-serif); margin-bottom:8px; }
     .modal p { font-size:12px; color:#666; margin-bottom:18px; }
     .modal-actions { display:flex; gap:10px; flex-wrap:wrap; }
@@ -933,7 +953,6 @@
     grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color:#666;">Loading store collection...</div>';
 
     try {
-      // Query active products (including out of stock so we can display them with Blur/Overlay)
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -962,12 +981,12 @@
         }
 
         const prodCode = String(item.code || item.id || '').trim();
-        const dbPrimaryKey = item.id; // Raw DB Primary Key (Integer/UUID or string) for Edge Function
+        const dbPrimaryKey = item.id;
 
         return {
           id: prodCode,
           dbId: prodCode,
-          rawDbId: dbPrimaryKey, // Critical for create-order function match!
+          rawDbId: dbPrimaryKey,
           title: item.title || 'Amane Design',
           priceText: `₹${Number(item.price).toLocaleString('en-IN')}`,
           price: Number(item.price),
@@ -1171,7 +1190,13 @@
     document.body.classList.remove('drawer-open');
   }
 
-  $('#modalWrap').addEventListener('click', e => { if (e.target.matches('[data-close-modal]')) closeModal(); });
+  // Robust Modal Close Handler (Supports clicks directly on ✕ button, child elements, or backdrop)
+  $('#modalWrap').addEventListener('click', e => { 
+    if (e.target.closest('[data-close-modal]')) {
+      closeModal(); 
+    }
+  });
+  
   $('#drawerOverlay').addEventListener('click', closeDrawer);
   $('#drawerClose').addEventListener('click', closeDrawer);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeDrawer(); } });
@@ -1262,7 +1287,7 @@
     openCart();
   }
 
-  /* Step 7: Richer Product Detail View with Out of Stock Handling */
+  /* Step 7: Richer Product Detail View with Close Button Fix */
   function openProduct(id) {
     const p = getProductById(id);
     if (!p) return;
@@ -1499,7 +1524,6 @@
       pincode: values.pincode
     };
 
-    // Send items using rawDbId (Primary Key in DB) to guarantee Backend Edge Function finds the product!
     const payload = {
       customer_name: values.name,
       customer_phone: values.phone,
