@@ -367,7 +367,30 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: filter 0.3s ease;
     }
+    
+    /* Out of stock blur styling */
+    .product-img-wrapper.out-of-stock img {
+      filter: blur(4px) grayscale(60%);
+      opacity: 0.7;
+    }
+    .out-of-stock-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.45);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      z-index: 2;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+
     .wishlist-btn {
       position: absolute;
       top: 8px;
@@ -382,6 +405,7 @@
       justify-content: center;
       cursor: pointer;
       box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      z-index: 5;
     }
     .product-title {
       font-size: 13px;
@@ -485,9 +509,10 @@
       font-weight: 600;
     }
 
-    /* Step 7 Custom Styling additions */
+    /* Gallery and Product detail styling */
     .gallery-container { display: flex; flex-direction: column; gap: 8px; }
     .gallery-main { width: 100%; aspect-ratio: 3/4; border-radius: 12px; object-fit: cover; background: #f1eee9; }
+    .gallery-main.blurred { filter: blur(4px) grayscale(60%); opacity: 0.7; }
     .gallery-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
     .gallery-thumb { width: 48px; height: 60px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 1px solid #ddd; opacity: 0.6; transition: all 0.2s; }
     .gallery-thumb.active { opacity: 1; border-color: #111; }
@@ -908,11 +933,11 @@
     grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color:#666;">Loading store collection...</div>';
 
     try {
+      // Query active products (including out of stock so we can display them with Blur/Overlay)
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('is_active', true)
-        .eq('in_stock', true)
         .neq('code', 'TEST-001')
         .order('created_at', { ascending: false });
 
@@ -937,10 +962,12 @@
         }
 
         const prodCode = String(item.code || item.id || '').trim();
+        const dbPrimaryKey = item.id; // Raw DB Primary Key (Integer/UUID or string) for Edge Function
 
         return {
           id: prodCode,
           dbId: prodCode,
+          rawDbId: dbPrimaryKey, // Critical for create-order function match!
           title: item.title || 'Amane Design',
           priceText: `₹${Number(item.price).toLocaleString('en-IN')}`,
           price: Number(item.price),
@@ -952,7 +979,8 @@
           category: item.category || 'New Arrivals',
           sizes: item.sizes ? (Array.isArray(item.sizes) ? item.sizes : String(item.sizes).split(',')) : ['XS', 'S', 'M', 'L', 'XL'],
           deliveryText: item.delivery_text || 'Delivered in 3–5 business days',
-          returnText: item.return_text || '7 Days Easy Return & Exchange'
+          returnText: item.return_text || '7 Days Easy Return & Exchange',
+          inStock: item.in_stock !== false
         };
       });
 
@@ -1012,10 +1040,12 @@
 
     grid.innerHTML = products.map((p) => {
       const isWishlisted = state.wishlist.includes(p.id);
+      const isOut = !p.inStock;
       return `
         <a href="#" class="product-card" data-product-id="${p.id}">
-          <div class="product-img-wrapper">
+          <div class="product-img-wrapper ${isOut ? 'out-of-stock' : ''}">
             <img src="${p.image}" alt="${p.title}">
+            ${isOut ? '<div class="out-of-stock-overlay">OUT OF STOCK</div>' : ''}
             <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" aria-label="Wishlist" data-wish-id="${p.id}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="${isWishlisted ? '#111' : 'none'}" stroke="#111" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
@@ -1202,12 +1232,18 @@
       return;
     }
     const strId = String(id || '').trim();
+    const p = getProductById(strId);
+    
+    if (p && !p.inStock) {
+      toast('Sorry, this item is currently out of stock');
+      return;
+    }
+
     const safeQty = Math.min(20, Math.max(1, Math.floor(Number(qty) || 1)));
     const item = state.cart.find(x => x.id === strId);
     if (item) item.qty = Math.min(20, item.qty + safeQty);
     else state.cart.push({ id: strId, qty: safeQty });
     updateUI();
-    const p = getProductById(strId);
     toast(`${p?.title || 'Product'} added to bag`);
   }
 
@@ -1226,12 +1262,13 @@
     openCart();
   }
 
-  /* Step 7: Richer Product Detail View */
+  /* Step 7: Richer Product Detail View with Out of Stock Handling */
   function openProduct(id) {
     const p = getProductById(id);
     if (!p) return;
     const sizes = p.sizes || ['XS', 'S', 'M', 'L', 'XL'];
     let selectedSize = sizes[0];
+    const isOut = !p.inStock;
     
     const thumbsHtml = p.images.length > 1 ? `
       <div class="gallery-thumbs">
@@ -1243,11 +1280,11 @@
       <button class="modal-close" data-close-modal aria-label="Close">✕</button>
       <div class="quick-product">
         <div class="gallery-container">
-          <img id="mainGalleryImg" class="gallery-main" src="${p.images[0]}" alt="${p.title}">
+          <img id="mainGalleryImg" class="gallery-main ${isOut ? 'blurred' : ''}" src="${p.images[0]}" alt="${p.title}">
           ${thumbsHtml}
         </div>
         <div>
-          <span class="stock-badge in-stock">✓ In Stock — Ready to Ship</span>
+          ${isOut ? '<span class="stock-badge low-stock">✖ Out of Stock</span>' : '<span class="stock-badge in-stock">✓ In Stock — Ready to Ship</span>'}
           <div style="font:500 11px var(--font-sans);letter-spacing:.14em;text-transform:uppercase;color:#777;margin-bottom:4px">Amane Collection • ${p.id}</div>
           <h2>${p.title}</h2>
           <div class="quick-price">${p.priceText} ${p.mrp ? `<span style="text-decoration:line-through;color:#999;font-size:13px;margin-left:8px">₹${p.mrp}</span>` : ''}</div>
@@ -1260,9 +1297,12 @@
             </div>
           </div>
 
-          <div class="qty-row"><button id="qtyMinus">−</button><span class="qty-value" id="qtyValue">1</span><button id="qtyPlus">+</button></div>
+          <div class="qty-row"><button id="qtyMinus" ${isOut ? 'disabled' : ''}>−</button><span class="qty-value" id="qtyValue">1</span><button id="qtyPlus" ${isOut ? 'disabled' : ''}>+</button></div>
           
-          <div class="modal-actions"><button class="soft" id="quickWish">${state.wishlist.includes(p.id) ? '♥ Wishlisted' : '♡ Add to Wishlist'}</button><button class="solid" id="quickAdd">ADD TO BAG</button></div>
+          <div class="modal-actions">
+            <button class="soft" id="quickWish">${state.wishlist.includes(p.id) ? '♥ Wishlisted' : '♡ Add to Wishlist'}</button>
+            ${isOut ? '<button class="solid" disabled style="background:#888;cursor:not-allowed">OUT OF STOCK</button>' : '<button class="solid" id="quickAdd">ADD TO BAG</button>'}
+          </div>
 
           <div class="info-box">
             <div class="info-item">🚚 <span>${p.deliveryText}</span></div>
@@ -1271,10 +1311,12 @@
         </div>
       </div>`, () => {
         let qty = 1;
-        $('#qtyMinus').onclick = () => { qty = Math.max(1, qty - 1); $('#qtyValue').textContent = qty; };
-        $('#qtyPlus').onclick = () => { qty += 1; $('#qtyValue').textContent = qty; };
+        if (!isOut) {
+          $('#qtyMinus').onclick = () => { qty = Math.max(1, qty - 1); $('#qtyValue').textContent = qty; };
+          $('#qtyPlus').onclick = () => { qty += 1; $('#qtyValue').textContent = qty; };
+          $('#quickAdd').onclick = () => { addToCart(p.id, qty); closeModal(); openCart(); };
+        }
         $('#quickWish').onclick = () => { toggleWishlist(p.id); $('#quickWish').textContent = state.wishlist.includes(p.id) ? '♥ Wishlisted' : '♡ Add to Wishlist'; };
-        $('#quickAdd').onclick = () => { addToCart(p.id, qty); closeModal(); openCart(); };
 
         $$('.size-btn').forEach(btn => {
           btn.onclick = () => {
@@ -1326,15 +1368,19 @@
   }
   searchInput?.addEventListener('input', () => filterProducts());
 
-  /* Cart View */
+  /* Cart View with Out of Stock Detection */
   function openCart() {
+    let hasOutOfStock = false;
+
     const itemsHtml = state.cart.length ? state.cart.map(item => {
       const p = getProductById(item.id);
       if (!p) return '';
+      if (!p.inStock) hasOutOfStock = true;
+
       return `<div class="cart-item">
-        <img src="${p.image}" alt="${p.title}">
+        <img src="${p.image}" alt="${p.title}" style="${!p.inStock ? 'filter:blur(2px) grayscale(60%);' : ''}">
         <div>
-          <h4>${p.title}</h4>
+          <h4>${p.title} ${!p.inStock ? '<span style="color:#c5221f;font-size:10px;font-weight:600">(Out of Stock)</span>' : ''}</h4>
           <p>${money(p.price)} × ${item.qty}</p>
           <div style="display:flex;align-items:center;gap:7px;margin-top:7px">
             <button class="qty-inline" data-cart-dec="${p.id}">−</button><strong style="font:600 11px var(--font-sans)">${item.qty}</strong><button class="qty-inline" data-cart-inc="${p.id}">+</button>
@@ -1346,21 +1392,27 @@
 
     const subtotal = cartSubtotal();
     const shipping = shippingFor(subtotal);
+    
     openModal(`<button class="modal-close" data-close-modal aria-label="Close">✕</button>
       <h2>Your Bag</h2>
       <p>${cartCount()} item${cartCount() === 1 ? '' : 's'} in your shopping bag.</p>
       <div class="cart-list">${itemsHtml}</div>
+      ${hasOutOfStock ? '<div style="background:#fce8e6;color:#c5221f;padding:10px 12px;border-radius:8px;font-size:11px;font-weight:500;margin-bottom:12px">One or more items in your bag are currently out of stock. Please remove them to proceed.</div>' : ''}
       ${state.cart.length ? `<div style="border-top:1px solid #eee;padding-top:12px;display:grid;gap:8px;font:500 12px var(--font-sans)">
         <div class="cart-total"><span>Subtotal</span><span>${money(subtotal)}</span></div>
         <div class="cart-total" style="font-weight:400"><span>Shipping</span><span>${shipping ? money(shipping) : 'FREE'}</span></div>
         <div class="cart-total" style="padding-top:8px;font-size:14px"><span>Total</span><span>${money(subtotal + shipping)}</span></div>
       </div>
-      <div class="modal-actions" style="margin-top:18px"><button class="solid" id="checkoutBtn">CHECKOUT</button></div>` : ''}`,
+      <div class="modal-actions" style="margin-top:18px">
+        <button class="solid" id="checkoutBtn" ${hasOutOfStock ? 'disabled style="background:#888;cursor:not-allowed"' : ''}>CHECKOUT</button>
+      </div>` : ''}`,
       () => {
         $$('#modalContent [data-remove-cart]').forEach(btn => btn.onclick = () => { removeFromCart(btn.dataset.removeCart); openCart(); });
         $$('#modalContent [data-cart-inc]').forEach(btn => btn.onclick = () => changeQty(btn.dataset.cartInc, 1));
         $$('#modalContent [data-cart-dec]').forEach(btn => btn.onclick = () => changeQty(btn.dataset.cartDec, -1));
-        $('#checkoutBtn')?.addEventListener('click', openCheckout);
+        if (!hasOutOfStock) {
+          $('#checkoutBtn')?.addEventListener('click', openCheckout);
+        }
       }
     );
   }
@@ -1447,6 +1499,7 @@
       pincode: values.pincode
     };
 
+    // Send items using rawDbId (Primary Key in DB) to guarantee Backend Edge Function finds the product!
     const payload = {
       customer_name: values.name,
       customer_phone: values.phone,
@@ -1458,7 +1511,7 @@
       items: state.cart.map(item => {
         const p = getProductById(item.id);
         return {
-          product_id: p ? p.dbId : item.id,
+          product_id: p ? (p.rawDbId || p.dbId) : item.id,
           quantity: item.qty,
           size: null,
           color: null
@@ -1801,7 +1854,7 @@
 
   function openHeaderWishlist() {
     const items = state.wishlist.map(id => getProductById(id)).filter(Boolean);
-    openModal(`<button class="modal-close" data-close-modal aria-label="Close">✕</button><h2>Wishlist</h2><p>Saved items (${items.length}).</p>${items.length ? `<div class="cart-list">${items.map(p => `<div class="cart-item"><img src="${p.image}" alt="${p.title}"><div><h4>${p.title}</h4><p>${p.priceText}</p></div><button class="cart-remove" data-wish-remove="${p.id}">Remove</button></div>`).join('')}</div>` : '<div class="empty-state">Your wishlist is waiting for something beautiful.</div>'}`, () => {
+    openModal(`<button class="modal-close" data-close-modal aria-label="Close">✕</button><h2>Wishlist</h2><p>Saved items (${items.length}).</p>${items.length ? `<div class="cart-list">${items.map(p => `<div class="cart-item"><img src="${p.image}" alt="${p.title}" style="${!p.inStock ? 'filter:blur(2px) grayscale(60%);' : ''}"><div><h4>${p.title} ${!p.inStock ? '<span style="color:#c5221f;font-size:10px">(Out of Stock)</span>' : ''}</h4><p>${p.priceText}</p></div><button class="cart-remove" data-wish-remove="${p.id}">Remove</button></div>`).join('')}</div>` : '<div class="empty-state">Your wishlist is waiting for something beautiful.</div>'}`, () => {
       $$('#modalContent [data-wish-remove]').forEach(btn => btn.onclick = () => { toggleWishlist(btn.dataset.wishRemove); openHeaderWishlist(); });
     });
   }
