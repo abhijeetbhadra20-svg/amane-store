@@ -533,7 +533,7 @@
     .coupon-btn { background: #111; color: #fff; border: 0; padding: 10px 16px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
     .coupon-applied-tag { display: flex; justify-content: space-between; align-items: center; background: #e6f4ea; color: #137333; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; margin: 8px 0; }
 
-    /* Step 11: Visual Order Lifecycle Stepper Styling */
+    /* Order Stepper Styling */
     .order-stepper { display: flex; justify-content: space-between; position: relative; margin: 16px 0 20px; padding: 0 8px; }
     .order-stepper::before { content: ''; position: absolute; top: 12px; left: 24px; right: 24px; height: 2px; background: #e0e0e0; z-index: 1; }
     .stepper-step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -548,6 +548,9 @@
     .badge-dispatched { background: #f3e8fd; color: #9333ea; }
     .badge-delivered { background: #e6f4ea; color: #137333; }
     .badge-cancelled { background: #fce8e6; color: #c5221f; }
+
+    /* Step 12 Courier Tracking Card Button */
+    .track-courier-btn { display: block; width: 100%; text-align: center; background: #111111; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 10px; border-radius: 8px; text-decoration: none; margin-top: 10px; letter-spacing: 0.5px; }
 
     /* Modal Close Button Layering Fix */
     .modal-close {
@@ -971,6 +974,22 @@
       newsletter: state.newsletter,
       appliedCoupon: state.appliedCoupon
     }));
+  }
+
+  /* Step 12: Indian Courier Tracking Link Auto-Generator */
+  function getAutoTrackingUrl(provider, trackingNumber, directUrl) {
+    if (directUrl && directUrl.trim()) return directUrl.trim();
+    if (!trackingNumber || !trackingNumber.trim()) return null;
+
+    const cleanNumber = trackingNumber.trim();
+    const p = String(provider || '').toLowerCase();
+
+    if (p.includes('delhivery')) return `https://www.delhivery.com/track/package/${cleanNumber}`;
+    if (p.includes('bluedart')) return `https://www.bluedart.com/tracking?numbers=${cleanNumber}`;
+    if (p.includes('ecom')) return `https://www.ecomexpress.in/tracking/?awb_field=${cleanNumber}`;
+    
+    // Default to Shiprocket universal tracking engine
+    return `https://shiprocket.co/tracking/${cleanNumber}`;
   }
 
   /* Database Persistence Hooks */
@@ -1614,7 +1633,7 @@
     );
   }
 
-  /* Step 10 Razorpay & COD Integrated Checkout */
+  /* Checkout Process */
   async function openCheckout() {
     if (!state.cart.length) { toast('Add a product before checkout'); return; }
 
@@ -1903,7 +1922,6 @@
     }[ch]));
   }
 
-  /* Step 11: Dynamic Badge & Order Lifecycle Helper */
   function getStatusBadge(status = '') {
     const s = String(status).toLowerCase();
     if (s.includes('deliver')) return `<span class="order-badge-pill badge-delivered">🟢 Delivered</span>`;
@@ -2092,7 +2110,7 @@
     });
   }
 
-  /* Step 11 Live Order Tracking with Visual Lifecycle Stepper */
+  /* Step 12 Enhanced Tracking with Auto Courier Link Generator */
   async function openOrderTracking(orderId = '') {
     openModal(`<button class="modal-close" data-close-modal aria-label="Close">✕</button><h2>Track Order</h2><p>Your order status is checked against your signed-in account.</p><div class="form-field"><label>ORDER NUMBER</label><input id="trackNo" value="${escapeHtml(orderId)}" placeholder="AMN-XXXXXXXX-XXXX"></div><div class="modal-actions"><button class="solid" id="trackBtn">TRACK ORDER</button></div><div id="trackResult"></div>`, async () => {
       
@@ -2162,9 +2180,13 @@
           </div>
         `;
 
-        const trackingLink = order.tracking_url
-          ? `<br><a href="${escapeHtml(order.tracking_url)}" target="_blank" rel="noopener noreferrer" style="color:#111;text-decoration:underline;font-weight:600">OPEN COURIER TRACKING ↗</a>`
-          : '';
+        const autoCourierUrl = getAutoTrackingUrl(order.shipping_provider, order.tracking_number, order.tracking_url);
+
+        const courierButtonHtml = autoCourierUrl ? `
+          <a href="${escapeHtml(autoCourierUrl)}" target="_blank" rel="noopener noreferrer" class="track-courier-btn">
+            TRACK COURIER PACKAGE 🚚 ↗
+          </a>
+        ` : '';
 
         result.innerHTML = `
           <div style="margin-top:16px;padding:16px;border-radius:12px;background:#f7f3ee;font:500 12px/1.8 var(--font-sans)">
@@ -2175,9 +2197,9 @@
             ${stepperHtml}
             <div>Payment: <strong>${escapeHtml(order.payment_status || 'Pending')} (${escapeHtml(order.payment_method || 'COD')})</strong></div>
             <div>Total: <strong>${money(order.total_amount)}</strong></div>
-            ${order.tracking_number ? `<div>Courier Tracking: <strong>${escapeHtml(order.tracking_number)}</strong> ${order.shipping_provider ? `via ${escapeHtml(order.shipping_provider)}` : ''}</div>` : ''}
-            ${trackingLink}
-            <div style="font-size:10px;color:#777;margin-top:6px">Order Placed: ${new Date(order.created_at).toLocaleString('en-IN')}</div>
+            ${order.tracking_number ? `<div>AWB Number: <strong>${escapeHtml(order.tracking_number)}</strong> ${order.shipping_provider ? `(${escapeHtml(order.shipping_provider)})` : ''}</div>` : ''}
+            ${courierButtonHtml}
+            <div style="font-size:10px;color:#777;margin-top:8px">Order Placed: ${new Date(order.created_at).toLocaleString('en-IN')}</div>
           </div>
         `;
       };
