@@ -233,6 +233,28 @@
         function isEmailWhitelisted(email) {
             return ALLOWED_ADMIN_EMAILS.includes((email || '').trim().toLowerCase());
         }
+// Step 13: Direct Supabase Storage Bucket File Upload
+async function uploadProductImage(file) {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+  const filePath = `products/${fileName}`;
+
+  const { data, error } = await supabase.storage
+    .from('product-images')
+    .upload(filePath, file, { cacheControl: '3600', upsert: false });
+
+  if (error) {
+    console.error('Storage Upload Error:', error);
+    throw new Error('Image upload failed');
+  }
+
+  // Get Public CDN URL
+  const { data: urlData } = supabase.storage
+    .from('product-images')
+    .getPublicUrl(filePath);
+
+  return urlData.publicUrl;
+}
 
         function switchAdminTab(tab) {
             const productsBtn = document.getElementById('tabBtnProducts');
