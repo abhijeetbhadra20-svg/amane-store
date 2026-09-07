@@ -599,18 +599,31 @@
       .newsletter-card { flex-direction: column; gap: 16px; text-align: center; }
       .newsletter-form { max-width: 100%; }
     }
-    @media (max-width: 600px) {
-      .hero-banner { min-height: 200px; margin-bottom: 18px; }
-      .hero-img { height: 210px; }
-      .hero-overlay { max-width: 100%; padding: 16px; }
-      .hero-title { font-size: 22px; line-height: 1.15; margin-bottom: 4px; }
-      .hero-subtitle { font-size: 11px; margin-bottom: 12px; }
-      .btn-primary { padding: 8px 14px; font-size: 10px; }
-      .categories-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-      .category-name { font-size: 11px; }
-      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .gallery-main { max-height: 240px; }
-    }
+        @media (max-width: 600px) {
+      /* Hero Banner Compact Height */
+      .hero-banner { min-height: 160px !important; margin-bottom: 14px !important; }
+      .hero-img { height: 170px !important; }
+      .hero-overlay { padding: 12px !important; }
+      .hero-title { font-size: 20px !important; margin-bottom: 2px !important; }
+      .hero-subtitle { font-size: 10px !important; margin-bottom: 8px !important; }
+      .btn-primary { padding: 6px 12px !important; font-size: 9px !important; }
+
+      /* Compact 2-Column Catalog Grid (Zero Stretch) */
+      .products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+      .product-img-wrapper { aspect-ratio: 1/1 !important; border-radius: 8px !important; margin-bottom: 6px !important; }
+      .product-title { font-size: 11px !important; }
+      .product-price { font-size: 11px !important; }
+
+      /* Zero-Scroll Mobile Quick View Modal */
+      .modal { padding: 14px !important; max-height: 88vh !important; border-radius: 14px !important; }
+      .quick-product { gap: 8px !important; }
+      .gallery-main { max-height: 150px !important; object-fit: contain !important; border-radius: 8px !important; background: #f8f6f2 !important; }
+      .quick-price { font-size: 14px !important; margin: 2px 0 6px !important; }
+      .qty-row { margin: 6px 0 10px !important; }
+      .size-btn { padding: 6px 10px !important; font-size: 10px !important; }
+      .info-box { display: none !important; }
+        }
+    
   
     /* Interactive UX Layer */
     html { scroll-behavior: smooth; }
