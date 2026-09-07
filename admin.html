@@ -11,6 +11,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Cropper.js CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <style>
         input, select, textarea {
           font-size: 16px !important;
@@ -150,7 +155,7 @@
                         </div>
 
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Product Images <span class="text-[10px] text-slate-400">(Select image file)</span></label>
+                            <label class="block font-bold text-slate-700 mb-1">Product Images <span class="text-[10px] text-rose-600 font-bold">(Locked 3:4 Crop Required)</span></label>
                             <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleImageSelection(event)" class="w-full p-2 card rounded-2xl border border-slate-100 text-base file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-base file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer transition">
                             <div id="imagePreviewContainer" class="flex gap-2 mt-2 overflow-x-auto"></div>
                         </div>
@@ -218,12 +223,34 @@
         </div>
     </main>
 
+    <!-- Cropper Modal Engine -->
+    <div id="cropperModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex-col items-center justify-center p-4">
+      <div class="bg-white rounded-3xl max-w-md w-full p-5 space-y-3 flex flex-col max-h-[90vh] shadow-2xl">
+        <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
+          <h3 class="font-bold text-sm text-slate-900">Crop Image (Locked 3:4 Aspect Ratio)</h3>
+          <span id="cropStepText" class="text-xs font-extrabold text-rose-600">Image 1 of 1</span>
+        </div>
+        <div class="relative w-full flex-1 min-h-[280px] max-h-[50vh] bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center">
+          <img id="cropperImage" class="max-w-full max-h-full block">
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button type="button" onclick="cancelCropping()" class="flex-1 py-3 rounded-2xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Cancel</button>
+          <button type="button" onclick="applyCurrentCrop()" class="flex-1 py-3 rounded-2xl text-xs font-extrabold bg-rose-600 text-white shadow-lg shadow-rose-600/20 hover:bg-rose-700 transition">Crop & Continue</button>
+        </div>
+      </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://mthkwrtfruhgcjmuwjih.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_HhSa_JJrkH06xHsv7_sgQQ_Gtz-zyGc';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let selectedImageFiles = [];
+        let rawFilesQueue = [];
+        let currentCropIndex = 0;
+        let croppedBlobs = [];
+        let cropperInstance = null;
+
         let editingProductId = null;
         let cachedOrders = [];
         let currentOrderFilter = 'All';
@@ -467,21 +494,86 @@
             return cachedProducts;
         }
 
+        /* 3:4 Aspect Ratio Cropper Engine Logic */
         function handleImageSelection(event) {
-            const files = event.target.files;
-            selectedImageFiles = Array.from(files || []);
+            const files = Array.from(event.target.files || []);
+            if (files.length === 0) return;
+            rawFilesQueue = files;
+            currentCropIndex = 0;
+            croppedBlobs = [];
+            startCroppingFlow();
+        }
+
+        function startCroppingFlow() {
+            if (currentCropIndex >= rawFilesQueue.length) {
+                const cropperModal = document.getElementById('cropperModal');
+                cropperModal.classList.add('hidden');
+                cropperModal.style.display = 'none';
+                if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+                renderCroppedPreviews();
+                return;
+            }
+            const file = rawFilesQueue[currentCropIndex];
+            document.getElementById('cropStepText').innerText = `Image ${currentCropIndex + 1} of ${rawFilesQueue.length}`;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const cropperImg = document.getElementById('cropperImage');
+                cropperImg.src = e.target.result;
+                const cropperModal = document.getElementById('cropperModal');
+                cropperModal.classList.remove('hidden');
+                cropperModal.style.display = 'flex';
+                if (cropperInstance) { cropperInstance.destroy(); }
+                cropperInstance = new Cropper(cropperImg, {
+                    aspectRatio: 3 / 4,
+                    viewMode: 1,
+                    autoCropArea: 1,
+                    responsive: true,
+                    background: false
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function applyCurrentCrop() {
+            if (!cropperInstance) return;
+            cropperInstance.getCroppedCanvas({
+                width: 900,
+                height: 1200,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high'
+            }).toBlob((blob) => {
+                const originalFile = rawFilesQueue[currentCropIndex];
+                const fileExt = originalFile.name.split('.').pop() || 'jpg';
+                const croppedFile = new File([blob], `product-3x4-${Date.now()}-${currentCropIndex}.${fileExt}`, { type: blob.type || 'image/jpeg' });
+                croppedBlobs.push(croppedFile);
+                currentCropIndex++;
+                startCroppingFlow();
+            }, 'image/jpeg', 0.9);
+        }
+
+        function cancelCropping() {
+            const cropperModal = document.getElementById('cropperModal');
+            cropperModal.classList.add('hidden');
+            cropperModal.style.display = 'none';
+            if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+            rawFilesQueue = [];
+            croppedBlobs = [];
+            selectedImageFiles = [];
+            document.getElementById('prodImageFiles').value = '';
+            document.getElementById('imagePreviewContainer').innerHTML = '';
+        }
+
+        function renderCroppedPreviews() {
+            selectedImageFiles = croppedBlobs;
             const previewContainer = document.getElementById('imagePreviewContainer');
             previewContainer.innerHTML = '';
-
-            if (!files || files.length === 0) return;
-
-            for (let file of files) {
+            selectedImageFiles.forEach(file => {
                 const previewUrl = URL.createObjectURL(file);
                 const imgTag = document.createElement('img');
                 imgTag.src = previewUrl;
-                imgTag.className = "w-12 h-12 object-cover rounded-xl border border-slate-200 shadow-xs shrink-0";
+                imgTag.className = "w-12 h-16 object-cover rounded-xl border border-slate-200 shadow-xs shrink-0";
                 previewContainer.appendChild(imgTag);
-            }
+            });
         }
 
         async function handleAddNewProduct(e) {
@@ -573,6 +665,8 @@
             editingProductId = null;
             document.getElementById('addProductForm').reset();
             selectedImageFiles = [];
+            rawFilesQueue = [];
+            croppedBlobs = [];
             document.getElementById('imagePreviewContainer').innerHTML = '';
             document.getElementById('formTitle').innerText = 'Add New Product';
             document.getElementById('publishBtn').innerText = 'Publish Product';
@@ -596,7 +690,7 @@
 
                 return `
                 <div class="flex items-center justify-between card p-2.5 rounded-2xl border border-slate-100 text-xs gap-3 shadow-xs">
-                    <img src="${img}" class="w-10 h-10 object-cover rounded-xl border border-white shrink-0">
+                    <img src="${img}" class="w-10 h-12 object-cover rounded-xl border border-white shrink-0">
                     <div class="flex-1 truncate">
                         <h4 class="font-bold text-slate-900 truncate">${p.title || 'Amane Design'}</h4>
                         <p class="text-[10px] text-slate-500">${p.code || ''} | ₹${p.price} ${p.discount ? '• ' + p.discount : ''}</p>
