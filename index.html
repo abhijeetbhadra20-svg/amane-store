@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
   <title>Amane Store - Effortless Style</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +16,11 @@
     input, select, textarea {
   font-size: 16px !important;
     }
+    html, body {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+    }
+    
     
     :root {
       --bg-color: #FAFAFA;
