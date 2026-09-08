@@ -56,16 +56,6 @@
         .fade-in-up {
             animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
-
-        @keyframes shimmer {
-            0% { background-position: -400px 0; }
-            100% { background-position: 400px 0; }
-        }
-        .shimmer {
-            background: linear-gradient(90deg, #F3EDE6 25%, #FBF8F4 50%, #F3EDE6 75%);
-            background-size: 800px 100%;
-            animation: shimmer 1.6s infinite linear;
-        }
     </style>
 </head>
 <body class="bg-[#FAF7F2] text-slate-800 font-sans pb-24 min-h-screen relative">
@@ -112,7 +102,7 @@
                 </button>
             </div>
 
-            <!-- Products Tab -->
+            <!-- Products Tab Content -->
             <div id="productsTabContent" class="space-y-4">
                 <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-4">
                     <h2 id="formTitle" class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Add New Product</h2>
@@ -190,7 +180,7 @@
                 <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-3">
                     <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Manage Store Products</h2>
                     <div id="adminProductsList" class="space-y-2">
-                        <div class="card rounded-2xl p-2.5 border border-slate-100 flex items-center gap-3"><div class="shimmer bg-slate-200/60 w-10 h-10 rounded-xl shrink-0"></div><div class="flex-1 space-y-1.5"><div class="shimmer bg-slate-200/60 h-2.5 w-1/2 rounded"></div><div class="shimmer bg-slate-200/60 h-2 w-1/3 rounded"></div></div></div>
+                        <p class="text-xs text-slate-400 text-center py-4">Loading inventory...</p>
                     </div>
                 </div>
             </div>
@@ -218,10 +208,13 @@
                 </div>
             </div>
 
-            <!-- Super Simple Banners Tab Content -->
+            <!-- Strict Banners Tab Content -->
             <div id="bannersTabContent" class="space-y-4 hidden">
                 <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-4">
-                    <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Upload Store Banner or Video</h2>
+                    <div class="flex justify-between items-center border-b border-slate-200/60 pb-2.5">
+                        <h2 class="font-display text-base font-semibold text-slate-900">Upload Banner or Video</h2>
+                        <span class="text-[10px] font-bold bg-rose-100 text-rose-700 px-2 py-1 rounded-lg">Max 6 Limit</span>
+                    </div>
                     
                     <form id="addBannerForm" onsubmit="handleAddNewBanner(event)" class="space-y-3 text-xs">
                         <div>
@@ -235,8 +228,10 @@
                         </div>
 
                         <div>
-                            <label class="block font-bold text-rose-600 mb-1">Select Photo or Video from Gallery 📁</label>
-                            <input type="file" id="bannerMediaFile" accept="image/*,video/*" required class="w-full p-2 card rounded-2xl border border-slate-100 text-base file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer transition">
+                            <label class="block font-bold text-rose-600 mb-1">Select Photo or Video 📁</label>
+                            <p class="text-[10px] text-slate-500 mb-1">✦ Images will be cropped to 4:3 ratio.<br>✦ Video duration MUST be 10–20 seconds.</p>
+                            <input type="file" id="bannerMediaFile" accept="image/*,video/*" required onchange="handleBannerFileSelect(event)" class="w-full p-2 card rounded-2xl border border-slate-100 text-base file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer transition">
+                            <div id="bannerPreviewBox" class="mt-2 hidden"></div>
                         </div>
 
                         <button type="submit" id="publishBannerBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer text-xs">
@@ -246,7 +241,7 @@
                 </div>
 
                 <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-3">
-                    <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Active Store Banners</h2>
+                    <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Active Store Banners (Max 6)</h2>
                     <div id="adminBannersList" class="space-y-2">
                         <p class="text-xs text-slate-400 text-center py-4">Loading banners...</p>
                     </div>
@@ -259,7 +254,7 @@
     <div id="cropperModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex-col items-center justify-center p-4">
       <div class="bg-white rounded-3xl max-w-md w-full p-5 space-y-3 flex flex-col max-h-[90vh] shadow-2xl">
         <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
-          <h3 class="font-bold text-sm text-slate-900">Crop Image (Locked 3:4 Aspect Ratio)</h3>
+          <h3 id="cropperTitleText" class="font-bold text-sm text-slate-900">Crop Image</h3>
           <span id="cropStepText" class="text-xs font-extrabold text-rose-600">Image 1 of 1</span>
         </div>
         <div class="relative w-full flex-1 min-h-[280px] max-h-[50vh] bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center">
@@ -282,6 +277,9 @@
         let currentCropIndex = 0;
         let croppedBlobs = [];
         let cropperInstance = null;
+        let activeCropMode = 'product'; // 'product' (3:4) or 'banner' (4:3)
+
+        let processedBannerFile = null;
 
         let editingProductId = null;
         let cachedOrders = [];
@@ -314,9 +312,7 @@
             .from('product-images')
             .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
-          if (error) {
-            throw new Error('Image upload failed: ' + error.message);
-          }
+          if (error) throw new Error('Image upload failed: ' + error.message);
 
           const { data: urlData } = _supabase.storage
             .from('product-images')
@@ -356,7 +352,55 @@
             }
         }
 
-        /* Direct Gallery Upload Banner Logic */
+        /* Video Duration & Banner Media File Select Handler */
+        function handleBannerFileSelect(event) {
+            const file = event.target.files[0];
+            processedBannerFile = null;
+            const previewBox = document.getElementById('bannerPreviewBox');
+            previewBox.innerHTML = '';
+            previewBox.classList.add('hidden');
+
+            if (!file) return;
+
+            const isVideo = file.type.startsWith('video') || file.name.endsWith('.mp4');
+
+            if (isVideo) {
+                const videoEl = document.createElement('video');
+                videoEl.preload = 'metadata';
+                videoEl.src = URL.createObjectURL(file);
+
+                videoEl.onloadedmetadata = () => {
+                    URL.revokeObjectURL(videoEl.src);
+                    const duration = videoEl.duration;
+
+                    if (duration < 10 || duration > 20) {
+                        alert(`❌ Invalid Video Duration!\nYour video is ${Math.round(duration)} seconds long.\n\nVideo length MUST be between 10 to 20 seconds.`);
+                        event.target.value = '';
+                        return;
+                    }
+
+                    processedBannerFile = file;
+                    previewBox.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-700 rounded-xl font-bold text-[11px]">✓ Valid Video Selected (${Math.round(duration)}s)</div>`;
+                    previewBox.classList.remove('hidden');
+                };
+
+                videoEl.onerror = () => {
+                    alert('Invalid video file.');
+                    event.target.value = '';
+                };
+            } else if (file.type.startsWith('image')) {
+                // Open Cropper Engine for Banner Image (4:3 Ratio)
+                activeCropMode = 'banner';
+                rawFilesQueue = [file];
+                currentCropIndex = 0;
+                croppedBlobs = [];
+                startCroppingFlow();
+            } else {
+                alert('Unsupported file type. Upload an Image or MP4 Video.');
+                event.target.value = '';
+            }
+        }
+
         async function uploadBannerMedia(file) {
             const fileExt = file.name.split('.').pop();
             const fileName = `banner-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -366,9 +410,7 @@
                 .from('product-images')
                 .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
-            if (error) {
-                throw new Error('Upload failed: ' + error.message);
-            }
+            if (error) throw new Error('Upload failed: ' + error.message);
 
             const { data: urlData } = _supabase.storage
                 .from('product-images')
@@ -411,20 +453,29 @@
 
         async function handleAddNewBanner(e) {
             e.preventDefault();
-            const fileInput = document.getElementById('bannerMediaFile');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert('Please select an image or video file from your gallery.');
+
+            // Check Max 6 Limit in Database
+            const { count, error: countErr } = await _supabase
+                .from('banners')
+                .select('*', { count: 'exact', head: true });
+
+            if (!countErr && count >= 6) {
+                alert('❌ Limit Reached!\nYou can upload a maximum of 6 active banners/videos. Please delete an existing banner before adding a new one.');
+                return;
+            }
+
+            if (!processedBannerFile) {
+                alert('Please select a valid image or 10-20 sec video.');
                 return;
             }
 
             const btn = document.getElementById('publishBannerBtn');
-            btn.innerText = 'Uploading to Server...';
+            btn.innerText = 'Uploading Media...';
             btn.disabled = true;
 
             try {
-                const mediaUrl = await uploadBannerMedia(file);
-                const isVideo = file.type.startsWith('video') || file.name.endsWith('.mp4');
+                const mediaUrl = await uploadBannerMedia(processedBannerFile);
+                const isVideo = processedBannerFile.type.startsWith('video') || processedBannerFile.name.endsWith('.mp4');
 
                 const payload = {
                     title: document.getElementById('bannerTitle').value.trim() || 'Effortless Style',
@@ -441,8 +492,10 @@
 
                 if (error) throw error;
 
-                alert('Banner uploaded directly from Gallery & published live! 🎉');
+                alert('Banner published live to store slider! 🎉');
                 document.getElementById('addBannerForm').reset();
+                processedBannerFile = null;
+                document.getElementById('bannerPreviewBox').classList.add('hidden');
                 loadAdminBanners();
             } catch (err) {
                 alert('Error publishing banner: ' + err.message);
@@ -645,6 +698,7 @@
         }
 
         function handleImageSelection(event) {
+            activeCropMode = 'product';
             const files = Array.from(event.target.files || []);
             if (files.length === 0) return;
             rawFilesQueue = files;
@@ -659,11 +713,22 @@
                 cropperModal.classList.add('hidden');
                 cropperModal.style.display = 'none';
                 if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-                renderCroppedPreviews();
+                if (activeCropMode === 'product') {
+                    renderCroppedPreviews();
+                } else if (activeCropMode === 'banner') {
+                    processedBannerFile = croppedBlobs[0];
+                    const previewBox = document.getElementById('bannerPreviewBox');
+                    previewBox.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-700 rounded-xl font-bold text-[11px]">✓ Banner Image Cropped (4:3 Ratio)</div>`;
+                    previewBox.classList.remove('hidden');
+                }
                 return;
             }
+
             const file = rawFilesQueue[currentCropIndex];
+            const targetRatio = activeCropMode === 'banner' ? (4 / 3) : (3 / 4);
+            document.getElementById('cropperTitleText').innerText = activeCropMode === 'banner' ? 'Crop Banner Image (4:3 Ratio)' : 'Crop Product Image (3:4 Ratio)';
             document.getElementById('cropStepText').innerText = `Image ${currentCropIndex + 1} of ${rawFilesQueue.length}`;
+            
             const reader = new FileReader();
             reader.onload = (e) => {
                 const cropperImg = document.getElementById('cropperImage');
@@ -673,7 +738,7 @@
                 cropperModal.style.display = 'flex';
                 if (cropperInstance) { cropperInstance.destroy(); }
                 cropperInstance = new Cropper(cropperImg, {
-                    aspectRatio: 3 / 4,
+                    aspectRatio: targetRatio,
                     viewMode: 1,
                     autoCropArea: 1,
                     responsive: true,
@@ -685,15 +750,18 @@
 
         function applyCurrentCrop() {
             if (!cropperInstance) return;
+            const targetWidth = activeCropMode === 'banner' ? 1200 : 900;
+            const targetHeight = activeCropMode === 'banner' ? 900 : 1200;
+
             cropperInstance.getCroppedCanvas({
-                width: 900,
-                height: 1200,
+                width: targetWidth,
+                height: targetHeight,
                 imageSmoothingEnabled: true,
                 imageSmoothingQuality: 'high'
             }).toBlob((blob) => {
                 const originalFile = rawFilesQueue[currentCropIndex];
                 const fileExt = originalFile.name.split('.').pop() || 'jpg';
-                const croppedFile = new File([blob], `product-3x4-${Date.now()}-${currentCropIndex}.${fileExt}`, { type: blob.type || 'image/jpeg' });
+                const croppedFile = new File([blob], `cropped-${Date.now()}-${currentCropIndex}.${fileExt}`, { type: blob.type || 'image/jpeg' });
                 croppedBlobs.push(croppedFile);
                 currentCropIndex++;
                 startCroppingFlow();
@@ -708,8 +776,14 @@
             rawFilesQueue = [];
             croppedBlobs = [];
             selectedImageFiles = [];
-            document.getElementById('prodImageFiles').value = '';
-            document.getElementById('imagePreviewContainer').innerHTML = '';
+            if (activeCropMode === 'banner') {
+                document.getElementById('bannerMediaFile').value = '';
+                processedBannerFile = null;
+                document.getElementById('bannerPreviewBox').classList.add('hidden');
+            } else {
+                document.getElementById('prodImageFiles').value = '';
+                document.getElementById('imagePreviewContainer').innerHTML = '';
+            }
         }
 
         function renderCroppedPreviews() {
