@@ -17,9 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <style>
-        input, select, textarea {
-          font-size: 16px !important;
-        }
+        input, select, textarea { font-size: 16px !important; }
         html, body {
           width: 100% !important;
           max-width: 100% !important;
@@ -101,7 +99,7 @@
 
         <!-- Main Admin Panel -->
         <div id="adminPanelContent" class="space-y-4 hidden">
-            <!-- Tab Switcher (3 Tabs: Products, Orders, Banners) -->
+            <!-- Tab Switcher -->
             <div class="fade-in-up card rounded-2xl p-1.5 shadow-md border border-slate-100 flex gap-1.5">
                 <button id="tabBtnProducts" onclick="switchAdminTab('products')" class="flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer">
                     <i class="fa-solid fa-shirt mr-1"></i> Products
@@ -116,7 +114,6 @@
 
             <!-- Products Tab -->
             <div id="productsTabContent" class="space-y-4">
-                <!-- Add Product Form Card -->
                 <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-4">
                     <h2 id="formTitle" class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Add New Product</h2>
                     <form id="addProductForm" onsubmit="handleAddNewProduct(event)" class="space-y-3 text-xs">
@@ -158,7 +155,7 @@
                         </div>
 
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Product Images <span class="text-[10px] text-rose-600 font-bold">(Locked 3:4 Crop Required)</span></label>
+                            <label class="block font-bold text-slate-700 mb-1">Product Images <span class="text-[10px] text-rose-600 font-bold">(Locked 3:4 Crop)</span></label>
                             <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleImageSelection(event)" class="w-full p-2 card rounded-2xl border border-slate-100 text-base file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-base file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer transition">
                             <div id="imagePreviewContainer" class="flex gap-2 mt-2 overflow-x-auto"></div>
                         </div>
@@ -190,7 +187,6 @@
                     </form>
                 </div>
 
-                <!-- Inventory List -->
                 <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-3">
                     <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Manage Store Products</h2>
                     <div id="adminProductsList" class="space-y-2">
@@ -207,7 +203,6 @@
                         <button onclick="loadOrders()" class="text-[10px] font-bold text-rose-600 hover:text-rose-700 cursor-pointer transition"><i class="fa-solid fa-rotate-right mr-1"></i>Refresh</button>
                     </div>
 
-                    <!-- Search Box -->
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
                             <i class="fa-solid fa-magnifying-glass text-[11px]"></i>
@@ -215,7 +210,6 @@
                         <input type="text" id="orderSearchInput" oninput="handleOrderSearch()" placeholder="Search by customer name or phone..." class="w-full card pl-9 pr-8 py-2.5 rounded-2xl text-base border border-slate-100 outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
                     </div>
 
-                    <!-- Status Filter Pills -->
                     <div id="orderStatusFilters" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
 
                     <div id="adminOrdersList" class="space-y-2.5">
@@ -224,59 +218,33 @@
                 </div>
             </div>
 
-            <!-- Banners Tab Content -->
+            <!-- Super Simple Banners Tab Content -->
             <div id="bannersTabContent" class="space-y-4 hidden">
-                <!-- Add Banner Form Card -->
                 <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-4">
-                    <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Add Hero Banner or Video</h2>
+                    <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Upload Store Banner or Video</h2>
+                    
                     <form id="addBannerForm" onsubmit="handleAddNewBanner(event)" class="space-y-3 text-xs">
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Banner Title (HTML supported, e.g. Effortless Style,&lt;br&gt;&lt;i&gt;Every Day.&lt;/i&gt;)</label>
-                            <input type="text" id="bannerTitle" placeholder="Effortless Style,<br><i>Every Day.</i>" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            <label class="block font-bold text-slate-700 mb-1">Banner Heading Text</label>
+                            <input type="text" id="bannerTitle" placeholder="e.g. New Summer Sale" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
                         </div>
 
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Subtitle</label>
-                            <input type="text" id="bannerSubtitle" placeholder="Timeless pieces. Made for you." class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2.5">
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Media Type</label>
-                                <select id="bannerType" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
-                                    <option value="image">Image (2K / 16:9)</option>
-                                    <option value="video">Video MP4 (2K / 16:9)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Display Order</label>
-                                <input type="number" id="bannerOrder" value="0" placeholder="0" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
-                            </div>
+                            <label class="block font-bold text-slate-700 mb-1">Subtitle (Optional)</label>
+                            <input type="text" id="bannerSubtitle" placeholder="e.g. Flat 30% Off Everything" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
                         </div>
 
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Media URL (Direct Image or Video Link)</label>
-                            <input type="text" id="bannerUrl" required placeholder="https://images.unsplash.com/... or video link" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            <label class="block font-bold text-rose-600 mb-1">Select Photo or Video from Gallery 📁</label>
+                            <input type="file" id="bannerMediaFile" accept="image/*,video/*" required class="w-full p-2 card rounded-2xl border border-slate-100 text-base file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer transition">
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2.5">
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Button Text</label>
-                                <input type="text" id="bannerBtnText" value="SHOP NEW ARRIVALS" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Button Link</label>
-                                <input type="text" id="bannerBtnLink" value="#" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
-                            </div>
-                        </div>
-
-                        <button type="submit" id="publishBannerBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer">
-                            Publish Banner
+                        <button type="submit" id="publishBannerBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer text-xs">
+                            Upload & Publish Banner
                         </button>
                     </form>
                 </div>
 
-                <!-- Active Banners List -->
                 <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-3">
                     <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Active Store Banners</h2>
                     <div id="adminBannersList" class="space-y-2">
@@ -347,8 +315,7 @@
             .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
           if (error) {
-            console.error('Storage Upload Error:', error);
-            throw new Error('Image upload to CDN failed: ' + error.message);
+            throw new Error('Image upload failed: ' + error.message);
           }
 
           const { data: urlData } = _supabase.storage
@@ -389,7 +356,27 @@
             }
         }
 
-        /* Banner Management Functions */
+        /* Direct Gallery Upload Banner Logic */
+        async function uploadBannerMedia(file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `banner-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+            const filePath = `banners/${fileName}`;
+
+            const { data, error } = await _supabase.storage
+                .from('product-images')
+                .upload(filePath, file, { cacheControl: '3600', upsert: false });
+
+            if (error) {
+                throw new Error('Upload failed: ' + error.message);
+            }
+
+            const { data: urlData } = _supabase.storage
+                .from('product-images')
+                .getPublicUrl(filePath);
+
+            return urlData.publicUrl;
+        }
+
         async function loadAdminBanners() {
             const listEl = document.getElementById('adminBannersList');
             if (!listEl) return;
@@ -399,7 +386,7 @@
             const { data, error } = await _supabase
                 .from('banners')
                 .select('*')
-                .order('display_order', { ascending: true });
+                .order('created_at', { ascending: false });
 
             if (error || !data || data.length === 0) {
                 listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No banners added yet.</p>`;
@@ -411,8 +398,8 @@
                     <div class="flex items-center gap-3 truncate">
                         <img src="${b.media_type === 'video' ? 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100' : b.media_url}" class="w-12 h-10 object-cover rounded-xl border border-slate-200 shrink-0">
                         <div class="truncate">
-                            <h4 class="font-bold text-slate-900 truncate">${b.title || 'Untitled Banner'}</h4>
-                            <p class="text-[10px] text-slate-500">${b.media_type.toUpperCase()} · Order: ${b.display_order}</p>
+                            <h4 class="font-bold text-slate-900 truncate">${b.title || 'Banner'}</h4>
+                            <p class="text-[10px] text-slate-500">${b.media_type.toUpperCase()}</p>
                         </div>
                     </div>
                     <button onclick="deleteBanner('${b.id}')" class="w-7 h-7 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-rose-100 transition shrink-0">
@@ -424,32 +411,44 @@
 
         async function handleAddNewBanner(e) {
             e.preventDefault();
+            const fileInput = document.getElementById('bannerMediaFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select an image or video file from your gallery.');
+                return;
+            }
+
             const btn = document.getElementById('publishBannerBtn');
-            btn.innerText = 'Publishing...';
+            btn.innerText = 'Uploading to Server...';
             btn.disabled = true;
 
-            const payload = {
-                title: document.getElementById('bannerTitle').value.trim(),
-                subtitle: document.getElementById('bannerSubtitle').value.trim(),
-                media_type: document.getElementById('bannerType').value,
-                media_url: document.getElementById('bannerUrl').value.trim(),
-                button_text: document.getElementById('bannerBtnText').value.trim() || 'SHOP NEW ARRIVALS',
-                button_link: document.getElementById('bannerBtnLink').value.trim() || '#',
-                display_order: parseInt(document.getElementById('bannerOrder').value) || 0,
-                is_active: true
-            };
+            try {
+                const mediaUrl = await uploadBannerMedia(file);
+                const isVideo = file.type.startsWith('video') || file.name.endsWith('.mp4');
 
-            const { error } = await _supabase.from('banners').insert([payload]);
+                const payload = {
+                    title: document.getElementById('bannerTitle').value.trim() || 'Effortless Style',
+                    subtitle: document.getElementById('bannerSubtitle').value.trim() || '',
+                    media_type: isVideo ? 'video' : 'image',
+                    media_url: mediaUrl,
+                    button_text: 'SHOP NOW',
+                    button_link: '#',
+                    display_order: 0,
+                    is_active: true
+                };
 
-            btn.disabled = false;
-            btn.innerText = 'Publish Banner';
+                const { error } = await _supabase.from('banners').insert([payload]);
 
-            if (error) {
-                alert('Failed to publish banner: ' + error.message);
-            } else {
-                alert('Banner published live to store! 🎉');
+                if (error) throw error;
+
+                alert('Banner uploaded directly from Gallery & published live! 🎉');
                 document.getElementById('addBannerForm').reset();
                 loadAdminBanners();
+            } catch (err) {
+                alert('Error publishing banner: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Upload & Publish Banner';
             }
         }
 
@@ -645,7 +644,6 @@
             return cachedProducts;
         }
 
-        /* 3:4 Aspect Ratio Cropper Engine Logic */
         function handleImageSelection(event) {
             const files = Array.from(event.target.files || []);
             if (files.length === 0) return;
