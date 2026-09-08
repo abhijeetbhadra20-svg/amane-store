@@ -1329,14 +1329,13 @@
     });
   }
 
-  /* Dynamic Banners State & Fetching from Supabase */
+  /* Dynamic Banners State & Fixed Auto-Slide Engine */
   let slides = [
-    { type: 'image', src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80', title: 'Effortless Style,<br><i>Every Day.</i>', subtitle: 'Timeless pieces. Made for you.', btnText: 'SHOP NEW ARRIVALS', btnLink: '#' },
-    { type: 'image', src: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80', title: 'Modern Pieces,<br><i>Made to Last.</i>', subtitle: 'Refined essentials for every moment.', btnText: 'EXPLORE COLLECTION', btnLink: '#' }
+    { type: 'image', src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80', title: 'Effortless Style,<br><i>Every Day.</i>', subtitle: 'Timeless pieces. Made for you.', btnText: 'SHOP NEW ARRIVALS', btnLink: '#' }
   ];
 
   let slideIndex = 0;
-  let sliderTimer;
+  let sliderTimer = null;
 
   async function fetchLiveBanners() {
     try {
@@ -1344,30 +1343,24 @@
         .from('banners')
         .select('*')
         .eq('is_active', true)
-        .order('display_order', { ascending: true });
+        .order('created_at', { ascending: false })
+        .limit(6); // Max 6 banners limit
 
       if (!error && data && data.length > 0) {
         slides = data.map(b => ({
           type: b.media_type || 'image',
           src: b.media_url,
-          title: b.title || 'Effortless Style,<br><i>Every Day.</i>',
-          subtitle: b.subtitle || 'Timeless pieces. Made for you.',
-          btnText: b.button_text || 'SHOP NEW ARRIVALS',
+          title: b.title || '',
+          subtitle: b.subtitle || '',
+          btnText: b.button_text || 'SHOP NOW',
           btnLink: b.button_link || '#'
         }));
-        renderDots();
-        setSlide(0);
-        restartSlider();
-      } else {
-        renderDots();
-        setSlide(0);
-        restartSlider();
       }
-    } catch (err) {
-      console.error('Failed to load banners, using default:', err);
       renderDots();
       setSlide(0);
-      restartSlider();
+      startAutoSlider();
+    } catch (err) {
+      console.error('Failed to load banners:', err);
     }
   }
 
@@ -1375,27 +1368,33 @@
     const dotsWrap = $('.slider-dots');
     if (!dotsWrap) return;
     dotsWrap.innerHTML = slides.map((_, i) => `<span class="dot ${i === 0 ? 'active' : ''}"></span>`).join('');
-    $$('.slider-dots .dot').forEach((dot, idx) => dot.onclick = () => { setSlide(idx); restartSlider(); });
+    $$('.slider-dots .dot').forEach((dot, idx) => {
+      dot.onclick = () => { setSlide(idx); startAutoSlider(); };
+    });
   }
 
   function setSlide(i) {
-    if (!slides.length) return;
+    if (!slides || !slides.length) return;
     slideIndex = (i + slides.length) % slides.length;
     const slide = slides[slideIndex];
     const container = $('#heroMediaContainer');
 
     if (container) {
-      if (slide.type === 'video') {
-        container.innerHTML = `<video class="hero-img" src="${slide.src}" autoplay loop muted playsinline></video>`;
-      } else {
-        container.innerHTML = `<img class="hero-img" src="${slide.src}" alt="Banner">`;
-      }
+      container.style.opacity = '0.3';
+      setTimeout(() => {
+        if (slide.type === 'video') {
+          container.innerHTML = `<video class="hero-img" src="${slide.src}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
+        } else {
+          container.innerHTML = `<img class="hero-img" src="${slide.src}" alt="Banner" style="width:100%;height:100%;object-fit:cover;">`;
+        }
+        container.style.opacity = '1';
+      }, 150);
     }
 
-    if ($('.hero-title')) $('.hero-title').innerHTML = slide.title;
-    if ($('.hero-subtitle')) $('.hero-subtitle').textContent = slide.subtitle;
+    if ($('.hero-title')) $('.hero-title').innerHTML = slide.title || '';
+    if ($('.hero-subtitle')) $('.hero-subtitle').textContent = slide.subtitle || '';
     if ($('#heroBtn')) {
-      $('#heroBtn').textContent = slide.btnText;
+      $('#heroBtn').textContent = slide.btnText || 'SHOP NOW';
       $('#heroBtn').onclick = () => {
         if (slide.btnLink && slide.btnLink !== '#') window.location.href = slide.btnLink;
         else scrollTo('.products-grid');
@@ -1405,15 +1404,30 @@
     $$('.slider-dots .dot').forEach((dot, idx) => dot.classList.toggle('active', idx === slideIndex));
   }
 
-  function restartSlider() {
-    clearInterval(sliderTimer);
+  function startAutoSlider() {
+    if (sliderTimer) clearInterval(sliderTimer);
     if (slides.length > 1) {
-      sliderTimer = setInterval(() => setSlide(slideIndex + 1), 5000);
+      sliderTimer = setInterval(() => {
+        setSlide(slideIndex + 1);
+      }, 4000); // Auto slide every 4 seconds
     }
   }
 
-  $('.hero-banner .slider-arrow.left')?.addEventListener('click', () => { setSlide(slideIndex - 1); restartSlider(); });
-  $('.hero-banner .slider-arrow.right')?.addEventListener('click', () => { setSlide(slideIndex + 1); restartSlider(); });
+  // Left & Right Navigation Click Fix
+  document.querySelector('.hero-banner .slider-arrow.left')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSlide(slideIndex - 1);
+    startAutoSlider();
+  });
+
+  document.querySelector('.hero-banner .slider-arrow.right')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSlide(slideIndex + 1);
+    startAutoSlider();
+  });
+  
 
   function money(n) { return `₹${Number(n || 0).toLocaleString('en-IN')}`; }
   
