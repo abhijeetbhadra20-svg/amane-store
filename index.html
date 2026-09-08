@@ -179,32 +179,51 @@
     /* Hero Banner Section */
     .hero-banner {
       position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
       border-radius: 12px;
       overflow: hidden;
+      background-color: #EDE8E2;
       margin-top: 8px;
       margin-bottom: 24px;
-      background-color: #EDE8E2;
-      min-height: 380px;
       display: flex;
       align-items: center;
     }
-    .hero-img {
+
+    #heroMediaContainer {
       width: 100%;
-      height: 420px;
-      object-fit: cover;
-      object-position: top center;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .hero-img, 
+    #heroMediaContainer video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: center;
       display: block;
     }
+
     .hero-overlay {
       position: absolute;
       inset: 0;
+      z-index: 2;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 32px 24px;
-      background: linear-gradient(90deg, rgba(245,241,236,0.85) 0%, rgba(245,241,236,0.4) 50%, rgba(245,241,236,0) 100%);
-      max-width: 50%;
+      padding: 24px 20px;
+      background: linear-gradient(90deg, rgba(245,241,236,0.85) 0%, rgba(245,241,236,0.3) 60%, rgba(245,241,236,0) 100%);
+      max-width: 60%;
+      pointer-events: none;
     }
+
+    .hero-overlay * {
+      pointer-events: auto;
+    }
+
     .hero-title {
       font-family: var(--font-serif);
       font-size: 36px;
@@ -213,15 +232,18 @@
       margin-bottom: 12px;
       color: #1A1A1A;
     }
+
     .hero-title i {
       font-style: italic;
       display: block;
     }
+
     .hero-subtitle {
       font-size: 14px;
       color: #444;
       margin-bottom: 24px;
     }
+
     .btn-primary {
       background: var(--accent-black);
       color: #FFF;
@@ -234,7 +256,8 @@
       cursor: pointer;
       width: fit-content;
       text-transform: uppercase;
-    }
+      }
+    
 
     /* Carousel Navigation */
     .slider-arrow {
