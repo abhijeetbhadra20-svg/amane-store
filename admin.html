@@ -101,13 +101,16 @@
 
         <!-- Main Admin Panel -->
         <div id="adminPanelContent" class="space-y-4 hidden">
-            <!-- Tab Switcher -->
+            <!-- Tab Switcher (3 Tabs: Products, Orders, Banners) -->
             <div class="fade-in-up card rounded-2xl p-1.5 shadow-md border border-slate-100 flex gap-1.5">
                 <button id="tabBtnProducts" onclick="switchAdminTab('products')" class="flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer">
                     <i class="fa-solid fa-shirt mr-1"></i> Products
                 </button>
                 <button id="tabBtnOrders" onclick="switchAdminTab('orders')" class="flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer">
                     <i class="fa-solid fa-receipt mr-1"></i> Orders
+                </button>
+                <button id="tabBtnBanners" onclick="switchAdminTab('banners')" class="flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer">
+                    <i class="fa-solid fa-image mr-1"></i> Banners
                 </button>
             </div>
 
@@ -220,6 +223,67 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Banners Tab Content -->
+            <div id="bannersTabContent" class="space-y-4 hidden">
+                <!-- Add Banner Form Card -->
+                <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-4">
+                    <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Add Hero Banner or Video</h2>
+                    <form id="addBannerForm" onsubmit="handleAddNewBanner(event)" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Banner Title (HTML supported, e.g. Effortless Style,&lt;br&gt;&lt;i&gt;Every Day.&lt;/i&gt;)</label>
+                            <input type="text" id="bannerTitle" placeholder="Effortless Style,<br><i>Every Day.</i>" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Subtitle</label>
+                            <input type="text" id="bannerSubtitle" placeholder="Timeless pieces. Made for you." class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Media Type</label>
+                                <select id="bannerType" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                                    <option value="image">Image (2K / 16:9)</option>
+                                    <option value="video">Video MP4 (2K / 16:9)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Display Order</label>
+                                <input type="number" id="bannerOrder" value="0" placeholder="0" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Media URL (Direct Image or Video Link)</label>
+                            <input type="text" id="bannerUrl" required placeholder="https://images.unsplash.com/... or video link" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Button Text</label>
+                                <input type="text" id="bannerBtnText" value="SHOP NEW ARRIVALS" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Button Link</label>
+                                <input type="text" id="bannerBtnLink" value="#" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="publishBannerBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer">
+                            Publish Banner
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Active Banners List -->
+                <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-3">
+                    <h2 class="font-display text-base font-semibold text-slate-900 border-b border-slate-200/60 pb-2.5">Active Store Banners</h2>
+                    <div id="adminBannersList" class="space-y-2">
+                        <p class="text-xs text-slate-400 text-center py-4">Loading banners...</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -297,19 +361,106 @@
         function switchAdminTab(tab) {
             const productsBtn = document.getElementById('tabBtnProducts');
             const ordersBtn = document.getElementById('tabBtnOrders');
+            const bannersBtn = document.getElementById('tabBtnBanners');
+
+            const productsContent = document.getElementById('productsTabContent');
+            const ordersContent = document.getElementById('ordersTabContent');
+            const bannersContent = document.getElementById('bannersTabContent');
+
+            productsContent.classList.add('hidden');
+            ordersContent.classList.add('hidden');
+            bannersContent.classList.add('hidden');
+
+            productsBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer';
+            ordersBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer';
+            bannersBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer';
 
             if (tab === 'products') {
-                document.getElementById('productsTabContent').classList.remove('hidden');
-                document.getElementById('ordersTabContent').classList.add('hidden');
+                productsContent.classList.remove('hidden');
                 productsBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer';
-                ordersBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer';
-            } else {
-                document.getElementById('productsTabContent').classList.add('hidden');
-                document.getElementById('ordersTabContent').classList.remove('hidden');
+            } else if (tab === 'orders') {
+                ordersContent.classList.remove('hidden');
                 ordersBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer';
-                productsBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-600 transition cursor-pointer';
                 loadOrders();
+            } else if (tab === 'banners') {
+                bannersContent.classList.remove('hidden');
+                bannersBtn.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-slate-900 text-white transition cursor-pointer';
+                loadAdminBanners();
             }
+        }
+
+        /* Banner Management Functions */
+        async function loadAdminBanners() {
+            const listEl = document.getElementById('adminBannersList');
+            if (!listEl) return;
+
+            listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Loading banners...</p>`;
+
+            const { data, error } = await _supabase
+                .from('banners')
+                .select('*')
+                .order('display_order', { ascending: true });
+
+            if (error || !data || data.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No banners added yet.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = data.map(b => `
+                <div class="flex items-center justify-between card p-3 rounded-2xl border border-slate-100 text-xs gap-3 shadow-xs">
+                    <div class="flex items-center gap-3 truncate">
+                        <img src="${b.media_type === 'video' ? 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100' : b.media_url}" class="w-12 h-10 object-cover rounded-xl border border-slate-200 shrink-0">
+                        <div class="truncate">
+                            <h4 class="font-bold text-slate-900 truncate">${b.title || 'Untitled Banner'}</h4>
+                            <p class="text-[10px] text-slate-500">${b.media_type.toUpperCase()} · Order: ${b.display_order}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteBanner('${b.id}')" class="w-7 h-7 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-rose-100 transition shrink-0">
+                        <i class="fa-solid fa-trash text-[10px]"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function handleAddNewBanner(e) {
+            e.preventDefault();
+            const btn = document.getElementById('publishBannerBtn');
+            btn.innerText = 'Publishing...';
+            btn.disabled = true;
+
+            const payload = {
+                title: document.getElementById('bannerTitle').value.trim(),
+                subtitle: document.getElementById('bannerSubtitle').value.trim(),
+                media_type: document.getElementById('bannerType').value,
+                media_url: document.getElementById('bannerUrl').value.trim(),
+                button_text: document.getElementById('bannerBtnText').value.trim() || 'SHOP NEW ARRIVALS',
+                button_link: document.getElementById('bannerBtnLink').value.trim() || '#',
+                display_order: parseInt(document.getElementById('bannerOrder').value) || 0,
+                is_active: true
+            };
+
+            const { error } = await _supabase.from('banners').insert([payload]);
+
+            btn.disabled = false;
+            btn.innerText = 'Publish Banner';
+
+            if (error) {
+                alert('Failed to publish banner: ' + error.message);
+            } else {
+                alert('Banner published live to store! 🎉');
+                document.getElementById('addBannerForm').reset();
+                loadAdminBanners();
+            }
+        }
+
+        async function deleteBanner(bannerId) {
+            if (!confirm('Delete this banner permanently?')) return;
+            const { error } = await _supabase.from('banners').delete().eq('id', bannerId);
+            if (error) {
+                alert('Failed to delete banner: ' + error.message);
+                return;
+            }
+            loadAdminBanners();
         }
 
         async function loadOrders() {
