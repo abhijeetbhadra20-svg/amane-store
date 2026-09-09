@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
   <title>Amane Store - Effortless Style</title>
-      <!-- Permanent Social Media Preview -->
-    <meta property="og:title" content="Amane Store — Effortless Style">
-    <meta property="og:description" content="Timeless pieces. Made for you. Explore our new arrivals and collection.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80">
-    <meta property="og:url" content="https://amane-store-smoky.vercel.app">
-    <meta property="og:type" content="website">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Amane Store — Effortless Style">
-    <meta name="twitter:description" content="Timeless pieces. Made for you. Explore our new arrivals and collection.">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80">
-  
+  <!-- Permanent Social Media Preview -->
+  <meta property="og:title" content="Amane Store — Effortless Style">
+  <meta property="og:description" content="Timeless pieces. Made for you. Explore our new arrivals and collection.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80">
+  <meta property="og:url" content="https://amane-store-smoky.vercel.app">
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Amane Store — Effortless Style">
+  <meta name="twitter:description" content="Timeless pieces. Made for you. Explore our new arrivals and collection.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,7 +189,7 @@
       padding: 0 16px;
     }
 
-    /* Hero Banner Section (Full Edge-to-Edge Sharp Rectangle Container) */
+    /* Hero Banner Section */
     .hero-banner {
       position: relative;
       width: calc(100% + 32px);
@@ -211,6 +212,7 @@
       position: absolute;
       inset: 0;
       z-index: 1;
+      background: #111111;
     }
 
     .hero-img, 
@@ -278,7 +280,7 @@
       transition: transform 0.2s ease, background 0.2s ease;
     }
 
-    /* Carousel Navigation Fix (Top Priority Layering) */
+    /* Carousel Navigation */
     .slider-arrow {
       position: absolute;
       top: 50%;
@@ -376,6 +378,93 @@
       font-weight: 500;
     }
 
+    /* View Switcher Controls */
+    .view-toggle-btn {
+      display: flex;
+      background: #F4EFEA;
+      padding: 3px;
+      border-radius: 20px;
+      border: 1px solid #E5DFD7;
+    }
+    .view-toggle-btn button {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 16px;
+      cursor: pointer;
+      color: #666;
+      transition: all 0.25s ease;
+    }
+    .view-toggle-btn button.active {
+      background: #111;
+      color: #FFF;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    /* Interactive Reel/Deck View Container */
+    .deck-container {
+      display: none;
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      height: 500px;
+      margin: 20px auto;
+      perspective: 1000px;
+    }
+    .deck-container.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .deck-card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.22);
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease;
+      background: #111;
+      cursor: pointer;
+    }
+    .deck-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .deck-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.88) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px;
+      color: #FFF;
+    }
+    .deck-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      cursor: pointer;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      font-weight: bold;
+      color: #111;
+    }
+    .deck-nav-btn.prev { left: -18px; }
+    .deck-nav-btn.next { right: -18px; }
+
     /* Shop by Category Grid */
     .categories-grid {
       display: grid;
@@ -438,7 +527,6 @@
       transition: filter 0.3s ease;
     }
     
-    /* Out of stock red styling */
     .product-img-wrapper.out-of-stock img {
       filter: blur(4px) grayscale(60%);
       opacity: 0.7;
@@ -615,10 +703,9 @@
     .badge-delivered { background: #e6f4ea; color: #137333; }
     .badge-cancelled { background: #fee2e2; color: #dc2626; }
 
-    /* Courier Tracking Card Button */
     .track-courier-btn { display: block; width: 100%; text-align: center; background: #111111; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 10px; border-radius: 8px; text-decoration: none; margin-top: 10px; letter-spacing: 0.5px; }
 
-    /* Modal Close Button Layering Fix */
+    /* Modal Close Button */
     .modal-close {
       position: absolute;
       right: 14px;
@@ -655,7 +742,7 @@
       .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     }
   
-    /* ===== Interactive UX Layer ===== */
+    /* Interactive UX Layer */
     html { scroll-behavior: smooth; }
     
     body.modal-open { 
@@ -685,7 +772,6 @@
     .drawer-nav button { width:100%; border:0; border-bottom:1px solid #f2f2f2; background:#fff; padding:17px 20px; text-align:left; font:500 13px var(--font-sans); display:flex; justify-content:space-between; cursor:pointer; }
     .drawer-footer { margin-top:auto; padding:18px 20px 28px; background:#faf8f4; font:400 11px/1.6 var(--font-sans); color:#666; }
     
-    /* Strict Horizontal Lock for Modal Overlay */
     .modal-wrap { 
       position:fixed; 
       top: 0;
@@ -709,7 +795,6 @@
     .modal-wrap.show { opacity:1; visibility:visible; }
     .modal-back { position:absolute; inset:0; background:rgba(17,17,17,.38); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
     
-    /* Standard Modal Container */
     .modal { 
       position:relative; 
       width:min(92vw,520px); 
@@ -727,7 +812,6 @@
       touch-action: pan-y;
     }
     
-    /* Strict Full-Screen Viewport Coverage */
     .modal.full-screen-modal {
       position: fixed !important;
       top: 0 !important;
@@ -830,14 +914,13 @@
   </header>
 
   <main class="container">
-    <!-- Hero Banner Section (Full Edge-to-Edge Sharp Rectangle Container) -->
+    <!-- Hero Banner Section -->
     <section class="hero-banner">
       <button class="slider-arrow left" aria-label="Previous">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
 
       <div id="heroMediaContainer" style="background: #111111;"></div>
-      
 
       <div class="hero-overlay">
         <h1 class="hero-title">Effortless Style,<br><i>Every Day.</i></h1>
@@ -931,15 +1014,26 @@
       </div>
     </section>
 
-    <!-- New Arrivals -->
+    <!-- New Arrivals Section with Interactive Switcher -->
     <section class="products-slider-wrapper">
       <div class="section-header">
         <h2 class="section-title">New Arrivals</h2>
-        <a href="#" class="view-all">View All</a>
+        <div class="view-toggle-btn">
+          <button id="btnGridView" class="active" onclick="switchProductView('grid')">Grid</button>
+          <button id="btnDeckView" onclick="switchProductView('deck')">✨ Interactive</button>
+        </div>
       </div>
 
+      <!-- Normal Products Grid -->
       <div class="products-grid">
-        <!-- Live products from Supabase will render here -->
+        <!-- Live products from Supabase render here -->
+      </div>
+
+      <!-- Interactive Story/Deck Card View -->
+      <div class="deck-container" id="deckContainer">
+        <button class="deck-nav-btn prev" onclick="navigateDeck(-1)">❮</button>
+        <div id="deckCardsWrapper" style="width:100%;height:100%;position:relative"></div>
+        <button class="deck-nav-btn next" onclick="navigateDeck(1)">❯</button>
       </div>
     </section>
 
@@ -956,7 +1050,7 @@
     </section>
   </main>
 
-  <!-- Interactive overlays / panels -->
+  <!-- Interactive Overlays -->
   <div class="overlay" id="drawerOverlay"></div>
   <aside class="drawer" id="mobileDrawer" aria-hidden="true">
     <div class="drawer-head">
@@ -1027,6 +1121,40 @@
     }
   });
   let currentUser = null;
+
+  /* Web Audio API SFX Generator */
+  let audioCtx = null;
+  function initAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function playSoundEffect(type) {
+    try {
+      initAudio();
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'swipe') {
+        osc.frequency.setValueAtTime(280, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } else if (type === 'toggle') {
+        osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(780, audioCtx.currentTime + 0.06);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.06);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.06);
+      }
+    } catch {}
+  }
 
   const VALID_COUPONS = {
     'AMANE10': { type: 'percent', value: 10, minOrder: 499, label: '10% OFF' },
@@ -1184,8 +1312,9 @@
     await supabase.from('carts').delete().eq('user_id', currentUser.id);
   }
 
-  /* Live Products State & Fetching from Supabase */
+  /* Live Products State & Fetching */
   let products = [];
+  let activeDeckIndex = 0;
 
   function getProductById(id) {
     const strId = String(id || '').trim();
@@ -1255,6 +1384,7 @@
 
       renderDynamicCategories();
       renderProductGrid();
+      renderDeckCards();
       updateUI();
     } catch (err) {
       console.error('Error loading live products:', err);
@@ -1262,7 +1392,62 @@
     }
   }
 
-  /* Shop by Category Deduplication Logic */
+  /* Dual View Switcher Logic */
+  window.switchProductView = function(mode) {
+    playSoundEffect('toggle');
+    const grid = $('.products-grid');
+    const deck = $('#deckContainer');
+    const btnGrid = $('#btnGridView');
+    const btnDeck = $('#btnDeckView');
+
+    if (mode === 'deck') {
+      grid.style.display = 'none';
+      deck.classList.add('active');
+      btnGrid.classList.remove('active');
+      btnDeck.classList.add('active');
+      renderDeckCards();
+    } else {
+      grid.style.display = 'grid';
+      deck.classList.remove('active');
+      btnDeck.classList.remove('active');
+      btnGrid.classList.add('active');
+    }
+  };
+
+  function renderDeckCards() {
+    const wrapper = $('#deckCardsWrapper');
+    if (!wrapper || !products.length) return;
+
+    wrapper.innerHTML = products.map((p, idx) => {
+      const offset = idx - activeDeckIndex;
+      const isCurrent = offset === 0;
+      const scale = Math.max(0.8, 1 - Math.abs(offset) * 0.08);
+      const translateY = offset * 12;
+      const opacity = Math.abs(offset) > 2 ? 0 : (1 - Math.abs(offset) * 0.3);
+      const zIndex = 30 - Math.abs(offset);
+
+      return `
+        <div class="deck-card" style="transform: translateY(${translateY}px) scale(${scale}); opacity:${opacity}; z-index:${zIndex}; display:${Math.abs(offset) > 2 ? 'none' : 'block'};" onclick="openProduct('${p.id}')">
+          <img src="${p.image}" alt="${p.title}">
+          <div class="deck-card-overlay">
+            <span style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#DDD">${p.category}</span>
+            <h3 style="font-family:var(--font-serif);font-size:24px;margin:2px 0">${p.title}</h3>
+            <div style="font-weight:600;font-size:16px;margin-bottom:12px">${p.priceText}</div>
+            <button class="btn-primary" onclick="event.stopPropagation(); addToCart('${p.id}');" style="width:100%;text-align:center">ADD TO BAG 🛍️</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.navigateDeck = function(direction) {
+    if (!products.length) return;
+    playSoundEffect('swipe');
+    activeDeckIndex = (activeDeckIndex + direction + products.length) % products.length;
+    renderDeckCards();
+  };
+
+  /* Shop by Category */
   function renderDynamicCategories() {
     const container = $('.categories-grid');
     if (!container || !products.length) return;
@@ -1356,7 +1541,7 @@
     });
   }
 
-  /* Dynamic Banners State & Fixed Auto-Slide Engine (With Video Completion Listener) */
+  /* Dynamic Banners Engine with Video End Sync */
   const DEFAULT_SLIDES = [
     { type: 'image', src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80', title: 'Effortless Style,<br><i>Every Day.</i>', subtitle: 'Timeless pieces. Made for you.', btnText: 'SHOP NEW ARRIVALS', btnLink: '#' },
     { type: 'image', src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80', title: 'Summer Essentials,<br><i>Curated.</i>', subtitle: 'Lightweight fabrics for warm days.', btnText: 'EXPLORE COLLECTION', btnLink: '#' },
@@ -1430,23 +1615,19 @@
       container.style.opacity = '0.3';
       setTimeout(() => {
         if (slide.type === 'video') {
-          // Play video WITHOUT loop attribute so onended triggers properly when completed
           container.innerHTML = `<video id="heroBannerVideo" class="hero-img" src="${slide.src}" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
           
           const videoEl = $('#heroBannerVideo');
           if (videoEl) {
-            // When video finishes playing naturally, advance to next slide!
             videoEl.onended = () => {
               setSlide(slideIndex + 1);
             };
-            // Fallback timer (22 seconds) in case video stalls or fails
             sliderTimer = setTimeout(() => {
               setSlide(slideIndex + 1);
             }, 22000);
           }
         } else {
           container.innerHTML = `<img class="hero-img" src="${slide.src}" alt="Banner" style="width:100%;height:100%;object-fit:cover;">`;
-          // Photo banner: advance after 4 seconds
           if (slides.length > 1) {
             sliderTimer = setTimeout(() => {
               setSlide(slideIndex + 1);
@@ -1591,7 +1772,6 @@
     if (typeof after === 'function') after();
   }
 
-  /* Safe Scroll Lock Clean Up */
   function closeModal() {
     $('#modalWrap').classList.remove('show');
     $('#modalWrap').setAttribute('aria-hidden', 'true');
@@ -1625,7 +1805,6 @@
   $('#drawerClose').addEventListener('click', closeDrawer);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeDrawer(); } });
 
-  /* Wishlist / Cart Actions */
   function toggleWishlist(id) {
     if (!currentUser) {
       toast('Please sign in to use your wishlist');
@@ -1646,7 +1825,7 @@
     updateUI();
   }
 
-  function addToCart(id, qty = 1, size = null) {
+  window.addToCart = function(id, qty = 1, size = null) {
     if (!currentUser) {
       toast('Please sign in to add items to your bag');
       openAuthModal('login');
@@ -1674,7 +1853,7 @@
     dbSaveCartItem(strId, finalQty, size);
     updateUI();
     toast(`${p?.title || 'Product'} added to bag`);
-  }
+  };
 
   function removeFromCart(id) {
     const strId = String(id || '').trim();
@@ -1693,8 +1872,8 @@
     openCart();
   }
 
-  /* Full Screen Product Detail View */
-  function openProduct(id) {
+  /* Product Modal View */
+  window.openProduct = function(id) {
     const p = getProductById(id);
     if (!p) return;
     const sizes = p.sizes || ['XS', 'S', 'M', 'L', 'XL'];
@@ -1767,7 +1946,7 @@
           };
         });
       });
-  }
+  };
 
   /* Search & Filtering */
   const searchInput = $('.search-input');
@@ -2190,7 +2369,6 @@
     return `<span class="order-badge-pill badge-pending">🟡 Order Placed</span>`;
   }
 
-  /* My Account Order History Product Image Rendering */
   async function loadCustomerOrders() {
     const box = $('#accountOrders');
     if (!box) return;
@@ -2492,7 +2670,7 @@
     });
   }
 
-  /* Header controls */
+  /* Header Controls */
   $('.nav-left .icon-btn')?.addEventListener('click', openDrawer);
   $('.nav-right .icon-btn[aria-label="Wishlist"]')?.addEventListener('click', openHeaderWishlist);
   $('.nav-right .icon-btn[aria-label="Cart"]')?.addEventListener('click', () => {
@@ -2507,7 +2685,7 @@
   $('.track-order')?.addEventListener('click', e => { e.preventDefault(); openTrackOrder(); });
   $('.btn-primary')?.addEventListener('click', () => scrollTo('.products-grid'));
 
-  /* Drawer */
+  /* Drawer Nav */
   $$('.drawer-nav button').forEach(btn => btn.addEventListener('click', () => {
     const action = btn.dataset.drawerAction;
     closeDrawer();
@@ -2520,7 +2698,7 @@
     if (action === 'track') openTrackOrder();
   }));
 
-  /* Categories / nav */
+  /* Scroll Navigation */
   function scrollTo(selector) { $(selector)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   $$('.view-all').forEach(link => link.addEventListener('click', e => { e.preventDefault(); scrollTo(link.closest('section')?.querySelector('.categories-grid') ? '.categories-grid' : '.products-grid'); }));
 
@@ -2536,7 +2714,7 @@
     else if (label === 'Account') openAccount();
   }));
 
-  /* Newsletter */
+  /* Newsletter Form */
   $('.newsletter-form')?.addEventListener('submit', e => {
     e.preventDefault();
     const input = $('.newsletter-input', e.currentTarget);
@@ -2547,14 +2725,14 @@
     toast('Welcome to the Amane Community ✦');
   });
 
-  /* Touch feedback */
+  /* Touch Feedback */
   $$('.btn-primary, .newsletter-btn, .slider-arrow, .icon-btn, .wishlist-btn, .drawer-nav button, .modal-actions button').forEach(btn => {
     btn.addEventListener('pointerdown', () => btn.classList.add('is-pressed'));
     btn.addEventListener('pointerup', () => btn.classList.remove('is-pressed'));
     btn.addEventListener('pointercancel', () => btn.classList.remove('is-pressed'));
   });
 
-  /* Dynamic CSS */
+  /* Dynamic Extra CSS */
   const extra = document.createElement('style');
   extra.textContent = `
     .qty-inline{width:24px;height:24px;border:1px solid #ddd;border-radius:50%;background:#fff;cursor:pointer;font:600 12px var(--font-sans)}
