@@ -176,18 +176,19 @@
       padding: 0 16px;
     }
 
-    /* Hero Banner Section (Fixed 16:9 2K Locking) */
+        /* Hero Banner Section (Dynamic 21:9 Image / 16:9 Video Aspect Ratio) */
     .hero-banner {
       position: relative;
       width: 100%;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 21 / 9; /* Default ratio for images */
       border-radius: 12px;
       overflow: hidden;
-      background-color: #EDE8E2;
+      background-color: #111111;
       margin-top: 8px;
       margin-bottom: 24px;
       display: flex;
       align-items: center;
+      transition: aspect-ratio 0.3s ease;
     }
 
     #heroMediaContainer {
@@ -207,6 +208,7 @@
       display: block;
     }
 
+    /* Dark Subtle Gradient Overlay (Removes beige glare & enhances video/photo visibility) */
     .hero-overlay {
       position: absolute;
       inset: 0;
@@ -214,9 +216,9 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 24px 20px;
-      background: linear-gradient(90deg, rgba(245,241,236,0.85) 0%, rgba(245,241,236,0.3) 60%, rgba(245,241,236,0) 100%);
-      max-width: 60%;
+      padding: 28px 24px;
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0) 100%);
+      max-width: 65%;
       pointer-events: none;
     }
 
@@ -230,7 +232,8 @@
       font-weight: 500;
       line-height: 1.15;
       margin-bottom: 12px;
-      color: #1A1A1A;
+      color: #FFFFFF;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .hero-title i {
@@ -240,24 +243,31 @@
 
     .hero-subtitle {
       font-size: 14px;
-      color: #444;
+      color: #F1F5F9;
       margin-bottom: 24px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     }
 
     .btn-primary {
-      background: var(--accent-black);
-      color: #FFF;
+      background: #FFFFFF;
+      color: #111111;
       border: none;
-      padding: 12px 20px;
+      padding: 12px 22px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.5px;
       border-radius: 4px;
       cursor: pointer;
       width: fit-content;
       text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: transform 0.2s ease, background 0.2s ease;
     }
 
+    .btn-primary:hover {
+      background: #F4EFEA;
+    }
+    
     /* Carousel Navigation */
     .slider-arrow {
       position: absolute;
@@ -1373,11 +1383,21 @@
     });
   }
 
-  function setSlide(i) {
+    function setSlide(i) {
     if (!slides || !slides.length) return;
     slideIndex = (i + slides.length) % slides.length;
     const slide = slides[slideIndex];
     const container = $('#heroMediaContainer');
+    const heroBanner = $('.hero-banner');
+
+    // Dynamic Aspect Ratio Switcher (21:9 for images, 16:9 for videos)
+    if (heroBanner) {
+      if (slide.type === 'video') {
+        heroBanner.style.aspectRatio = '16 / 9';
+      } else {
+        heroBanner.style.aspectRatio = '21 / 9';
+      }
+    }
 
     if (container) {
       container.style.opacity = '0.3';
@@ -1402,36 +1422,8 @@
     }
 
     $$('.slider-dots .dot').forEach((dot, idx) => dot.classList.toggle('active', idx === slideIndex));
-  }
-
-  function startAutoSlider() {
-    if (sliderTimer) clearInterval(sliderTimer);
-    if (slides.length > 1) {
-      sliderTimer = setInterval(() => {
-        setSlide(slideIndex + 1);
-      }, 4000); // Auto slide every 4 seconds
     }
-  }
-
-  // Left & Right Navigation Click Fix
-  document.querySelector('.hero-banner .slider-arrow.left')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setSlide(slideIndex - 1);
-    startAutoSlider();
-  });
-
-  document.querySelector('.hero-banner .slider-arrow.right')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setSlide(slideIndex + 1);
-    startAutoSlider();
-  });
   
-
-  function money(n) { return `₹${Number(n || 0).toLocaleString('en-IN')}`; }
-  
-  function cartCount() {
     return state.cart.reduce((sum, item) => {
       const p = getProductById(item.id);
       return p ? sum + item.qty : sum;
