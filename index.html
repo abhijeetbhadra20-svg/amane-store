@@ -403,16 +403,16 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
-    /* Touch Gesture Reel/Deck Engine Styles */
+    /* Touch Gesture Reel/Deck Engine Styles with Scroll Lock Fix */
     .deck-container {
       display: none;
       position: relative;
       width: 100%;
       max-width: 380px;
-      height: 580px;
+      height: 560px;
       margin: 10px auto 20px auto;
       perspective: 1000px;
-      touch-action: none;
+      touch-action: pan-y !important; /* Allows smooth page scrolling */
     }
     .deck-container.active {
       display: flex;
@@ -424,6 +424,7 @@
       position: relative;
       width: 100%;
       height: 100%;
+      touch-action: pan-y !important;
     }
 
     .deck-card {
@@ -437,6 +438,7 @@
       will-change: transform, opacity;
       user-select: none;
       cursor: grab;
+      touch-action: pan-y !important;
       transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
     }
 
@@ -1418,6 +1420,7 @@
   let products = [];
   let currentCardIndex = 0;
   let isDragging = false;
+  let isHorizontalSwipe = false;
   let startX = 0, startY = 0;
   let currentX = 0, currentY = 0;
 
@@ -1497,7 +1500,7 @@
     }
   }
 
-  /* Touch Gesture Deck Engine Rendering & Swipe Handlers */
+  /* Touch Gesture Deck Engine with Intelligent Scroll Lock Release */
   function renderDeckCards() {
     const wrapper = $('#deckWrapper');
     const controls = $('#deckControls');
@@ -1552,6 +1555,7 @@
   function attachCardGestures(card) {
     const onStart = (e) => {
       isDragging = true;
+      isHorizontalSwipe = false;
       startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
       startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
       card.style.transition = 'none';
@@ -1565,23 +1569,36 @@
       currentX = x - startX;
       currentY = y - startY;
 
-      const rotate = currentX * 0.08;
+      // Smart Direction Detection: Release drag if user is scrolling page vertically
+      if (!isHorizontalSwipe) {
+        if (Math.abs(currentY) > Math.abs(currentX) && Math.abs(currentY) > 8) {
+          isDragging = false;
+          card.style.transform = `translate3d(0px, 0px, 0px) scale(1) rotate(0deg)`;
+          return;
+        }
+        if (Math.abs(currentX) > Math.abs(currentY) && Math.abs(currentX) > 8) {
+          isHorizontalSwipe = true;
+        }
+      }
 
-      card.style.transform = `translate3d(${currentX}px, ${currentY}px, 0px) rotate(${rotate}deg)`;
+      if (isHorizontalSwipe) {
+        const rotate = currentX * 0.08;
+        card.style.transform = `translate3d(${currentX}px, 0px, 0px) rotate(${rotate}deg)`;
+      }
     };
 
     const onEnd = () => {
-      if (!isDragging) return;
+      if (!isDragging && !isHorizontalSwipe) return;
       isDragging = false;
       card.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease';
 
-      if (Math.abs(currentX) > 100) {
+      if (isHorizontalSwipe && Math.abs(currentX) > 100) {
         const direction = currentX > 0 ? 'right' : 'left';
         dismissCard(card, direction);
       } else {
         card.style.transform = `translate3d(0px, 0px, 0px) scale(1) rotate(0deg)`;
       }
-      currentX = 0; currentY = 0;
+      currentX = 0; currentY = 0; isHorizontalSwipe = false;
     };
 
     card.addEventListener('touchstart', onStart, { passive: true });
@@ -1598,7 +1615,7 @@
     const throwX = direction === 'right' ? window.innerWidth : -window.innerWidth;
     const rotate = direction === 'right' ? 25 : -25;
 
-    card.style.transform = `translate3d(${throwX}px, ${currentY}px, 0px) rotate(${rotate}deg)`;
+    card.style.transform = `translate3d(${throwX}px, 0px, 0px) rotate(${rotate}deg)`;
     card.style.opacity = '0';
 
     setTimeout(() => {
