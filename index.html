@@ -176,7 +176,7 @@
       padding: 0 16px;
     }
 
-    /* Hero Banner Section (Full Edge-to-Edge Sharp Rectangle) */
+    /* Hero Banner Section (Full Edge-to-Edge Sharp Rectangle Container) */
     .hero-banner {
       position: relative;
       width: calc(100% + 32px);
@@ -1345,7 +1345,7 @@
     });
   }
 
-  /* Dynamic Banners State & Fixed Auto-Slide Engine */
+  /* Dynamic Banners State & Fixed Auto-Slide Engine (With Video Completion Listener) */
   const DEFAULT_SLIDES = [
     { type: 'image', src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80', title: 'Effortless Style,<br><i>Every Day.</i>', subtitle: 'Timeless pieces. Made for you.', btnText: 'SHOP NEW ARRIVALS', btnLink: '#' },
     { type: 'image', src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80', title: 'Summer Essentials,<br><i>Curated.</i>', subtitle: 'Lightweight fabrics for warm days.', btnText: 'EXPLORE COLLECTION', btnLink: '#' },
@@ -1385,7 +1385,6 @@
       }
       renderDots();
       setSlide(0);
-      startAutoSlider();
     } catch (err) {
       console.error('Failed to load banners:', err);
     }
@@ -1399,13 +1398,14 @@
       dot.onclick = (e) => {
         e.stopPropagation();
         setSlide(idx);
-        startAutoSlider();
       };
     });
   }
 
   function setSlide(i) {
     if (!slides || !slides.length) return;
+    if (sliderTimer) clearTimeout(sliderTimer);
+
     slideIndex = (i + slides.length) % slides.length;
     const slide = slides[slideIndex];
     const container = $('#heroMediaContainer');
@@ -1419,12 +1419,43 @@
       container.style.opacity = '0.3';
       setTimeout(() => {
         if (slide.type === 'video') {
-          container.innerHTML = `<video class="hero-img" src="${slide.src}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
+          // Play video WITHOUT loop attribute so onended triggers properly when completed
+          container.innerHTML = `<video id="heroBannerVideo" class="hero-img" src="${slide.src}" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
+          
+          const videoEl = $('#heroBannerVideo');
+          if (videoEl) {
+            // When video finishes playing naturally, advance to next slide!
+            videoEl.onended = () => {
+              setSlide(slideIndex + 1);
+            };
+            // Fallback timer (22 seconds) in case video stalls or fails
+            sliderTimer = setTimeout(() => {
+              setSlide(slideIndex + 1);
+            }, 22000);
+          }
         } else {
           container.innerHTML = `<img class="hero-img" src="${slide.src}" alt="Banner" style="width:100%;height:100%;object-fit:cover;">`;
+          // Photo banner: advance after 4 seconds
+          if (slides.length > 1) {
+            sliderTimer = setTimeout(() => {
+              setSlide(slideIndex + 1);
+            }, 4000);
+          }
         }
         container.style.opacity = '1';
       }, 150);
+    }
+
+    const overlay = $('.hero-overlay');
+    const hasTitle = Boolean(slide.title && slide.title.trim());
+    const hasSubtitle = Boolean(slide.subtitle && slide.subtitle.trim());
+
+    if (overlay) {
+      if (!hasTitle && !hasSubtitle) {
+        overlay.style.display = 'none';
+      } else {
+        overlay.style.display = 'flex';
+      }
     }
 
     if ($('.hero-title')) $('.hero-title').innerHTML = slide.title || '';
@@ -1440,15 +1471,6 @@
     $$('.slider-dots .dot').forEach((dot, idx) => dot.classList.toggle('active', idx === slideIndex));
   }
 
-  function startAutoSlider() {
-    if (sliderTimer) clearInterval(sliderTimer);
-    if (slides.length > 1) {
-      sliderTimer = setInterval(() => {
-        setSlide(slideIndex + 1);
-      }, 4000);
-    }
-  }
-
   function setupBannerControls() {
     const leftBtn = document.querySelector('.hero-banner .slider-arrow.left');
     const rightBtn = document.querySelector('.hero-banner .slider-arrow.right');
@@ -1458,7 +1480,6 @@
         e.preventDefault();
         e.stopPropagation();
         setSlide(slideIndex - 1);
-        startAutoSlider();
       };
     }
 
@@ -1467,7 +1488,6 @@
         e.preventDefault();
         e.stopPropagation();
         setSlide(slideIndex + 1);
-        startAutoSlider();
       };
     }
   }
