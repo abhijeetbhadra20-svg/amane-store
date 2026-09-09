@@ -208,35 +208,40 @@
                 </div>
             </div>
 
-            <!-- Strict Banners Tab Content -->
+            <!-- Banners Tab Content -->
             <div id="bannersTabContent" class="space-y-4 hidden">
                 <div class="fade-in-up card rounded-3xl p-5 shadow-lg border border-slate-100 space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-200/60 pb-2.5">
-                        <h2 class="font-display text-base font-semibold text-slate-900">Upload Banner or Video</h2>
+                        <h2 id="bannerFormTitle" class="font-display text-base font-semibold text-slate-900">Upload Banner or Video</h2>
                         <span class="text-[10px] font-bold bg-rose-100 text-rose-700 px-2 py-1 rounded-lg">Max 6 Limit</span>
                     </div>
                     
                     <form id="addBannerForm" onsubmit="handleAddNewBanner(event)" class="space-y-3 text-xs">
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Banner Heading Text</label>
-                            <input type="text" id="bannerTitle" placeholder="e.g. New Summer Sale" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            <label class="block font-bold text-slate-700 mb-1">Banner Heading Text <span class="text-slate-400 font-normal">(Optional / Removable)</span></label>
+                            <input type="text" id="bannerTitle" placeholder="Leave empty for no text on banner" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
                         </div>
 
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Subtitle (Optional)</label>
-                            <input type="text" id="bannerSubtitle" placeholder="e.g. Flat 30% Off Everything" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
+                            <label class="block font-bold text-slate-700 mb-1">Subtitle <span class="text-slate-400 font-normal">(Optional / Removable)</span></label>
+                            <input type="text" id="bannerSubtitle" placeholder="Leave empty for no subtitle" class="w-full p-3 card rounded-2xl border border-slate-100 text-base outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-600/20 transition">
                         </div>
 
                         <div>
-                            <label class="block font-bold text-rose-600 mb-1">Select Photo or Video 📁</label>
-                            <p class="text-[10px] text-slate-500 mb-1">✦ Images will be cropped to 4:3 ratio.<br>✦ Video duration MUST be 10–20 seconds.</p>
-                            <input type="file" id="bannerMediaFile" accept="image/*,video/*" required onchange="handleBannerFileSelect(event)" class="w-full p-2 card rounded-2xl border border-slate-100 text-base file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer transition">
+                            <label class="block font-bold text-rose-600 mb-1">Select Photo or Video 📁 <span id="bannerMediaReqTag" class="text-slate-400 font-normal">(Required)</span></label>
+                            <p class="text-[10px] text-slate-500 mb-1">✦ Images cropped to locked 16:9 widescreen ratio.<br>✦ Video duration MUST be 10–20 seconds.</p>
+                            <input type="file" id="bannerMediaFile" accept="image/*,video/*" onchange="handleBannerFileSelect(event)" class="w-full p-2 card rounded-2xl border border-slate-100 text-base file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-rose-600 file:text-white hover:file:bg-rose-700 cursor-pointer transition">
                             <div id="bannerPreviewBox" class="mt-2 hidden"></div>
                         </div>
 
-                        <button type="submit" id="publishBannerBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer text-xs">
-                            Upload & Publish Banner
-                        </button>
+                        <div class="flex gap-2">
+                            <button type="submit" id="publishBannerBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-rose-600/20 transition cursor-pointer text-xs">
+                                Upload & Publish Banner
+                            </button>
+                            <button type="button" id="cancelBannerEditBtn" onclick="cancelBannerEdit()" class="hidden shrink-0 bg-slate-200 hover:bg-slate-300 text-slate-700 font-extrabold py-3.5 px-4 rounded-2xl shadow-xs transition cursor-pointer text-xs">
+                                Cancel
+                            </button>
+                        </div>
                     </form>
                 </div>
 
@@ -277,9 +282,11 @@
         let currentCropIndex = 0;
         let croppedBlobs = [];
         let cropperInstance = null;
-        let activeCropMode = 'product'; // 'product' (3:4) or 'banner' (4:3)
+        let activeCropMode = 'product'; // 'product' (3:4) or 'banner' (16:9)
 
         let processedBannerFile = null;
+        let editingBannerId = null;
+        let cachedBanners = [];
 
         let editingProductId = null;
         let cachedOrders = [];
@@ -389,7 +396,7 @@
                     event.target.value = '';
                 };
             } else if (file.type.startsWith('image')) {
-                // Open Cropper Engine for Banner Image (4:3 Ratio)
+                // Open Cropper Engine for Banner Image Locked to 16:9 Widescreen Ratio
                 activeCropMode = 'banner';
                 rawFilesQueue = [file];
                 currentCropIndex = 0;
@@ -431,77 +438,137 @@
                 .order('created_at', { ascending: false });
 
             if (error || !data || data.length === 0) {
+                cachedBanners = [];
                 listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No banners added yet.</p>`;
                 return;
             }
+
+            cachedBanners = data;
 
             listEl.innerHTML = data.map(b => `
                 <div class="flex items-center justify-between card p-3 rounded-2xl border border-slate-100 text-xs gap-3 shadow-xs">
                     <div class="flex items-center gap-3 truncate">
                         <img src="${b.media_type === 'video' ? 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100' : b.media_url}" class="w-12 h-10 object-cover rounded-xl border border-slate-200 shrink-0">
                         <div class="truncate">
-                            <h4 class="font-bold text-slate-900 truncate">${b.title || 'Banner'}</h4>
-                            <p class="text-[10px] text-slate-500">${b.media_type.toUpperCase()}</p>
+                            <h4 class="font-bold text-slate-900 truncate">${b.title || '<i>(No Heading)</i>'}</h4>
+                            <p class="text-[10px] text-slate-500">${b.media_type.toUpperCase()} ${b.subtitle ? '• ' + b.subtitle : ''}</p>
                         </div>
                     </div>
-                    <button onclick="deleteBanner('${b.id}')" class="w-7 h-7 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-rose-100 transition shrink-0">
-                        <i class="fa-solid fa-trash text-[10px]"></i>
-                    </button>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="editBanner('${b.id}')" class="w-7 h-7 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-200 transition">
+                            <i class="fa-solid fa-pen text-[10px]"></i>
+                        </button>
+                        <button onclick="deleteBanner('${b.id}')" class="w-7 h-7 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center cursor-pointer hover:bg-rose-100 transition">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
+                    </div>
                 </div>
             `).join('');
+        }
+
+        function editBanner(bannerId) {
+            const b = cachedBanners.find(x => String(x.id) === String(bannerId));
+            if (!b) return;
+
+            editingBannerId = bannerId;
+
+            document.getElementById('bannerTitle').value = b.title || '';
+            document.getElementById('bannerSubtitle').value = b.subtitle || '';
+            
+            document.getElementById('bannerFormTitle').innerText = 'Edit Banner Details';
+            document.getElementById('publishBannerBtn').innerText = 'Update Banner Details';
+            document.getElementById('cancelBannerEditBtn').classList.remove('hidden');
+            document.getElementById('bannerMediaReqTag').innerText = '(Optional during edit)';
+            document.getElementById('bannerMediaFile').required = false;
+
+            const previewBox = document.getElementById('bannerPreviewBox');
+            previewBox.innerHTML = `<div class="p-2 bg-slate-100 text-slate-700 rounded-xl font-bold text-[11px]">Current Media: ${b.media_type.toUpperCase()} (Leave file empty to keep current)</div>`;
+            previewBox.classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelBannerEdit() {
+            editingBannerId = null;
+            document.getElementById('addBannerForm').reset();
+            processedBannerFile = null;
+            document.getElementById('bannerFormTitle').innerText = 'Upload Banner or Video';
+            document.getElementById('publishBannerBtn').innerText = 'Upload & Publish Banner';
+            document.getElementById('cancelBannerEditBtn').classList.add('hidden');
+            document.getElementById('bannerMediaReqTag').innerText = '(Required)';
+            document.getElementById('bannerMediaFile').required = true;
+            document.getElementById('bannerPreviewBox').classList.add('hidden');
         }
 
         async function handleAddNewBanner(e) {
             e.preventDefault();
 
-            // Check Max 6 Limit in Database
-            const { count, error: countErr } = await _supabase
-                .from('banners')
-                .select('*', { count: 'exact', head: true });
+            const isEditing = !!editingBannerId;
 
-            if (!countErr && count >= 6) {
-                alert('❌ Limit Reached!\nYou can upload a maximum of 6 active banners/videos. Please delete an existing banner before adding a new one.');
-                return;
-            }
+            if (!isEditing) {
+                // Check Max 6 Limit in Database
+                const { count, error: countErr } = await _supabase
+                    .from('banners')
+                    .select('*', { count: 'exact', head: true });
 
-            if (!processedBannerFile) {
-                alert('Please select a valid image or 10-20 sec video.');
-                return;
+                if (!countErr && count >= 6) {
+                    alert('❌ Limit Reached!\nYou can upload a maximum of 6 active banners/videos. Please delete an existing banner before adding a new one.');
+                    return;
+                }
+
+                if (!processedBannerFile) {
+                    alert('Please select a valid image or 10-20 sec video.');
+                    return;
+                }
             }
 
             const btn = document.getElementById('publishBannerBtn');
-            btn.innerText = 'Uploading Media...';
+            btn.innerText = isEditing ? 'Updating Banner...' : 'Uploading Media...';
             btn.disabled = true;
 
             try {
-                const mediaUrl = await uploadBannerMedia(processedBannerFile);
-                const isVideo = processedBannerFile.type.startsWith('video') || processedBannerFile.name.endsWith('.mp4');
+                let mediaUrl = null;
+                let isVideo = false;
+
+                if (processedBannerFile) {
+                    mediaUrl = await uploadBannerMedia(processedBannerFile);
+                    isVideo = processedBannerFile.type.startsWith('video') || processedBannerFile.name.endsWith('.mp4');
+                }
+
+                const titleText = document.getElementById('bannerTitle').value.trim();
+                const subtitleText = document.getElementById('bannerSubtitle').value.trim();
 
                 const payload = {
-                    title: document.getElementById('bannerTitle').value.trim() || 'Effortless Style',
-                    subtitle: document.getElementById('bannerSubtitle').value.trim() || '',
-                    media_type: isVideo ? 'video' : 'image',
-                    media_url: mediaUrl,
+                    title: titleText,
+                    subtitle: subtitleText,
                     button_text: 'SHOP NOW',
                     button_link: '#',
-                    display_order: 0,
                     is_active: true
                 };
 
-                const { error } = await _supabase.from('banners').insert([payload]);
+                if (mediaUrl) {
+                    payload.media_url = mediaUrl;
+                    payload.media_type = isVideo ? 'video' : 'image';
+                }
+
+                let error;
+                if (isEditing) {
+                    ({ error } = await _supabase.from('banners').update(payload).eq('id', editingBannerId));
+                } else {
+                    payload.display_order = 0;
+                    ({ error } = await _supabase.from('banners').insert([payload]));
+                }
 
                 if (error) throw error;
 
-                alert('Banner published live to store slider! 🎉');
-                document.getElementById('addBannerForm').reset();
-                processedBannerFile = null;
-                document.getElementById('bannerPreviewBox').classList.add('hidden');
-                loadAdminBanners();
+                alert(isEditing ? 'Banner details updated successfully!' : 'Banner published live to store slider! 🎉');
+                cancelBannerEdit();
+                await loadAdminBanners();
             } catch (err) {
-                alert('Error publishing banner: ' + err.message);
+                alert('Error saving banner: ' + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'Upload & Publish Banner';
+                btn.innerText = isEditing ? 'Update Banner Details' : 'Upload & Publish Banner';
             }
         }
 
@@ -512,6 +579,7 @@
                 alert('Failed to delete banner: ' + error.message);
                 return;
             }
+            if (editingBannerId === bannerId) cancelBannerEdit();
             loadAdminBanners();
         }
 
@@ -718,15 +786,15 @@
                 } else if (activeCropMode === 'banner') {
                     processedBannerFile = croppedBlobs[0];
                     const previewBox = document.getElementById('bannerPreviewBox');
-                    previewBox.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-700 rounded-xl font-bold text-[11px]">✓ Banner Image Cropped (4:3 Ratio)</div>`;
+                    previewBox.innerHTML = `<div class="p-2 bg-emerald-50 text-emerald-700 rounded-xl font-bold text-[11px]">✓ Banner Image Cropped (16:9 Widescreen Ratio)</div>`;
                     previewBox.classList.remove('hidden');
                 }
                 return;
             }
 
             const file = rawFilesQueue[currentCropIndex];
-            const targetRatio = activeCropMode === 'banner' ? (4 / 3) : (3 / 4);
-            document.getElementById('cropperTitleText').innerText = activeCropMode === 'banner' ? 'Crop Banner Image (4:3 Ratio)' : 'Crop Product Image (3:4 Ratio)';
+            const targetRatio = activeCropMode === 'banner' ? (16 / 9) : (3 / 4);
+            document.getElementById('cropperTitleText').innerText = activeCropMode === 'banner' ? 'Crop Banner Image (16:9 Ratio)' : 'Crop Product Image (3:4 Ratio)';
             document.getElementById('cropStepText').innerText = `Image ${currentCropIndex + 1} of ${rawFilesQueue.length}`;
             
             const reader = new FileReader();
@@ -750,7 +818,7 @@
 
         function applyCurrentCrop() {
             if (!cropperInstance) return;
-            const targetWidth = activeCropMode === 'banner' ? 1200 : 900;
+            const targetWidth = activeCropMode === 'banner' ? 1600 : 900;
             const targetHeight = activeCropMode === 'banner' ? 900 : 1200;
 
             cropperInstance.getCroppedCanvas({
