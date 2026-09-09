@@ -176,15 +176,17 @@
       padding: 0 16px;
     }
 
-        /* Hero Banner Section (Dynamic 21:9 Image / 16:9 Video Aspect Ratio) */
+    /* Hero Banner Section (Full Edge-to-Edge Sharp Rectangle) */
     .hero-banner {
       position: relative;
-      width: 100%;
-      aspect-ratio: 21 / 9; /* Default ratio for images */
-      border-radius: 12px;
+      width: calc(100% + 32px);
+      margin-left: -16px;
+      margin-right: -16px;
+      aspect-ratio: 21 / 9;
+      border-radius: 0 !important;
       overflow: hidden;
       background-color: #111111;
-      margin-top: 8px;
+      margin-top: 0;
       margin-bottom: 24px;
       display: flex;
       align-items: center;
@@ -208,7 +210,7 @@
       display: block;
     }
 
-    /* Dark Subtle Gradient Overlay (Removes beige glare & enhances video/photo visibility) */
+    /* Dark Subtle Gradient Overlay */
     .hero-overlay {
       position: absolute;
       inset: 0;
@@ -217,7 +219,7 @@
       flex-direction: column;
       justify-content: center;
       padding: 28px 24px;
-      background: linear-gradient(90deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0) 100%);
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0) 100%);
       max-width: 65%;
       pointer-events: none;
     }
@@ -264,50 +266,54 @@
       transition: transform 0.2s ease, background 0.2s ease;
     }
 
-    .btn-primary:hover {
-      background: #F4EFEA;
-    }
-    
-    /* Carousel Navigation */
+    /* Carousel Navigation Fix (Top Priority Layering) */
     .slider-arrow {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.9);
-      border: none;
+      background: rgba(0, 0, 0, 0.6);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      z-index: 5;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 30 !important;
+      touch-action: manipulation;
+    }
+    .slider-arrow:active {
+      transform: translateY(-50%) scale(0.9);
+      background: rgba(0, 0, 0, 0.9);
     }
     .slider-arrow.left { left: 12px; }
     .slider-arrow.right { right: 12px; }
 
     .slider-dots {
       position: absolute;
-      bottom: 16px;
+      bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 6px;
-      z-index: 5;
+      gap: 8px;
+      z-index: 30 !important;
     }
     .dot {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.4);
       cursor: pointer;
+      transition: all 0.25s ease;
     }
     .dot.active {
-      background: #000;
-      width: 18px;
+      background: #FFFFFF;
+      width: 24px;
       border-radius: 10px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.4);
     }
 
     /* Features Grid */
@@ -812,7 +818,7 @@
   </header>
 
   <main class="container">
-    <!-- Hero Banner Section (Dynamic Supabase Media Container) -->
+    <!-- Hero Banner Section (Full Edge-to-Edge Sharp Rectangle Container) -->
     <section class="hero-banner">
       <button class="slider-arrow left" aria-label="Previous">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -1340,10 +1346,13 @@
   }
 
   /* Dynamic Banners State & Fixed Auto-Slide Engine */
-  let slides = [
-    { type: 'image', src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80', title: 'Effortless Style,<br><i>Every Day.</i>', subtitle: 'Timeless pieces. Made for you.', btnText: 'SHOP NEW ARRIVALS', btnLink: '#' }
+  const DEFAULT_SLIDES = [
+    { type: 'image', src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80', title: 'Effortless Style,<br><i>Every Day.</i>', subtitle: 'Timeless pieces. Made for you.', btnText: 'SHOP NEW ARRIVALS', btnLink: '#' },
+    { type: 'image', src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80', title: 'Summer Essentials,<br><i>Curated.</i>', subtitle: 'Lightweight fabrics for warm days.', btnText: 'EXPLORE COLLECTION', btnLink: '#' },
+    { type: 'image', src: 'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1200&q=80', title: 'New Season,<br><i>Fresh Looks.</i>', subtitle: 'Elevate your wardrobe today.', btnText: 'DISCOVER MORE', btnLink: '#' }
   ];
 
+  let slides = [...DEFAULT_SLIDES];
   let slideIndex = 0;
   let sliderTimer = null;
 
@@ -1354,10 +1363,10 @@
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
-        .limit(6); // Max 6 banners limit
+        .limit(6);
 
       if (!error && data && data.length > 0) {
-        slides = data.map(b => ({
+        const dbSlides = data.map(b => ({
           type: b.media_type || 'image',
           src: b.media_url,
           title: b.title || '',
@@ -1365,6 +1374,14 @@
           btnText: b.button_text || 'SHOP NOW',
           btnLink: b.button_link || '#'
         }));
+
+        if (dbSlides.length === 1) {
+          slides = [...dbSlides, DEFAULT_SLIDES[1]];
+        } else {
+          slides = dbSlides;
+        }
+      } else {
+        slides = [...DEFAULT_SLIDES];
       }
       renderDots();
       setSlide(0);
@@ -1379,24 +1396,23 @@
     if (!dotsWrap) return;
     dotsWrap.innerHTML = slides.map((_, i) => `<span class="dot ${i === 0 ? 'active' : ''}"></span>`).join('');
     $$('.slider-dots .dot').forEach((dot, idx) => {
-      dot.onclick = () => { setSlide(idx); startAutoSlider(); };
+      dot.onclick = (e) => {
+        e.stopPropagation();
+        setSlide(idx);
+        startAutoSlider();
+      };
     });
   }
 
-    function setSlide(i) {
+  function setSlide(i) {
     if (!slides || !slides.length) return;
     slideIndex = (i + slides.length) % slides.length;
     const slide = slides[slideIndex];
     const container = $('#heroMediaContainer');
     const heroBanner = $('.hero-banner');
 
-    // Dynamic Aspect Ratio Switcher (21:9 for images, 16:9 for videos)
     if (heroBanner) {
-      if (slide.type === 'video') {
-        heroBanner.style.aspectRatio = '16 / 9';
-      } else {
-        heroBanner.style.aspectRatio = '21 / 9';
-      }
+      heroBanner.style.aspectRatio = slide.type === 'video' ? '16 / 9' : '21 / 9';
     }
 
     if (container) {
@@ -1422,8 +1438,43 @@
     }
 
     $$('.slider-dots .dot').forEach((dot, idx) => dot.classList.toggle('active', idx === slideIndex));
+  }
+
+  function startAutoSlider() {
+    if (sliderTimer) clearInterval(sliderTimer);
+    if (slides.length > 1) {
+      sliderTimer = setInterval(() => {
+        setSlide(slideIndex + 1);
+      }, 4000);
     }
+  }
+
+  function setupBannerControls() {
+    const leftBtn = document.querySelector('.hero-banner .slider-arrow.left');
+    const rightBtn = document.querySelector('.hero-banner .slider-arrow.right');
+
+    if (leftBtn) {
+      leftBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setSlide(slideIndex - 1);
+        startAutoSlider();
+      };
+    }
+
+    if (rightBtn) {
+      rightBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setSlide(slideIndex + 1);
+        startAutoSlider();
+      };
+    }
+  }
+
+  function money(n) { return `₹${Number(n || 0).toLocaleString('en-IN')}`; }
   
+  function cartCount() {
     return state.cart.reduce((sum, item) => {
       const p = getProductById(item.id);
       return p ? sum + item.qty : sum;
@@ -2491,6 +2542,7 @@
     updateUI();
     fetchLiveProducts();
     fetchLiveBanners();
+    setupBannerControls();
   });
 })();
 </script>
