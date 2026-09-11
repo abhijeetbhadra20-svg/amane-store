@@ -810,166 +810,47 @@
 
     .track-courier-btn { display: block; width: 100%; text-align: center; background: #111111; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 10px; border-radius: 8px; text-decoration: none; margin-top: 10px; letter-spacing: 0.5px; }
 
-    /* --- RESPONSIVE TRUCK BUTTON FIX --- */
-    .truck-button {
-      position: relative;
-      background: #111111;
-      color: #FFFFFF;
+    /* --- GLASSMORPHISM PLACE ORDER BUTTON --- */
+    .glass-btn {
       width: 100%;
-      height: 54px;
-      border: none;
+      height: 52px;
+      margin-top: 16px;
+      background: rgba(17, 17, 17, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 12px;
-      cursor: pointer;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-family: var(--font-sans);
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 1px;
-      margin-top: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-      transition: background 0.4s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .truck-button:active { transform: scale(0.98); }
-
-    .truck-button .default-text {
-      position: relative;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .truck-button .success-text {
-      position: absolute;
-      z-index: 5;
-      inset: 0;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      color: #FFFFFF;
-      font-size: 13px;
-      font-weight: 700;
-      pointer-events: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .truck-button .truck-wrapper {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 2;
+    .glass-btn:hover {
+      background: rgba(0, 0, 0, 0.98);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.32);
+      transform: translateY(-1px);
     }
 
-    .truck-button .street {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.2);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+    .glass-btn:active {
+      transform: scale(0.98);
     }
 
-    .truck-button .street::after {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: repeating-linear-gradient(90deg, #FFF, #FFF 10px, transparent 10px, transparent 20px);
-      animation: streetMove 0.3s linear infinite paused;
-    }
-
-    .truck-button .truck-svg {
-      position: absolute;
-      bottom: 6px;
-      left: -60px;
-      width: 52px;
-      height: 32px;
-      will-change: transform;
-      z-index: 3;
-    }
-
-    .truck-button .box-svg {
-      position: absolute;
-      bottom: 12px;
-      left: -60px;
-      width: 13px;
-      height: 13px;
-      opacity: 0;
-      will-change: transform, opacity;
-      z-index: 4;
-    }
-
-    .truck-button.is-animating {
-      background: #000000;
-      pointer-events: none;
-    }
-
-    .truck-button.is-animating .default-text,
-    .truck-button.is-success .default-text {
-      opacity: 0 !important;
-      transform: translateY(-24px) !important;
-      visibility: hidden;
-    }
-
-    .truck-button.is-animating .street { opacity: 1; }
-    .truck-button.is-animating .street::after { animation-play-state: running; }
-
-    .truck-button.is-animating .truck-svg {
-      animation: truckDriveSmooth 2.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-    }
-
-    .truck-button.is-animating .box-svg {
-      animation: boxDropInTruck 2.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-    }
-
-    .truck-button.is-success {
-      background: #137333 !important;
-      box-shadow: 0 10px 30px rgba(19, 115, 51, 0.4) !important;
-    }
-
-    .truck-button.is-success .street { opacity: 0; }
-    .truck-button.is-success .success-text {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
-    }
-
-    @keyframes streetMove {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-20px); }
-    }
-
-    @keyframes truckDriveSmooth {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(calc(50vw - 20px)); }
-      30% { transform: translateX(calc(50vw - 23px)); }
-      35% { transform: translateX(calc(50vw - 20px)); }
-      42% { transform: translateX(calc(50vw - 20px)) scaleY(0.92); }
-      48% { transform: translateX(calc(50vw - 20px)) scaleY(1); }
-      100% { transform: translateX(calc(100vw + 100px)); }
-    }
-
-    @keyframes boxDropInTruck {
-      0% { opacity: 0; transform: translate(calc(50vw - 12px), -50px); }
-      22% { opacity: 0; transform: translate(calc(50vw - 12px), -40px); }
-      28% { opacity: 1; transform: translate(calc(50vw - 12px), -30px); }
-      42% { opacity: 1; transform: translate(calc(50vw - 12px), -1px); }
-      46% { opacity: 1; transform: translate(calc(50vw - 12px), -4px); }
-      50% { opacity: 1; transform: translate(calc(50vw - 12px), -1px); }
-      100% { opacity: 1; transform: translate(calc(100vw + 108px), -1px); }
+    .glass-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
     }
 
     /* Modal Close Button */
@@ -2297,7 +2178,7 @@
             </div>
           </div>
 
-          <div class="qty-row"><button id="qtyMinus" ${isOut ? 'disabled' : ''}>−}</button><span class="qty-value" id="qtyValue">1</span><button id="qtyPlus" ${isOut ? 'disabled' : ''}>+</button></div>
+          <div class="qty-row"><button id="qtyMinus" ${isOut ? 'disabled' : ''}>−</button><span class="qty-value" id="qtyValue">1</span><button id="qtyPlus" ${isOut ? 'disabled' : ''}>+</button></div>
           
           <div class="modal-actions">
             <button class="soft" id="quickWish">${state.wishlist.includes(p.id) ? '♥ Wishlisted' : '♡ Add to Wishlist'}</button>
@@ -2461,7 +2342,7 @@
     );
   }
 
-  /* Checkout Process with Delivery Truck Animation */
+  /* Checkout Process with Glassmorphism Place Order Button */
   async function openCheckout() {
     if (!state.cart.length) { toast('Add a product before checkout'); return; }
 
@@ -2489,23 +2370,9 @@
       <div id="paymentNote" style="padding:11px 12px;border-radius:8px;background:#f7f3ee;font:400 11px/1.5 var(--font-sans);color:#666;margin:8px 0 14px">COD order verification active. Please provide an active phone number.</div>
       <div class="cart-total" style="border-top:1px solid #eee;padding-top:12px;margin-top:4px"><span>Payable Total</span><span>${money(cartTotal())}</span></div>
       
-      <!-- Delivery Truck Glassmorphism Animated Place Order Button -->
-      <button class="truck-button" id="placeOrderBtn">
-        <span class="default-text">PLACE ORDER</span>
-        <span class="success-text">ORDER PLACED ✓</span>
-        <div class="truck-wrapper">
-          <div class="street"></div>
-          <svg class="box-svg" viewBox="0 0 24 24" fill="#E0A96D">
-            <rect x="2" y="2" width="20" height="20" rx="3" />
-            <path d="M12 2v20M2 12h20" stroke="#B38048" stroke-width="2"/>
-          </svg>
-          <svg class="truck-svg" viewBox="0 0 60 36" fill="none">
-            <rect x="2" y="4" width="34" height="22" rx="3" fill="#FFFFFF"/>
-            <path d="M36 12h12l6 7v7h-18V12z" fill="#FFFFFF"/>
-            <circle cx="12" cy="28" r="4" fill="#333"/>
-            <circle cx="44" cy="28" r="4" fill="#333"/>
-          </svg>
-        </div>
+      <!-- Glassmorphism Place Order Button -->
+      <button class="glass-btn" id="placeOrderBtn">
+        <span>PLACE ORDER 🛍️</span>
       </button>`, () => {
         const method = $('#paymentMethod');
         const note = $('#paymentNote');
@@ -2619,7 +2486,8 @@
 
     const button = $('#placeOrderBtn');
     if (button) {
-      button.classList.add('is-animating');
+      button.disabled = true;
+      button.innerHTML = '<span>PROCESSING ORDER...</span>';
       playSoundEffect('swipe');
     }
 
@@ -2697,24 +2565,23 @@
       saveState();
       updateUI();
 
-      // Delivery Truck Transition
-      setTimeout(() => {
-        if (button) {
-          button.classList.remove('is-animating');
-          button.classList.add('is-success');
-          playSoundEffect('success');
-        }
-      }, 2300);
+      if (button) {
+        button.innerHTML = '<span>ORDER PLACED ✓</span>';
+        button.style.background = 'rgba(19, 115, 51, 0.95)';
+        playSoundEffect('success');
+      }
 
       setTimeout(() => {
         openOrderConfirmation(order);
-      }, 3200);
+      }, 600);
 
     } catch (error) {
       console.error('Amane Store order failed:', error);
       toast(error?.message || 'Unable to place order. Please try again.');
       if (button) {
-        button.classList.remove('is-animating', 'is-success');
+        button.disabled = false;
+        button.style.background = 'rgba(17, 17, 17, 0.92)';
+        button.innerHTML = '<span>PLACE ORDER 🛍️</span>';
       }
     }
   }
