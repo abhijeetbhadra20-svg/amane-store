@@ -22,10 +22,56 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <!-- Razorpay Standard Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <!-- $10k Animation & Physics Libraries -->
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   
   <style> 
+    /* Lenis Liquid Smooth Scroll Setup */
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+
+    /* Custom Magnetic Cursor System */
+    @media (pointer: fine) {
+      body { cursor: default; }
+      
+      .custom-cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: rgba(17, 17, 17, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: transform 0.15s ease-out, width 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.25s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 9px;
+        font-weight: 700;
+        backdrop-filter: invert(0.2);
+      }
+
+      .custom-cursor.hovering-btn {
+        width: 44px;
+        height: 44px;
+        background: rgba(17, 17, 17, 0.95);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      }
+    }
+
     input, select, textarea {
       font-size: 16px !important;
     }
@@ -117,6 +163,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.2s ease;
     }
 
     .badge {
@@ -182,7 +229,6 @@
       background: #FFF;
     }
 
-    /* Common Layout Container */
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -224,7 +270,6 @@
       display: block;
     }
 
-    /* Dark Subtle Gradient Overlay */
     .hero-overlay {
       position: absolute;
       inset: 0;
@@ -250,6 +295,7 @@
       margin-bottom: 12px;
       color: #FFFFFF;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      will-change: transform, opacity;
     }
 
     .hero-title i {
@@ -280,7 +326,6 @@
       transition: transform 0.2s ease, background 0.2s ease;
     }
 
-    /* Carousel Navigation */
     .slider-arrow {
       position: absolute;
       top: 50%;
@@ -330,7 +375,6 @@
       box-shadow: 0 0 6px rgba(0,0,0,0.4);
     }
 
-    /* Features Grid */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -359,7 +403,6 @@
       color: var(--text-muted);
     }
 
-    /* Section Headers */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -378,7 +421,6 @@
       font-weight: 500;
     }
 
-    /* View Switcher Controls */
     .view-toggle-btn {
       display: flex;
       background: #F4EFEA;
@@ -403,7 +445,6 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
-    /* Touch Gesture Reel/Deck Engine Styles */
     .deck-container {
       display: none;
       position: relative;
@@ -453,7 +494,6 @@
       pointer-events: none;
     }
 
-    /* Glassmorphism Floating Overlay */
     .deck-card-overlay {
       position: absolute;
       inset: 0;
@@ -543,7 +583,6 @@
       text-align: center;
     }
 
-    /* Floating Controls Below Deck */
     .deck-controls {
       display: flex;
       justify-content: center;
@@ -568,7 +607,6 @@
     }
     .deck-control-btn:active { transform: scale(0.9); }
 
-    /* Shop by Category Grid */
     .categories-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -599,7 +637,6 @@
       font-weight: 500;
     }
 
-    /* New Arrivals Section */
     .products-slider-wrapper {
       position: relative;
       margin-bottom: 40px;
@@ -609,11 +646,16 @@
       grid-template-columns: repeat(5, 1fr);
       gap: 14px;
     }
+    
+    /* 3D Parallax Card Container */
     .product-card {
       position: relative;
       text-decoration: none;
       color: var(--text-dark);
+      transform-style: preserve-3d;
+      will-change: transform;
     }
+    
     .product-img-wrapper {
       position: relative;
       width: 100%;
@@ -690,7 +732,6 @@
       border: 1px solid rgba(0,0,0,0.1);
     }
 
-    /* Newsletter Card */
     .newsletter-card {
       background-color: #F7F3EE;
       border-radius: 12px;
@@ -741,7 +782,6 @@
       cursor: pointer;
     }
 
-    /* Bottom Navigation Bar */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -770,9 +810,8 @@
       font-weight: 600;
     }
 
-    /* Gallery and Product detail styling */
     .gallery-container { display: flex; flex-direction: column; gap: 8px; width: 100%; overflow-x: hidden; }
-    .gallery-main { width: 100%; aspect-ratio: 3/4; border-radius: 12px; object-fit: cover; background: #f1eee9; }
+    .gallery-main { width: 100%; aspect-ratio: 3/4; border-radius: 12px; object-fit: cover; background: #f1eee9; cursor: grab; }
     .gallery-main.blurred { filter: blur(4px) grayscale(60%); opacity: 0.7; }
     .gallery-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
     .gallery-thumb { width: 48px; height: 60px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 1px solid #ddd; opacity: 0.6; transition: all 0.2s; flex-shrink: 0; }
@@ -786,13 +825,11 @@
     .info-box { background: #f9f8f6; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 11px; color: #555; display: flex; flex-direction: column; gap: 6px; }
     .info-item { display: flex; align-items: center; gap: 8px; }
 
-    /* Coupon Box Styling */
     .coupon-box { display: flex; gap: 8px; margin: 12px 0; }
     .coupon-input { flex: 1; padding: 10px 12px; border: 1px dashed #ccc; border-radius: 6px; font-size: 16px !important; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
     .coupon-btn { background: #111; color: #fff; border: 0; padding: 10px 16px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
     .coupon-applied-tag { display: flex; justify-content: space-between; align-items: center; background: #e6f4ea; color: #137333; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; margin: 8px 0; }
 
-    /* Order Stepper Styling */
     .order-stepper { display: flex; justify-content: space-between; position: relative; margin: 16px 0 20px; padding: 0 8px; }
     .order-stepper::before { content: ''; position: absolute; top: 12px; left: 24px; right: 24px; height: 2px; background: #e0e0e0; z-index: 1; }
     .stepper-step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -810,7 +847,6 @@
 
     .track-courier-btn { display: block; width: 100%; text-align: center; background: #111111; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 10px; border-radius: 8px; text-decoration: none; margin-top: 10px; letter-spacing: 0.5px; }
 
-    /* --- GLASSMORPHISM PLACE ORDER BUTTON --- */
     .glass-btn {
       width: 100%;
       height: 52px;
@@ -853,7 +889,6 @@
       transform: none;
     }
 
-    /* Modal Close Button */
     .modal-close {
       position: absolute;
       right: 14px;
@@ -875,7 +910,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Glassmorphism Modal Wrapper */
     .modal { 
       position:relative; 
       width:min(92vw,520px); 
@@ -896,7 +930,6 @@
       touch-action: pan-y;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 900px) {
       .hero-overlay { max-width: 80%; }
       .features-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
@@ -912,7 +945,6 @@
       .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     }
   
-    /* Interactive UX Layer */
     html { scroll-behavior: smooth; }
     
     body.modal-open { 
@@ -924,8 +956,6 @@
     .icon-btn, .wishlist-btn, .slider-arrow, .btn-primary, .newsletter-btn, .bottom-nav-item, .view-all, .track-order, .category-card, .product-card { -webkit-tap-highlight-color: transparent; }
     .icon-btn:active, .wishlist-btn:active, .slider-arrow:active, .btn-primary:active, .newsletter-btn:active { transform: scale(.94); }
     .wishlist-btn.active svg { fill: #111; }
-    .wishlist-btn.bump { animation: heartPop .28s ease; }
-    @keyframes heartPop { 50% { transform: scale(1.22); } }
     .toast-container { position: fixed; left: 50%; bottom: 86px; transform: translateX(-50%); z-index: 5000; display: grid; gap: 8px; width: min(92vw, 420px); pointer-events: none; }
     .toast { background:#111; color:#fff; border-radius:999px; padding:11px 16px; font:500 12px/1.2 var(--font-sans); text-align:center; box-shadow:0 12px 30px rgba(0,0,0,.18); animation: toastIn .28s ease both; }
     .toast.hide { animation: toastOut .22s ease both; }
@@ -1259,6 +1289,134 @@
 (() => {
   'use strict';
 
+  /* --- 1. LENIS SMOOTH SCROLL INITIALIZATION --- */
+  let lenis = null;
+  if (typeof window.Lenis !== 'undefined') {
+    lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 1.5
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+  }
+
+  /* --- 2. CUSTOM MAGNETIC CURSOR & PULL --- */
+  const cursor = document.createElement('div');
+  cursor.className = 'custom-cursor';
+  document.body.appendChild(cursor);
+
+  let mouseX = 0, mouseY = 0;
+  let cursorX = 0, cursorY = 0;
+
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateCursor() {
+    cursorX += (mouseX - cursorX) * 0.2;
+    cursorY += (mouseY - cursorY) * 0.2;
+    cursor.style.left = `${cursorX}px`;
+    cursor.style.top = `${cursorY}px`;
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  function attachMagneticEffect() {
+    document.querySelectorAll('.btn-primary, .glass-btn, .icon-btn, .bottom-nav-item, .deck-buy-btn').forEach(btn => {
+      if (btn.dataset.magneticAttached) return;
+      btn.dataset.magneticAttached = 'true';
+      
+      btn.addEventListener('mouseenter', () => cursor.classList.add('hovering-btn'));
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const btnCenterX = rect.left + rect.width / 2;
+        const btnCenterY = rect.top + rect.height / 2;
+        const distanceX = e.clientX - btnCenterX;
+        const distanceY = e.clientY - btnCenterY;
+        btn.style.transform = `translate3d(${distanceX * 0.25}px, ${distanceY * 0.25}px, 0px) scale(1.03)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        cursor.classList.remove('hovering-btn');
+        btn.style.transform = `translate3d(0px, 0px, 0px) scale(1)`;
+      });
+    });
+  }
+
+  /* --- 3. 3D PARALLAX TILT ON PRODUCT CARDS --- */
+  function apply3DTiltEffect() {
+    document.querySelectorAll('.product-card').forEach(card => {
+      if (card.dataset.tiltAttached) return;
+      card.dataset.tiltAttached = 'true';
+
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -12;
+        const rotateY = ((x - centerX) / centerX) * 12;
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        card.style.transition = 'transform 0.1s ease-out';
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        card.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      });
+    });
+  }
+
+  /* --- 4. GSAP KINETIC SCROLL REVEALS --- */
+  function initGSAPAnimations() {
+    if (typeof window.gsap === 'undefined' || typeof window.ScrollTrigger === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from('.hero-title', {
+      y: 60,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power4.out',
+      delay: 0.2
+    });
+
+    gsap.from('.category-card', {
+      scrollTrigger: {
+        trigger: '.categories-grid',
+        start: 'top 85%',
+      },
+      y: 40,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: 'power3.out'
+    });
+
+    gsap.from('.product-card', {
+      scrollTrigger: {
+        trigger: '.products-grid',
+        start: 'top 80%',
+      },
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.12,
+      ease: 'power3.out',
+      onComplete: () => {
+        apply3DTiltEffect();
+        attachMagneticEffect();
+      }
+    });
+  }
+
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
@@ -1398,7 +1556,6 @@
     }));
   }
 
-  /* Courier Tracking Link Generator */
   function getAutoTrackingUrl(provider, trackingNumber, directUrl) {
     if (directUrl && directUrl.trim()) return directUrl.trim();
     if (!trackingNumber || !trackingNumber.trim()) return null;
@@ -1413,7 +1570,6 @@
     return `https://shiprocket.co/tracking/${cleanNumber}`;
   }
 
-  /* Database Persistence Hooks */
   async function syncCartAndWishlistFromDb() {
     if (!currentUser?.id) return;
 
@@ -1475,7 +1631,6 @@
     await supabase.from('carts').delete().eq('user_id', currentUser.id);
   }
 
-  /* Live Products State & Fetching */
   let products = [];
   let currentCardIndex = 0;
   let isDragging = false;
@@ -1553,13 +1708,15 @@
       renderProductGrid();
       renderDeckCards();
       updateUI();
+      
+      initGSAPAnimations();
+      attachMagneticEffect();
     } catch (err) {
       console.error('Error loading live products:', err);
       grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color:#c00;">Failed to load products. Please refresh.</div>';
     }
   }
 
-  /* Touch Gesture Deck Engine */
   function renderDeckCards() {
     const wrapper = $('#deckWrapper');
     const controls = $('#deckControls');
@@ -1597,7 +1754,7 @@
             <h3 class="deck-title">${p.title}</h3>
             <div class="deck-price">${p.priceText}</div>
             <div class="deck-action-row">
-              <button class="deck-buy-btn" onclick="event.stopPropagation(); addToCart('${p.id}'); openCart();">ADD TO BAG 🛍️</button>
+              <button class="deck-buy-btn" onclick="event.stopPropagation(); addToCart('${p.id}'); openCart();">ADD TO BAG 🛍️️</button>
             </div>
           </div>
         </div>
@@ -1718,7 +1875,6 @@
     }
   };
 
-  /* Shop by Category */
   function renderDynamicCategories() {
     const container = $('.categories-grid');
     if (!container || !products.length) return;
@@ -1810,9 +1966,10 @@
         toggleWishlist(id);
       });
     });
+
+    apply3DTiltEffect();
   }
 
-  /* Dynamic Banners Engine with Video End Sync */
   const DEFAULT_SLIDES = [
     { type: 'image', src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80', title: 'Effortless Style,<br><i>Every Day.</i>', subtitle: 'Timeless pieces. Made for you.', btnText: 'SHOP NEW ARRIVALS', btnLink: '#' },
     { type: 'image', src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80', title: 'Summer Essentials,<br><i>Curated.</i>', subtitle: 'Lightweight fabrics for warm days.', btnText: 'EXPLORE COLLECTION', btnLink: '#' },
@@ -2041,6 +2198,7 @@
     $('#modalWrap').setAttribute('aria-hidden', 'false');
     document.body.classList.add('modal-open');
     if (typeof after === 'function') after();
+    attachMagneticEffect();
   }
 
   function closeModal() {
@@ -2143,7 +2301,6 @@
     openCart();
   }
 
-  /* Product Modal View */
   window.openProduct = function(id) {
     const p = getProductById(id);
     if (!p) return;
@@ -2219,7 +2376,6 @@
       });
   };
 
-  /* Search & Filtering */
   const searchInput = $('.search-input');
   function filterProducts(query = searchInput?.value || '') {
     const grid = $('.products-grid');
@@ -2250,7 +2406,6 @@
   }
   searchInput?.addEventListener('input', () => filterProducts());
 
-  /* Cart View */
   function openCart() {
     let hasOutOfStock = false;
 
@@ -2342,7 +2497,6 @@
     );
   }
 
-  /* Checkout Process with Glassmorphism Place Order Button */
   async function openCheckout() {
     if (!state.cart.length) { toast('Add a product before checkout'); return; }
 
@@ -2370,7 +2524,6 @@
       <div id="paymentNote" style="padding:11px 12px;border-radius:8px;background:#f7f3ee;font:400 11px/1.5 var(--font-sans);color:#666;margin:8px 0 14px">COD order verification active. Please provide an active phone number.</div>
       <div class="cart-total" style="border-top:1px solid #eee;padding-top:12px;margin-top:4px"><span>Payable Total</span><span>${money(cartTotal())}</span></div>
       
-      <!-- Glassmorphism Place Order Button -->
       <button class="glass-btn" id="placeOrderBtn">
         <span>PLACE ORDER 🛍️</span>
       </button>`, () => {
@@ -2711,7 +2864,7 @@
         ${thumbHtml}
         <div>
           <h4>${escapeHtml(o.order_number || `Order #${o.id}`)}</h4>
-          <p>${new Date(o.created_at).toLocaleDateString('en-IN')} · ${money(o.total_amount)}</p>
+          <p>${new Date(o.created_at).toLocaleDateString('en-IN')} ·${money(o.total_amount)}</p>
           <p style="margin-top:4px">${getStatusBadge(o.order_status)}${itemCount ? `<span style="font-size:11px;color:#666;margin-left:6px">(${itemCount} items)</span>` : ''}</p>
         </div>
         <button class="cart-remove" data-db-order-track="${escapeHtml(o.order_number || '')}">TRACK</button>
@@ -2849,7 +3002,6 @@
     });
   }
 
-  /* Tracking View */
   async function openOrderTracking(orderId = '') {
     openModal(`<button class="modal-close" data-close-modal aria-label="Close">✕</button><h2>Track Order</h2><p>Your order status is checked against your signed-in account.</p><div class="form-field"><label>ORDER NUMBER</label><input id="trackNo" value="${escapeHtml(orderId)}" placeholder="AMN-XXXXXXXX-XXXX"></div><div class="modal-actions"><button class="solid" id="trackBtn">TRACK ORDER</button></div><div id="trackResult"></div>`, async () => {
       
@@ -2936,7 +3088,7 @@
             ${stepperHtml}
             <div>Payment: <strong>${escapeHtml(order.payment_status || 'Pending')} (${escapeHtml(order.payment_method || 'COD')})</strong></div>
             <div>Total: <strong>${money(order.total_amount)}</strong></div>
-            ${order.tracking_number ? `<div>AWB Number: <strong>${escapeHtml(order.tracking_number)}</strong> ${order.shipping_provider ? `(${escapeHtml(order.shipping_provider)})` : ''}</div>` : ''}
+            ${order.tracking_number ? `<div>AWB Number: <strong>${escapeHtml(order.tracking_number)}</strong>${order.shipping_provider ? `(${escapeHtml(order.shipping_provider)})` : ''}</div>` : ''}
             ${courierButtonHtml}
             <div style="font-size:10px;color:#777;margin-top:8px">Order Placed: ${new Date(order.created_at).toLocaleString('en-IN')}</div>
           </div>
@@ -2957,9 +3109,7 @@
     });
   }
 
-  /* Header Controls */
-  $('.nav-left .icon-btn')?.addEventListener('click', openDrawer);
-  $('.nav-right .icon-btn[aria-label="Wishlist"]')?.addEventListener('click', openHeaderWishlist);
+  $('.nav-left .icon-btn')?.addEventListener('click', openDrawer);$('.nav-right .icon-btn[aria-label="Wishlist"]')?.addEventListener('click', openHeaderWishlist);
   $('.nav-right .icon-btn[aria-label="Cart"]')?.addEventListener('click', () => {
     if (!currentUser) {
       toast('Please sign in to view your bag');
@@ -2970,10 +3120,7 @@
   });
   $('.nav-right .icon-btn[aria-label="Account"]')?.addEventListener('click', openAccount);
   $('.track-order')?.addEventListener('click', e => { e.preventDefault(); openTrackOrder(); });
-  $('.btn-primary')?.addEventListener('click', () => scrollTo('.products-grid'));
-
-  /* Drawer Nav */
-  $$('.drawer-nav button').forEach(btn => btn.addEventListener('click', () => {
+  $('.btn-primary')?.addEventListener('click', () => scrollTo('.products-grid'));    $$('.drawer-nav button').forEach(btn => btn.addEventListener('click', () => {
     const action = btn.dataset.drawerAction;
     closeDrawer();
     if (action === 'home') scrollTo('main');
@@ -2985,14 +3132,11 @@
     if (action === 'track') openTrackOrder();
   }));
 
-  /* Scroll Navigation */
   function scrollTo(selector) { $(selector)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-  $$('.view-all').forEach(link => link.addEventListener('click', e => { e.preventDefault(); scrollTo(link.closest('section')?.querySelector('.categories-grid') ? '.categories-grid' : '.products-grid'); }));
-
-  $$('.bottom-nav-item').forEach(item => item.addEventListener('click', e => {
+  $$('.view-all').forEach(link => link.addEventListener('click', e => { e.preventDefault(); scrollTo(link.closest('section')?.querySelector('.categories-grid') ? '.categories-grid' : '.products-grid'); }));    $$
+('.bottom-nav-item').forEach(item => item.addEventListener('click', e => {
     e.preventDefault();
-    const label = $('span', item)?.textContent.trim();
-    $$('.bottom-nav-item').forEach(x => x.classList.remove('active'));
+    const label = $('span', item)?.textContent.trim();$$('.bottom-nav-item').forEach(x => x.classList.remove('active'));
     item.classList.add('active');
     if (label === 'Home') scrollTo('main');
     else if (label === 'Categories') scrollTo('.categories-grid');
@@ -3001,25 +3145,14 @@
     else if (label === 'Account') openAccount();
   }));
 
-  /* Newsletter Form */
   $('.newsletter-form')?.addEventListener('submit', e => {
     e.preventDefault();
-    const input = $('.newsletter-input', e.currentTarget);
-    if (!input.value.includes('@')) { toast('Please enter a valid email'); input.focus(); return; }
-    state.newsletter = true;
-    saveState();
-    input.value = '';
-    toast('Welcome to the Amane Community ✦');
-  });
-
-  /* Touch Feedback */
-  $$('.btn-primary, .newsletter-btn, .slider-arrow, .icon-btn, .wishlist-btn, .drawer-nav button, .modal-actions button').forEach(btn => {
+    const input = $('.newsletter-input', e.currentTarget);     if (!input.value.includes('@')) { toast('Please enter a valid email'); input.focus(); return; }     state.newsletter = true;     saveState();     input.value = '';     toast('Welcome to the Amane Community ✦');   });    $$('.btn-primary, .newsletter-btn, .slider-arrow, .icon-btn, .wishlist-btn, .drawer-nav button, .modal-actions button').forEach(btn => {
     btn.addEventListener('pointerdown', () => btn.classList.add('is-pressed'));
     btn.addEventListener('pointerup', () => btn.classList.remove('is-pressed'));
     btn.addEventListener('pointercancel', () => btn.classList.remove('is-pressed'));
   });
 
-  /* Dynamic Extra CSS */
   const extra = document.createElement('style');
   extra.textContent = `
     .qty-inline{width:24px;height:24px;border:1px solid #ddd;border-radius:50%;background:#fff;cursor:pointer;font:600 12px var(--font-sans)}
@@ -3033,7 +3166,6 @@
 
   try { localStorage.removeItem('amane-store-v2'); } catch {}
 
-  /* App Initialization */
   initAuth().finally(() => {
     updateUI();
     fetchLiveProducts();
