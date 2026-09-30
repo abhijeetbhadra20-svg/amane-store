@@ -4,29 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
-  <title>Amane Store - Effortless Style</title>
+  <title>Amane Store — High Fashion Editorial & Runway</title>
 
   <!-- Permanent Social Media Preview -->
-  <meta property="og:title" content="Amane Store — Effortless Style">
-  <meta property="og:description" content="Timeless pieces. Made for you. Explore our new arrivals and collection.">
+  <meta property="og:title" content="Amane Store — High Fashion Editorial & Runway">
+  <meta property="og:description" content="Timeless luxury pieces. Made for you. Explore our new arrivals and runway collection.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80">
   <meta property="og:url" content="https://amane-store-smoky.vercel.app">
   <meta property="og:type" content="website">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Amane Store — Effortless Style">
-  <meta name="twitter:description" content="Timeless pieces. Made for you. Explore our new arrivals and collection.">
+  <meta name="twitter:title" content="Amane Store — High Fashion Editorial">
+  <meta name="twitter:description" content="Timeless luxury pieces. Made for you. Explore our collection.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Editorial Serif & Clean Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Razorpay Standard Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-  <!-- $10k Animation & Physics Libraries -->
+  <!-- Animation & Physics Libraries -->
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -93,7 +93,7 @@
       --border-color: #EEEEEE;
       --accent-black: #1A1A1A;
       --font-serif: 'Cormorant Garamond', Georgia, serif;
-      --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', 'Montserrat', -apple-system, sans-serif;
     }
 
     * {
@@ -138,6 +138,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .main-nav {
@@ -145,7 +146,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px;
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
     }
 
@@ -187,11 +188,12 @@
       align-items: center;
       gap: 8px;
       font-family: var(--font-serif);
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 600;
-      letter-spacing: -0.5px;
+      letter-spacing: 1px;
       text-decoration: none;
       color: var(--text-dark);
+      text-transform: uppercase;
     }
     .logo-icon {
       width: 22px;
@@ -201,7 +203,7 @@
     /* Search Bar */
     .search-container {
       padding: 0 16px 16px 16px;
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
     }
     .search-wrapper {
@@ -230,84 +232,220 @@
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
       padding: 0 16px;
     }
 
-    /* Hero Banner Section */
-    .hero-banner {
-      position: relative;
+    /* --- EDITORIAL RUNWAY STUDIO MODULE --- */
+    .editorial-studio {
       width: calc(100% + 32px);
       margin-left: -16px;
       margin-right: -16px;
-      aspect-ratio: 21 / 9;
-      border-radius: 0 !important;
+      background: #EFECE6;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      margin-bottom: 36px;
       overflow: hidden;
-      background-color: #111111;
-      margin-top: 0;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      transition: aspect-ratio 0.3s ease;
     }
 
-    #heroMediaContainer {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      background: #111111;
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      min-height: 580px;
+      align-items: stretch;
     }
 
-    .hero-img, 
-    #heroMediaContainer video {
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover !important;
-      object-position: center;
-      display: block;
-    }
-
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
+    /* Left Lookbook Navigator */
+    .studio-nav-panel {
+      padding: 36px 28px;
+      border-right: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.3);
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding: 28px 24px;
-      background: linear-gradient(90deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0) 100%);
-      max-width: 65%;
-      pointer-events: none;
+      justify-content: space-between;
     }
 
-    .hero-overlay * {
-      pointer-events: auto;
+    .studio-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888888;
+      margin-bottom: 6px;
     }
 
-    .hero-title {
+    .studio-heading {
       font-family: var(--font-serif);
-      font-size: 36px;
-      font-weight: 500;
-      line-height: 1.15;
-      margin-bottom: 12px;
+      font-size: 32px;
+      line-height: 1.1;
+      color: #111111;
+      margin-bottom: 28px;
+    }
+
+    .look-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .look-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 14px 16px;
+      border-radius: 12px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.25s ease;
+    }
+
+    .look-btn.active {
+      background: #FFFFFF;
+      border-color: rgba(0,0,0,0.06);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .look-btn .look-num {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .look-btn .look-sub {
+      font-size: 10px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Center Editorial Stage */
+    .studio-stage {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .stage-blob {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: #CBD5C0;
+      filter: blur(28px);
+      opacity: 0.55;
+      transition: background-color 0.6s ease;
+      z-index: 1;
+    }
+
+    .stage-model-wrap {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      max-height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stage-model-img {
+      height: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.12));
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .stage-tag-pill {
+      position: absolute;
+      top: 22%;
+      right: 10%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #111;
+    }
+
+    /* Right Sidebar Items */
+    .studio-items-panel {
+      padding: 36px 24px;
+      border-left: 1px solid rgba(0, 0, 0, 0.06);
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #999999;
+    }
+
+    .studio-card-mini {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #F7F4EF;
+      align-items: center;
+    }
+
+    .studio-card-mini img {
+      width: 68px;
+      height: 86px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .studio-card-info {
+      flex: 1;
+    }
+
+    .studio-card-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: #111;
+    }
+
+    .studio-card-price {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .studio-buy-btn {
+      background: #111111;
       color: #FFFFFF;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-      will-change: transform, opacity;
-    }
-
-    .hero-title i {
-      font-style: italic;
-      display: block;
-    }
-
-    .hero-subtitle {
-      font-size: 14px;
-      color: #F1F5F9;
-      margin-bottom: 24px;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
     }
 
     .btn-primary {
@@ -324,55 +462,6 @@
       text-transform: uppercase;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       transition: transform 0.2s ease, background 0.2s ease;
-    }
-
-    .slider-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.6);
-      color: #FFFFFF;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      z-index: 30 !important;
-      touch-action: manipulation;
-    }
-    .slider-arrow:active {
-      transform: translateY(-50%) scale(0.9);
-      background: rgba(0, 0, 0, 0.9);
-    }
-    .slider-arrow.left { left: 12px; }
-    .slider-arrow.right { right: 12px; }
-
-    .slider-dots {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      z-index: 30 !important;
-    }
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.4);
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-    .dot.active {
-      background: #FFFFFF;
-      width: 24px;
-      border-radius: 10px;
-      box-shadow: 0 0 6px rgba(0,0,0,0.4);
     }
 
     .features-grid {
@@ -411,7 +500,7 @@
     }
     .section-title {
       font-family: var(--font-serif);
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 500;
     }
     .view-all {
@@ -883,12 +972,6 @@
       transform: scale(0.98);
     }
 
-    .glass-btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-      transform: none;
-    }
-
     .modal-close {
       position: absolute;
       right: 14px;
@@ -931,7 +1014,9 @@
     }
 
     @media (max-width: 900px) {
-      .hero-overlay { max-width: 80%; }
+      .studio-grid { grid-template-columns: 1fr; }
+      .studio-nav-panel, .studio-items-panel { border: none; }
+      .stage-model-wrap { height: 380px; }
       .features-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
       .categories-grid { grid-template-columns: repeat(3, 1fr); }
       .products-grid { grid-template-columns: repeat(3, 1fr); }
@@ -939,22 +1024,17 @@
       .newsletter-form { max-width: 100%; }
     }
     @media (max-width: 600px) {
-      .hero-overlay { max-width: 100%; padding: 20px; }
-      .hero-title { font-size: 26px; }
       .categories-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
       .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     }
   
     html { scroll-behavior: smooth; }
     
-    body.modal-open { 
-      overflow: hidden !important; 
-      touch-action: none !important;
-    }
+    body.modal-open { overflow: hidden !important; touch-action: none !important; }
     body.drawer-open { overflow: hidden !important; }
 
-    .icon-btn, .wishlist-btn, .slider-arrow, .btn-primary, .newsletter-btn, .bottom-nav-item, .view-all, .track-order, .category-card, .product-card { -webkit-tap-highlight-color: transparent; }
-    .icon-btn:active, .wishlist-btn:active, .slider-arrow:active, .btn-primary:active, .newsletter-btn:active { transform: scale(.94); }
+    .icon-btn, .wishlist-btn, .btn-primary, .newsletter-btn, .bottom-nav-item, .view-all, .track-order, .category-card, .product-card { -webkit-tap-highlight-color: transparent; }
+    .icon-btn:active, .wishlist-btn:active, .btn-primary:active, .newsletter-btn:active { transform: scale(.94); }
     .wishlist-btn.active svg { fill: #111; }
     .toast-container { position: fixed; left: 50%; bottom: 86px; transform: translateX(-50%); z-index: 5000; display: grid; gap: 8px; width: min(92vw, 420px); pointer-events: none; }
     .toast { background:#111; color:#fff; border-radius:999px; padding:11px 16px; font:500 12px/1.2 var(--font-sans); text-align:center; box-shadow:0 12px 30px rgba(0,0,0,.18); animation: toastIn .28s ease both; }
@@ -974,47 +1054,21 @@
     
     .modal-wrap { 
       position:fixed; 
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100% !important;
-      height: 100% !important;
-      height: 100dvh !important;
-      z-index: 3000; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      padding: 0 !important; 
-      opacity: 0; 
-      visibility: hidden; 
-      transition: opacity .2s ease;
-      overflow: hidden !important;
-      touch-action: pan-y;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100% !important; height: 100% !important;
+      z-index: 3000; display: flex; align-items: center; justify-content: center; 
+      padding: 0 !important; opacity: 0; visibility: hidden; transition: opacity .2s ease;
+      overflow: hidden !important; touch-action: pan-y;
     }
     .modal-wrap.show { opacity:1; visibility:visible; }
     .modal-back { position:absolute; inset:0; background:rgba(17,17,17,.38); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
     
     .modal.full-screen-modal {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      height: 100% !important;
-      height: 100dvh !important;
-      max-height: 100dvh !important;
-      border-radius: 0 !important;
-      padding: 20px 16px 80px 16px !important;
-      margin: 0 !important;
-      box-shadow: none !important;
-      overflow-x: hidden !important;
-      overflow-y: auto !important;
-      -webkit-overflow-scrolling: touch;
-      transform: none !important;
-      z-index: 3001;
+      position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+      width: 100% !important; max-width: 100% !important; height: 100% !important; max-height: 100dvh !important;
+      border-radius: 0 !important; padding: 20px 16px 80px 16px !important; margin: 0 !important;
+      box-shadow: none !important; overflow-x: hidden !important; overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch; transform: none !important; z-index: 3001;
     }
 
     .modal-wrap.show .modal { transform:translateY(0) scale(1); }
@@ -1097,25 +1151,55 @@
   </header>
 
   <main class="container">
-    <!-- Hero Banner Section -->
-    <section class="hero-banner">
-      <button class="slider-arrow left" aria-label="Previous">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
+    <!-- High-Fashion Editorial Runway Studio Section -->
+    <section class="editorial-studio">
+      <div class="studio-grid">
+        
+        <!-- Left Column: Lookbook Navigator -->
+        <div class="studio-nav-panel">
+          <div>
+            <div class="studio-tag">Spring / Summer 2026</div>
+            <h2 class="studio-heading">Runway Lookbook</h2>
 
-      <div id="heroMediaContainer" style="background: #111111;"></div>
+            <div class="look-list">
+              <button class="look-btn active" onclick="selectRunwayLook(0)">
+                <span class="look-num">Look 01</span>
+                <span class="look-sub">Silk Elegance</span>
+              </button>
+              <button class="look-btn" onclick="selectRunwayLook(1)">
+                <span class="look-num">Look 02</span>
+                <span class="look-sub">Urban Trench</span>
+              </button>
+              <button class="look-btn" onclick="selectRunwayLook(2)">
+                <span class="look-num">Look 03</span>
+                <span class="look-sub">Couture Top</span>
+              </button>
+            </div>
+          </div>
+          <div style="font-size: 10px; color: #888; margin-top: 20px;">Amane Editorial Runway Studio</div>
+        </div>
 
-      <div class="hero-overlay">
-        <h1 class="hero-title">Effortless Style,<br><i>Every Day.</i></h1>
-        <p class="hero-subtitle">Timeless pieces. Made for you.</p>
-        <button class="btn-primary" id="heroBtn">SHOP NEW ARRIVALS</button>
+        <!-- Center Stage: Dynamic Cutout & Blob -->
+        <div class="studio-stage">
+          <div class="stage-blob" id="stageBlob"></div>
+          
+          <div class="stage-model-wrap">
+            <img id="stageModelImg" class="stage-model-img" src="https://images.unsplash.com/photo-1534126511673-b6899657816a?auto=format&fit=crop&w=800&q=80" alt="Runway Look">
+          </div>
+
+          <div class="stage-tag-pill">
+            <span class="pill-dot"></span>
+            <span id="stageTagText">LOOK 01 — FEATURED COLLECTION</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Synced Live Products -->
+        <div class="studio-items-panel">
+          <div class="panel-title">Featured Look Items</div>
+          <div id="studioItemsWrap" style="display: flex; flex-direction: column; gap: 12px;"></div>
+        </div>
+
       </div>
-
-      <button class="slider-arrow right" aria-label="Next">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-
-      <div class="slider-dots"></div>
     </section>
 
     <!-- Value Propositions -->
@@ -1208,9 +1292,7 @@
       </div>
 
       <!-- Normal Products Grid -->
-      <div class="products-grid">
-        <!-- Live products from Supabase render here -->
-      </div>
+      <div class="products-grid"></div>
 
       <!-- Touch Gesture Reel/Deck View Mode -->
       <div class="deck-container" id="deckContainer">
@@ -1329,7 +1411,7 @@
   animateCursor();
 
   function attachMagneticEffect() {
-    document.querySelectorAll('.btn-primary, .glass-btn, .icon-btn, .bottom-nav-item, .deck-buy-btn').forEach(btn => {
+    document.querySelectorAll('.btn-primary, .glass-btn, .icon-btn, .bottom-nav-item, .deck-buy-btn, .studio-buy-btn').forEach(btn => {
       if (btn.dataset.magneticAttached) return;
       btn.dataset.magneticAttached = 'true';
       
@@ -1380,12 +1462,11 @@
     if (typeof window.gsap === 'undefined' || typeof window.ScrollTrigger === 'undefined') return;
     gsap.registerPlugin(ScrollTrigger);
 
-    gsap.from('.hero-title', {
-      y: 60,
+    gsap.from('.studio-heading', {
+      y: 40,
       opacity: 0,
-      duration: 1.2,
-      ease: 'power4.out',
-      delay: 0.2
+      duration: 1.0,
+      ease: 'power3.out'
     });
 
     gsap.from('.category-card', {
@@ -1476,6 +1557,71 @@
       }
     } catch {}
   }
+
+  const RUNWAY_LOOKS = [
+    {
+      blobColor: "#CBD5C0",
+      img: "https://images.unsplash.com/photo-1534126511673-b6899657816a?auto=format&fit=crop&w=800&q=80",
+      tag: "LOOK 01 — SILK ELEGANCE"
+    },
+    {
+      blobColor: "#F4E3D7",
+      img: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+      tag: "LOOK 02 — URBAN TRENCH"
+    },
+    {
+      blobColor: "#E5DDF0",
+      img: "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&w=800&q=80",
+      tag: "LOOK 03 — COUTURE TOP"
+    }
+  ];
+
+  window.selectRunwayLook = function(index) {
+    const look = RUNWAY_LOOKS[index];
+    if (!look) return;
+
+    const buttons = $$('.look-btn');
+    buttons.forEach((btn, idx) => btn.classList.toggle('active', idx === index));
+
+    const modelImg = $('#stageModelImg');
+    const blob = $('#stageBlob');
+    const tagText = $('#stageTagText');
+
+    if (modelImg) {
+      modelImg.style.opacity = '0';
+      modelImg.style.transform = 'scale(0.96)';
+
+      setTimeout(() => {
+        modelImg.src = look.img;
+        if (blob) blob.style.backgroundColor = look.blobColor;
+        if (tagText) tagText.textContent = look.tag;
+
+        modelImg.style.opacity = '1';
+        modelImg.style.transform = 'scale(1)';
+      }, 200);
+    }
+
+    const itemsWrap = $('#studioItemsWrap');
+    if (itemsWrap) {
+      const displayProducts = products.length >= 2 ? products.slice(0, 2) : products;
+      
+      if (!displayProducts.length) {
+        itemsWrap.innerHTML = '<div style="font-size:11px;color:#888;">Loading catalog...</div>';
+        return;
+      }
+
+      itemsWrap.innerHTML = displayProducts.map(p => `
+        <div class="studio-card-mini">
+          <img src="${p.image}" alt="${p.title}">
+          <div class="studio-card-info">
+            <div class="studio-card-title">${p.title}</div>
+            <div class="studio-card-price">${p.priceText}</div>
+            <button class="studio-buy-btn" onclick="addToCart('${p.id}'); openCart();">ADD TO BAG 🛍</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  };
 
   const VALID_COUPONS = {
     'AMANE10': { type: 'percent', value: 10, minOrder: 499, label: '10% OFF' },
@@ -1707,6 +1853,7 @@
       renderDynamicCategories();
       renderProductGrid();
       renderDeckCards();
+      selectRunwayLook(0);
       updateUI();
       
       initGSAPAnimations();
@@ -1754,7 +1901,7 @@
             <h3 class="deck-title">${p.title}</h3>
             <div class="deck-price">${p.priceText}</div>
             <div class="deck-action-row">
-              <button class="deck-buy-btn" onclick="event.stopPropagation(); addToCart('${p.id}'); openCart();">ADD TO BAG 🛍️️</button>
+              <button class="deck-buy-btn" onclick="event.stopPropagation(); addToCart('${p.id}'); openCart();">ADD TO BAG 🛍</button>
             </div>
           </div>
         </div>
@@ -1968,148 +2115,6 @@
     });
 
     apply3DTiltEffect();
-  }
-
-  const DEFAULT_SLIDES = [
-    { type: 'image', src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80', title: 'Effortless Style,<br><i>Every Day.</i>', subtitle: 'Timeless pieces. Made for you.', btnText: 'SHOP NEW ARRIVALS', btnLink: '#' },
-    { type: 'image', src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80', title: 'Summer Essentials,<br><i>Curated.</i>', subtitle: 'Lightweight fabrics for warm days.', btnText: 'EXPLORE COLLECTION', btnLink: '#' },
-    { type: 'image', src: 'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1200&q=80', title: 'New Season,<br><i>Fresh Looks.</i>', subtitle: 'Elevate your wardrobe today.', btnText: 'DISCOVER MORE', btnLink: '#' }
-  ];
-
-  let slides = [...DEFAULT_SLIDES];
-  let slideIndex = 0;
-  let sliderTimer = null;
-
-  async function fetchLiveBanners() {
-    try {
-      const { data, error } = await supabase
-        .from('banners')
-        .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .limit(6);
-
-      if (!error && data && data.length > 0) {
-        const dbSlides = data.map(b => ({
-          type: b.media_type || 'image',
-          src: b.media_url,
-          title: b.title || '',
-          subtitle: b.subtitle || '',
-          btnText: b.button_text || 'SHOP NOW',
-          btnLink: b.button_link || '#'
-        }));
-
-        if (dbSlides.length === 1) {
-          slides = [...dbSlides, DEFAULT_SLIDES[1]];
-        } else {
-          slides = dbSlides;
-        }
-      } else {
-        slides = [...DEFAULT_SLIDES];
-      }
-      renderDots();
-      setSlide(0);
-    } catch (err) {
-      console.error('Failed to load banners:', err);
-    }
-  }
-
-  function renderDots() {
-    const dotsWrap = $('.slider-dots');
-    if (!dotsWrap) return;
-    dotsWrap.innerHTML = slides.map((_, i) => `<span class="dot ${i === 0 ? 'active' : ''}"></span>`).join('');
-    $$('.slider-dots .dot').forEach((dot, idx) => {
-      dot.onclick = (e) => {
-        e.stopPropagation();
-        setSlide(idx);
-      };
-    });
-  }
-
-  function setSlide(i) {
-    if (!slides || !slides.length) return;
-    if (sliderTimer) clearTimeout(sliderTimer);
-
-    slideIndex = (i + slides.length) % slides.length;
-    const slide = slides[slideIndex];
-    const container = $('#heroMediaContainer');
-    const heroBanner = $('.hero-banner');
-
-    if (heroBanner) {
-      heroBanner.style.aspectRatio = slide.type === 'video' ? '16 / 9' : '21 / 9';
-    }
-
-    if (container) {
-      container.style.opacity = '0.3';
-      setTimeout(() => {
-        if (slide.type === 'video') {
-          container.innerHTML = `<video id="heroBannerVideo" class="hero-img" src="${slide.src}" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
-          
-          const videoEl = $('#heroBannerVideo');
-          if (videoEl) {
-            videoEl.onended = () => {
-              setSlide(slideIndex + 1);
-            };
-            sliderTimer = setTimeout(() => {
-              setSlide(slideIndex + 1);
-            }, 22000);
-          }
-        } else {
-          container.innerHTML = `<img class="hero-img" src="${slide.src}" alt="Banner" style="width:100%;height:100%;object-fit:cover;">`;
-          if (slides.length > 1) {
-            sliderTimer = setTimeout(() => {
-              setSlide(slideIndex + 1);
-            }, 4000);
-          }
-        }
-        container.style.opacity = '1';
-      }, 150);
-    }
-
-    const overlay = $('.hero-overlay');
-    const hasTitle = Boolean(slide.title && slide.title.trim());
-    const hasSubtitle = Boolean(slide.subtitle && slide.subtitle.trim());
-
-    if (overlay) {
-      if (!hasTitle && !hasSubtitle) {
-        overlay.style.display = 'none';
-      } else {
-        overlay.style.display = 'flex';
-      }
-    }
-
-    if ($('.hero-title')) $('.hero-title').innerHTML = slide.title || '';
-    if ($('.hero-subtitle')) $('.hero-subtitle').textContent = slide.subtitle || '';
-    if ($('#heroBtn')) {
-      $('#heroBtn').textContent = slide.btnText || 'SHOP NOW';
-      $('#heroBtn').onclick = () => {
-        if (slide.btnLink && slide.btnLink !== '#') window.location.href = slide.btnLink;
-        else scrollTo('.products-grid');
-      };
-    }
-
-    $$('.slider-dots .dot').forEach((dot, idx) => dot.classList.toggle('active', idx === slideIndex));
-  }
-
-  function setupBannerControls() {
-    const leftBtn = document.querySelector('.hero-banner .slider-arrow.left');
-    const rightBtn = document.querySelector('.hero-banner .slider-arrow.right');
-
-    if (leftBtn) {
-      leftBtn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setSlide(slideIndex - 1);
-      };
-    }
-
-    if (rightBtn) {
-      rightBtn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setSlide(slideIndex + 1);
-      };
-    }
   }
 
   function money(n) { return `₹${Number(n || 0).toLocaleString('en-IN')}`; }
@@ -3147,7 +3152,7 @@
 
   $('.newsletter-form')?.addEventListener('submit', e => {
     e.preventDefault();
-    const input = $('.newsletter-input', e.currentTarget);     if (!input.value.includes('@')) { toast('Please enter a valid email'); input.focus(); return; }     state.newsletter = true;     saveState();     input.value = '';     toast('Welcome to the Amane Community ✦');   });    $$('.btn-primary, .newsletter-btn, .slider-arrow, .icon-btn, .wishlist-btn, .drawer-nav button, .modal-actions button').forEach(btn => {
+    const input = $('.newsletter-input', e.currentTarget);     if (!input.value.includes('@')) { toast('Please enter a valid email'); input.focus(); return; }     state.newsletter = true;     saveState();     input.value = '';     toast('Welcome to the Amane Community ✦');   });    $$('.btn-primary, .newsletter-btn, .icon-btn, .wishlist-btn, .drawer-nav button, .modal-actions button').forEach(btn => {
     btn.addEventListener('pointerdown', () => btn.classList.add('is-pressed'));
     btn.addEventListener('pointerup', () => btn.classList.remove('is-pressed'));
     btn.addEventListener('pointercancel', () => btn.classList.remove('is-pressed'));
@@ -3169,8 +3174,6 @@
   initAuth().finally(() => {
     updateUI();
     fetchLiveProducts();
-    fetchLiveBanners();
-    setupBannerControls();
   });
 })();
 </script>
