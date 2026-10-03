@@ -1016,8 +1016,39 @@
     @media (min-width:901px) { .drawer { width:360px; } .quick-product { grid-template-columns: 280px 1fr; align-items:start; } .modal { padding:28px; } }
     @media (max-width:600px) { .toast-container { bottom:78px; } .modal { border-radius:16px; padding:20px; } .top-bar .announcement { padding-right:8px; } }
   </style>
+
+  <!-- AMANE Theme Engine v2 -->
+  <style id="amane-theme-engine">
+    :root{--theme-bg:#fff;--theme-surface:#f7f3ee;--theme-text:#111;--theme-muted:#6f6a64;--theme-accent:#111;--theme-accent-contrast:#fff;--theme-border:rgba(17,17,17,.10)}
+    html[data-theme="noir"]{--theme-bg:#0b0b0c;--theme-surface:#151516;--theme-text:#f5f2ed;--theme-muted:#a7a29a;--theme-accent:#f0e5d2;--theme-accent-contrast:#111;--theme-border:rgba(255,255,255,.10)}
+    html[data-theme="editorial"]{--theme-bg:#f5f0e8;--theme-surface:#ebe2d5;--theme-text:#241d19;--theme-muted:#74665c;--theme-accent:#6f2635;--theme-accent-contrast:#fffaf4;--theme-border:rgba(72,49,39,.14)}
+    html[data-theme="noir"] body{background:var(--theme-bg)!important;color:var(--theme-text)!important}
+    html[data-theme="noir"] header,html[data-theme="noir"] .bottom-nav{background:rgba(11,11,12,.88)!important;color:var(--theme-text);border-color:var(--theme-border)!important}
+    html[data-theme="noir"] .search-input,html[data-theme="noir"] .newsletter-input{background:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+    html[data-theme="noir"] .newsletter-card,html[data-theme="noir"] .view-toggle-btn,html[data-theme="noir"] .deck-control-btn{background:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+    html[data-theme="noir"] .newsletter-btn,html[data-theme="noir"] .view-toggle-btn button.active{background:var(--theme-accent)!important;color:var(--theme-accent-contrast)!important}
+    html[data-theme="noir"] .section-title,html[data-theme="noir"] .logo,html[data-theme="noir"] .product-title,html[data-theme="noir"] .product-price,html[data-theme="noir"] .category-name,html[data-theme="noir"] .feature-text h4{color:var(--theme-text)!important}
+    html[data-theme="noir"] .top-bar{background:#101011!important;color:var(--theme-muted)!important;border-color:var(--theme-border)!important}
+    html[data-theme="editorial"] body{background:var(--theme-bg)!important;color:var(--theme-text)!important}
+    html[data-theme="editorial"] header{background:rgba(245,240,232,.94)!important}
+    html[data-theme="editorial"] .top-bar{background:#e9dfd2!important;color:var(--theme-muted)!important}
+    html[data-theme="editorial"] .search-input,html[data-theme="editorial"] .newsletter-input{background:#fffaf4!important;border-color:var(--theme-border)!important;color:var(--theme-text)!important}
+    html[data-theme="editorial"] .newsletter-card{background:var(--theme-surface)!important}
+    html[data-theme="editorial"] .newsletter-btn,html[data-theme="editorial"] .view-toggle-btn button.active{background:var(--theme-accent)!important;color:var(--theme-accent-contrast)!important}
+    html[data-theme="editorial"] .section-title,html[data-theme="editorial"] .logo,html[data-theme="editorial"] .product-title,html[data-theme="editorial"] .product-price,html[data-theme="editorial"] .category-name,html[data-theme="editorial"] .feature-text h4{color:var(--theme-text)!important}
+    .amane-theme-switcher{position:fixed;left:14px;bottom:78px;z-index:1200;display:flex;gap:4px;padding:5px;border:1px solid rgba(127,127,127,.20);border-radius:999px;background:rgba(255,255,255,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.10)}
+    [data-theme="noir"] .amane-theme-switcher{background:rgba(25,25,26,.86);border-color:rgba(255,255,255,.12)}
+    .amane-theme-switcher button{border:0;background:transparent;color:#777;padding:7px 10px;border-radius:999px;font:700 9px/1 var(--font-sans,sans-serif);letter-spacing:.08em;cursor:pointer;transition:.2s ease}
+    .amane-theme-switcher button[aria-pressed="true"]{background:#111;color:#fff;transform:translateY(-1px)}
+    [data-theme="noir"] .amane-theme-switcher button{color:#aaa}
+    [data-theme="noir"] .amane-theme-switcher button[aria-pressed="true"]{background:#f0e5d2;color:#111}
+    [data-theme="editorial"] .amane-theme-switcher button[aria-pressed="true"]{background:#6f2635;color:#fffaf4}
+    @media(max-width:520px){.amane-theme-switcher{left:50%;transform:translateX(-50%);bottom:76px}.amane-theme-switcher button{padding:7px 9px}}
+  </style>
 </head>
 <body>
+  <div class="amane-theme-switcher" aria-label="Store theme selector"><button type="button" data-amane-theme="atelier" aria-pressed="true">ATELIER</button><button type="button" data-amane-theme="noir" aria-pressed="false">NOIR</button><button type="button" data-amane-theme="editorial" aria-pressed="false">EDITORIAL</button></div>
+
 
   <!-- Top Announcement Bar -->
   <div class="top-bar">
@@ -3043,5 +3074,7 @@
 })();
 </script>
 
+
+<script id="amane-theme-engine-js">(()=>{const key='amane-ui-theme-v2',root=document.documentElement,buttons=()=>Array.from(document.querySelectorAll('[data-amane-theme]'));const applyTheme=theme=>{const value=['atelier','noir','editorial'].includes(theme)?theme:'atelier';if(value==='atelier')root.removeAttribute('data-theme');else root.setAttribute('data-theme',value);buttons().forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.amaneTheme===value)));try{localStorage.setItem(key,value)}catch{}};document.addEventListener('click',e=>{const btn=e.target.closest('[data-amane-theme]');if(btn)applyTheme(btn.dataset.amaneTheme)});let saved='atelier';try{saved=localStorage.getItem(key)||'atelier'}catch{}applyTheme(saved)})();</script>
 </body>
 </html>
