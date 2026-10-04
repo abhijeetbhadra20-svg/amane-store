@@ -1016,7 +1016,64 @@
     .search-empty { grid-column:1/-1; padding:30px 10px; text-align:center; font:400 12px var(--font-sans); color:#777; }
     @media (min-width:901px) { .drawer { width:360px; } .quick-product { grid-template-columns: 280px 1fr; align-items:start; } .modal { padding:28px; } }
     @media (max-width:600px) { .toast-container { bottom:78px; } .modal { border-radius:16px; padding:20px; } .top-bar .announcement { padding-right:8px; } }
-  </style>
+  
+  /* ============================================================
+     COMPACT SCROLL HEADER — restores the Flipkart-style
+     utility bar while scrolling without reflowing the main nav.
+     ============================================================ */
+  .compact-scroll-header{
+    position:fixed;top:8px;left:10px;right:10px;z-index:1500;height:48px;
+    display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;
+    gap:7px;padding:5px;border:1px solid rgba(255,255,255,.82);border-radius:18px;
+    background:rgba(222,238,246,.86);
+    box-shadow:0 14px 32px rgba(46,68,80,.13),inset 0 1px 0 rgba(255,255,255,.88);
+    backdrop-filter:blur(10px) saturate(1.12);-webkit-backdrop-filter:blur(10px) saturate(1.12);
+    transform:translate3d(0,-90px,0);opacity:0;visibility:hidden;pointer-events:none;
+    will-change:transform,opacity;
+    transition:transform .24s cubic-bezier(.22,1,.36,1),opacity .18s ease,visibility 0s linear .24s;
+  }
+  .compact-scroll-header.is-visible{
+    transform:translate3d(0,0,0);opacity:1;visibility:visible;pointer-events:auto;
+    transition:transform .24s cubic-bezier(.22,1,.36,1),opacity .18s ease;
+  }
+  .compact-menu-btn,.compact-action-btn{
+    position:relative;width:38px;height:38px;border:1px solid rgba(255,255,255,.74);
+    border-radius:13px;background:rgba(246,251,253,.72);color:#49616f;display:grid;
+    place-items:center;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.84);
+    transition:transform .18s ease,background .18s ease;
+  }
+  .compact-menu-btn:active,.compact-action-btn:active{transform:scale(.93)}
+  .compact-menu-btn:hover,.compact-action-btn:hover{background:rgba(255,255,255,.9)}
+  .compact-scroll-search{min-width:0;position:relative}
+  .compact-scroll-search svg{position:absolute;left:12px;top:50%;width:16px;height:16px;transform:translateY(-50%);color:#8297a3;pointer-events:none}
+  .compact-scroll-search input{
+    width:100%;height:36px;padding:0 12px 0 38px;border-radius:12px;
+    border:1px solid rgba(255,255,255,.88);outline:none;background:rgba(250,253,254,.82);
+    color:#334b58;font:500 12px/1 var(--premium-sans,Inter,sans-serif);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.88);
+  }
+  .compact-scroll-search input::placeholder{color:#91a1aa}
+  .compact-scroll-search input:focus{background:#fff;border-color:rgba(116,150,166,.28)}
+  .compact-scroll-actions{display:flex;align-items:center;gap:5px}
+  .compact-action-btn{width:36px;height:36px;border-radius:12px}
+  .compact-action-btn .badge{top:-3px!important;right:-3px!important;width:15px!important;height:15px!important}
+  body.scrolled .main-nav{
+    background:rgba(249,252,253,.72)!important;
+    box-shadow:0 16px 36px rgba(56,73,84,.08),inset 0 1px 0 rgba(255,255,255,.92)!important;
+  }
+  @media(max-width:420px){
+    .compact-scroll-header{left:7px;right:7px;gap:5px}
+    .compact-menu-btn,.compact-action-btn{width:35px;height:35px;border-radius:11px}
+    .compact-action-btn .badge{width:14px!important;height:14px!important;font-size:7px!important}
+    .compact-scroll-search input{height:34px;font-size:11px}
+    .compact-scroll-actions{gap:3px}
+  }
+  body.drawer-open .compact-scroll-header{
+    opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+    transform:translate3d(0,-90px,0)!important;
+  }
+
+</style>
 
   <!-- AMANE Theme Engine v2 -->
   <style id="amane-theme-engine">
@@ -2328,6 +2385,30 @@
       </div>
     </div>
   </header>
+
+  <div class="compact-scroll-header" id="compactScrollHeader" aria-hidden="true">
+    <button class="compact-menu-btn" type="button" data-compact-action="menu" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="compact-scroll-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="compactSearchInput" type="search" autocomplete="off" placeholder="Search dresses, tops, skirts..." aria-label="Search products">
+    </div>
+    <div class="compact-scroll-actions">
+      <button class="compact-action-btn" type="button" data-compact-action="wishlist" aria-label="Wishlist">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="badge" data-compact-badge="wishlist">0</span>
+      </button>
+      <button class="compact-action-btn" type="button" data-compact-action="cart" aria-label="Cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="badge" data-compact-badge="cart">0</span>
+      </button>
+      <button class="compact-action-btn" type="button" data-compact-action="account" aria-label="Account">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+    </div>
+  </div>
+
 
   <main class="container">
     <!-- Hero Banner Section -->
@@ -4357,6 +4438,82 @@
   let scrollTick=false;
   const onScroll=()=>{if(scrollTick)return;scrollTick=true;requestAnimationFrame(()=>{scrollTick=false;document.body.classList.toggle('scrolled',window.scrollY>18)})};
   window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+})();
+</script>
+
+
+<script id="amane-navigation-motion">
+(()=>{
+  const drawer=document.getElementById('mobileDrawer');
+  const menuButton=document.querySelector('.nav-left .icon-btn');
+  const compact=document.getElementById('compactScrollHeader');
+  const compactInput=document.getElementById('compactSearchInput');
+  const originalSearch=document.querySelector('.search-input');
+  if(!compact) return;
+
+  const original={
+    menu:document.querySelector('.nav-left .icon-btn'),
+    wishlist:document.querySelector('.nav-right .icon-btn[aria-label="Wishlist"]'),
+    cart:document.querySelector('.nav-right .icon-btn[aria-label="Cart"]'),
+    account:document.querySelector('.nav-right .icon-btn[aria-label="Account"]')
+  };
+
+  if(drawer && menuButton){
+    const sync=()=>menuButton.setAttribute('aria-expanded',String(drawer.classList.contains('show')));
+    new MutationObserver(sync).observe(drawer,{attributes:true,attributeFilter:['class']});
+    sync();
+  }
+
+  compact.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-compact-action]');
+    if(!btn) return;
+    const target=original[btn.dataset.compactAction];
+    if(target) target.click();
+  });
+
+  if(compactInput && originalSearch){
+    compactInput.addEventListener('input',()=>{
+      if(originalSearch.value===compactInput.value) return;
+      originalSearch.value=compactInput.value;
+      originalSearch.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    originalSearch.addEventListener('input',()=>{
+      if(document.activeElement!==compactInput) compactInput.value=originalSearch.value;
+    });
+  }
+
+  const updateBadges=()=>{
+    const originals={
+      wishlist:document.querySelector('.nav-right .icon-btn[aria-label="Wishlist"] .badge'),
+      cart:document.querySelector('.nav-right .icon-btn[aria-label="Cart"] .badge')
+    };
+    Object.keys(originals).forEach(key=>{
+      const source=originals[key];
+      const dest=compact.querySelector('[data-compact-badge="'+key+'"]');
+      if(source && dest) dest.textContent=source.textContent;
+    });
+  };
+
+  let ticking=false,visible=false;
+  const syncScroll=()=>{
+    if(ticking) return;
+    ticking=true;
+    requestAnimationFrame(()=>{
+      ticking=false;
+      const shouldShow=window.scrollY>96;
+      if(shouldShow===visible) return;
+      visible=shouldShow;
+      compact.classList.toggle('is-visible',visible);
+      compact.setAttribute('aria-hidden',String(!visible));
+      if(visible && compactInput && originalSearch) compactInput.value=originalSearch.value;
+    });
+  };
+  window.addEventListener('scroll',syncScroll,{passive:true});
+  window.addEventListener('resize',syncScroll,{passive:true});
+  const badgeObserver=new MutationObserver(updateBadges);
+  document.querySelectorAll('.nav-right .badge').forEach(el=>badgeObserver.observe(el,{childList:true,characterData:true,subtree:true}));
+  updateBadges();
+  syncScroll();
 })();
 </script>
 
