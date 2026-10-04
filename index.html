@@ -2398,6 +2398,22 @@
     .compact-scroll-search input{height:34px;font-size:11px}
     .compact-scroll-actions{gap:3px}
   }
+
+  /* Drawer owns the viewport while open: never leave the compact
+     scroll header floating above the side navigation. */
+  body.drawer-open .compact-scroll-header{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transform:translate3d(0,-90px,0)!important;
+  }
+  body.drawer-open .drawer{
+    z-index:1700!important;
+  }
+  body.drawer-open #drawerOverlay{
+    z-index:1650!important;
+  }
+
   </style>
 </head>
 <body>
