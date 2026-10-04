@@ -4312,57 +4312,6 @@
 </script>
 
 
-<script id="amane-theme-engine-js">
-(()=> {
-  const root=document.documentElement;
-  const buttons=()=>Array.from(document.querySelectorAll('[data-amane-theme]'));
-  const themeCopy={
-    atelier:'Atelier — default clean blue-glass luxury',
-    noir:'Noir — deep blue-charcoal cinematic mode',
-    editorial:'Editorial — soft lilac magazine mode'
-  };
-  const applyTheme=(theme='atelier',announce=false)=>{
-    const value=['atelier','noir','editorial'].includes(theme)?theme:'atelier';
-    if(value==='atelier') root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme',value);
-    buttons().forEach(btn=>{
-      const active=btn.dataset.amaneTheme===value;
-      btn.setAttribute('aria-pressed',String(active));
-      btn.title=themeCopy[btn.dataset.amaneTheme] || '';
-      btn.setAttribute('aria-label',themeCopy[btn.dataset.amaneTheme] || btn.textContent.trim());
-    });
-    /* Atelier is the permanent baseline: refreshes always return here.
-       Noir and Editorial are live preview modes for visual testing. */
-    try{localStorage.setItem('amane-ui-theme-v2','atelier')}catch{}
-    if(announce){
-      const live=document.getElementById('amaneThemeLive');
-      if(live) live.textContent=themeCopy[value];
-    }
-    requestAnimationFrame(()=>{
-      const box=document.querySelector('.amane-theme-switcher');
-      if(!box)return;
-      const active=box.querySelector('button[aria-pressed="true"]');
-      if(active){
-        box.style.setProperty('--indicator-left',active.offsetLeft+'px');
-        box.style.setProperty('--indicator-width',active.offsetWidth+'px');
-      }
-    });
-  };
-  const live=document.createElement('div');
-  live.id='amaneThemeLive';
-  live.setAttribute('aria-live','polite');
-  live.style.cssText='position:fixed;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap';
-  document.body.appendChild(live);
-
-  document.addEventListener('click',e=>{
-    const btn=e.target.closest('[data-amane-theme]');
-    if(btn) applyTheme(btn.dataset.amaneTheme,true);
-  });
-  /* Always start in Atelier; alternatives are temporary preview modes. */
-  applyTheme('atelier',false);
-})();
-</script>
-
 <script id="amane-premium-motion">
 (()=>{
   const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
