@@ -2279,7 +2279,7 @@
   </style>
 </head>
 <body>
-  <div class="amane-theme-switcher" aria-label="Store theme selector"><button type="button" data-amane-theme="atelier" aria-pressed="true">ATELIER</button><button type="button" data-amane-theme="noir" aria-pressed="false">NOIR</button><button type="button" data-amane-theme="editorial" aria-pressed="false">EDITORIAL</button></div>
+  <div class="amane-theme-switcher" aria-hidden="true" hidden></div>
 
 
   <!-- Top Announcement Bar -->
@@ -2776,7 +2776,7 @@
       const validData = data.filter(item => item.title && item.price && Number(item.price) < 100000);
 
       products = validData.map((item) => {
-        let imgs = ['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80'];
+        let imgs = [];
         if (Array.isArray(item.images) && item.images.length > 0) {
           imgs = item.images;
         } else if (typeof item.images === 'string' && item.images.trim()) {
@@ -3077,9 +3077,7 @@
 
   /* Dynamic Banners Engine with Video End Sync */
   const DEFAULT_SLIDES = [
-    { type: 'image', src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80', title: 'Effortless Style,<br><i>Every Day.</i>', subtitle: 'Timeless pieces. Made for you.', btnText: 'SHOP NEW ARRIVALS', btnLink: '#' },
-    { type: 'image', src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80', title: 'Summer Essentials,<br><i>Curated.</i>', subtitle: 'Lightweight fabrics for warm days.', btnText: 'EXPLORE COLLECTION', btnLink: '#' },
-    { type: 'image', src: 'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1200&q=80', title: 'New Season,<br><i>Fresh Looks.</i>', subtitle: 'Elevate your wardrobe today.', btnText: 'DISCOVER MORE', btnLink: '#' }
+    { type: 'image', src: '', title: 'AMANE STORE', subtitle: 'Add an active banner from Admin to publish your campaign.', btnText: 'SHOP COLLECTION', btnLink: '#products' }
   ];
 
   let slides = [...DEFAULT_SLIDES];
@@ -3105,11 +3103,7 @@
           btnLink: b.button_link || '#'
         }));
 
-        if (dbSlides.length === 1) {
-          slides = [...dbSlides, DEFAULT_SLIDES[1]];
-        } else {
-          slides = dbSlides;
-        }
+        slides = dbSlides;
       } else {
         slides = [...DEFAULT_SLIDES];
       }
@@ -3149,19 +3143,30 @@
       container.style.opacity = '0.3';
       setTimeout(() => {
         if (slide.type === 'video') {
-          container.innerHTML = `<video id="heroBannerVideo" class="hero-img" src="${slide.src}" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
+          container.innerHTML = `<video id="heroBannerVideo" class="hero-img" src="${slide.src}" autoplay muted playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;"></video>`;
           
           const videoEl = $('#heroBannerVideo');
           if (videoEl) {
             videoEl.onended = () => {
-              setSlide(slideIndex + 1);
+              if (slides.length > 1) setSlide(slideIndex + 1);
+            };
+            videoEl.onerror = () => {
+              if (slides.length > 1) setSlide(slideIndex + 1);
+              else container.innerHTML = '<div class="hero-media-fallback">Banner unavailable</div>';
             };
             sliderTimer = setTimeout(() => {
               setSlide(slideIndex + 1);
             }, 22000);
           }
         } else {
-          container.innerHTML = `<img class="hero-img" src="${slide.src}" alt="Banner" style="width:100%;height:100%;object-fit:cover;">`;
+          container.innerHTML = `<img class="hero-img" src="${slide.src}" alt="Banner" loading="eager" decoding="async" style="width:100%;height:100%;object-fit:cover;">`;
+          const imageEl = container.querySelector('img');
+          if (imageEl) {
+            imageEl.onerror = () => {
+              if (slides.length > 1) setSlide(slideIndex + 1);
+              else container.innerHTML = '<div class="hero-media-fallback">Banner unavailable</div>';
+            };
+          }
           if (slides.length > 1) {
             sliderTimer = setTimeout(() => {
               setSlide(slideIndex + 1);
@@ -4316,7 +4321,7 @@
     noir:'Noir — deep blue-charcoal cinematic mode',
     editorial:'Editorial — soft lilac magazine mode'
   };
-  const applyTheme=(theme,announce=true)=>{
+  const applyTheme=(theme='atelier',announce=false)=>{
     const value=['atelier','noir','editorial'].includes(theme)?theme:'atelier';
     if(value==='atelier') root.removeAttribute('data-theme');
     else root.setAttribute('data-theme',value);
