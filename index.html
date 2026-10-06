@@ -62,7 +62,7 @@
       background-color: #FFFFFF;
       color: var(--text-dark);
       line-height: 1.5;
-      padding-bottom: 70px;
+
       -webkit-font-smoothing: antialiased;
     }
 
@@ -2573,31 +2573,6 @@
     <section class="modal" id="modalContent" role="dialog" aria-modal="true"></section>
   </div>
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
-
-  <!-- Mobile Bottom Navigation Bar -->
-  <nav class="bottom-nav">
-    <a href="#" class="bottom-nav-item active">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      <span>Home</span>
-    </a>
-    <a href="#" class="bottom-nav-item">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      <span>Categories</span>
-    </a>
-    <a href="#" class="bottom-nav-item">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.6 6.6 2.4-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
-      <span>New In</span>
-    </a>
-    <a href="#" class="bottom-nav-item">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <span>Wishlist</span>
-    </a>
-    <a href="#" class="bottom-nav-item">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Account</span>
-    </a>
-  </nav>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (() => {
@@ -4337,18 +4312,6 @@
   /* Scroll Navigation */
   function scrollTo(selector) { $(selector)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   $$('.view-all').forEach(link => link.addEventListener('click', e => { e.preventDefault(); scrollTo(link.closest('section')?.querySelector('.categories-grid') ? '.categories-grid' : '.products-grid'); }));
-
-  $$('.bottom-nav-item').forEach(item => item.addEventListener('click', e => {
-    e.preventDefault();
-    const label = $('span', item)?.textContent.trim();
-    $$('.bottom-nav-item').forEach(x => x.classList.remove('active'));
-    item.classList.add('active');
-    if (label === 'Home') scrollTo('main');
-    else if (label === 'Categories') scrollTo('.categories-grid');
-    else if (label === 'New In') scrollTo('.products-grid');
-    else if (label === 'Wishlist') openHeaderWishlist();
-    else if (label === 'Account') openAccount();
-  }));
 
   /* Newsletter Form */
   $('.newsletter-form')?.addEventListener('submit', e => {
