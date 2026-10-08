@@ -2392,6 +2392,82 @@ header{background:rgba(244,240,233,.92)!important;border-bottom:1px solid var(--
 }
 @media(prefers-reduced-motion:reduce){.editorial-marquee-track,.manifesto-orbit{animation:none!important}.editorial-categories .category-img-wrapper img{transition:none!important}}
 </style>
+<style id="amane-cream-v2">
+/* AMANE CREAM V2 — visual-only layer. Commerce, auth, cart, wishlist, orders and media logic untouched. */
+:root{
+  --amane-cream:#f3eee5;
+  --amane-paper:#faf7f1;
+  --amane-ink:#171716;
+  --amane-muted:#777168;
+  --amane-line:rgba(23,23,22,.14);
+}
+html{background:var(--amane-cream)!important}
+body{background:var(--amane-cream)!important;color:var(--amane-ink)!important}
+header{background:rgba(243,238,229,.94)!important;border-bottom:1px solid var(--amane-line)!important;box-shadow:none!important}
+.main-nav{max-width:1380px!important}
+.logo,.drawer-brand{font-family:Georgia,'Times New Roman',serif!important;letter-spacing:-.045em!important}
+.compact-scroll-header{background:rgba(250,247,241,.94)!important;border:1px solid rgba(23,23,22,.12)!important;box-shadow:0 12px 36px rgba(23,23,22,.08)!important}
+.hero-banner{border-radius:0!important;box-shadow:none!important;aspect-ratio:16/8.5!important;background:var(--amane-cream)!important}
+.hero-overlay{padding:clamp(26px,5vw,72px)!important;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.52) 100%)!important}
+.hero-title{font-family:Georgia,'Times New Roman',serif!important;font-weight:400!important;letter-spacing:-.065em!important;line-height:.88!important;text-shadow:none!important}
+.hero-subtitle{letter-spacing:.11em!important;text-transform:uppercase!important;font-size:10px!important}
+.hero-overlay .btn-primary{border-radius:0!important;background:var(--amane-ink)!important;color:var(--amane-paper)!important;padding:13px 22px!important;letter-spacing:.12em!important;font-size:10px!important}
+.slider-arrow{border-radius:50%!important;background:rgba(250,247,241,.72)!important;color:var(--amane-ink)!important;border:1px solid rgba(23,23,22,.12)!important;box-shadow:none!important}
+.features-grid{background:var(--amane-cream)!important;border-top:1px solid var(--amane-line)!important;border-bottom:1px solid var(--amane-line)!important;box-shadow:none!important}
+.feature-item{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.feature-icon{display:none!important}
+.feature-text h4{font-size:9px!important;letter-spacing:.18em!important;text-transform:uppercase!important}
+.feature-text p{font-size:10px!important;color:var(--amane-muted)!important}
+.editorial-intro{padding:clamp(76px,10vw,145px) 0 clamp(62px,8vw,105px)!important;grid-template-columns:minmax(0,1fr) minmax(300px,.7fr)!important;gap:8vw!important;border-bottom:1px solid var(--amane-line)!important}
+.editorial-kicker{font-size:9px!important;letter-spacing:.2em!important;color:var(--amane-muted)!important}
+.editorial-intro h2{font-family:Georgia,'Times New Roman',serif!important;font-weight:400!important;letter-spacing:-.065em!important}
+.editorial-intro-copy{font-size:clamp(18px,2vw,27px)!important;line-height:1.2!important;color:#403d38!important}
+.editorial-intro-copy em{font-family:Georgia,'Times New Roman',serif!important}
+.editorial-marquee{border-bottom:1px solid var(--amane-line)!important}
+.editorial-marquee-track{animation-duration:32s!important;color:#6f6961!important}
+.section-header{border-bottom:1px solid var(--amane-line)!important;margin-top:clamp(70px,9vw,120px)!important;padding-bottom:14px!important}
+.section-title{font-family:Georgia,'Times New Roman',serif!important;font-weight:400!important;letter-spacing:-.055em!important}
+.view-all{color:var(--amane-ink)!important}
+.editorial-categories{gap:10px!important;margin-bottom:clamp(80px,10vw,135px)!important}
+.editorial-categories .category-img-wrapper{background:#ddd6ca!important}
+.editorial-categories .category-name{font-family:Georgia,'Times New Roman',serif!important;font-weight:400!important}
+.editorial-categories .category-card:after{content:"01";position:absolute;top:15px;right:16px;color:#fff;font-size:9px;letter-spacing:.12em;opacity:.9}
+.editorial-categories .category-card:nth-child(2):after{content:"02"}
+.editorial-categories .category-card:nth-child(3):after{content:"03"}
+.editorial-categories .category-card:nth-child(4):after{content:"04"}
+.products-grid{gap:clamp(28px,4vw,54px) 14px!important}
+.product-card{background:transparent!important;box-shadow:none!important}
+.product-img-wrapper{border-radius:0!important;background:#e3ddd2!important;box-shadow:none!important}
+.product-title{font-weight:500!important;letter-spacing:.01em!important}
+.product-price{color:#4c4944!important}
+.wishlist-btn{border-radius:50%!important;background:rgba(250,247,241,.88)!important;border:1px solid rgba(23,23,22,.1)!important;box-shadow:none!important}
+.editorial-manifesto{display:none!important}
+.newsletter-card{background:var(--amane-paper)!important;border-top:1px solid var(--amane-line)!important;border-bottom:1px solid var(--amane-line)!important;border-radius:0!important;padding:clamp(65px,9vw,120px) 0!important;margin-top:clamp(70px,9vw,120px)!important}
+.newsletter-title{font-family:Georgia,'Times New Roman',serif!important;font-weight:400!important;letter-spacing:-.055em!important}
+.newsletter-desc{color:var(--amane-muted)!important}
+.newsletter-form{border-bottom:1px solid var(--amane-ink)!important}
+.newsletter-input{background:transparent!important;border:0!important;border-radius:0!important}
+.newsletter-btn{background:transparent!important;color:var(--amane-ink)!important;border:0!important;border-radius:0!important;letter-spacing:.12em!important}
+footer{background:var(--amane-ink)!important;color:var(--amane-paper)!important;border-radius:0!important}
+@media(max-width:760px){
+  .hero-banner{aspect-ratio:4/5!important}
+  .hero-overlay{padding:22px!important}
+  .hero-title{font-size:clamp(52px,16vw,82px)!important}
+  .editorial-intro{grid-template-columns:1fr!important;gap:38px!important;padding:72px 0!important}
+  .editorial-intro h2{font-size:clamp(58px,17vw,82px)!important}
+  .editorial-intro-copy{font-size:20px!important;max-width:330px!important}
+  .editorial-marquee-track{gap:28px!important}
+  .section-header{margin-top:76px!important}
+  .section-title{font-size:42px!important}
+  .editorial-categories{grid-template-columns:1fr 1fr!important;grid-template-rows:58vw 38vw!important}
+  .editorial-categories .category-card:first-child{grid-column:1 / span 2!important}
+  .products-grid{gap:34px 10px!important}
+  .newsletter-card{padding:72px 0!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .editorial-marquee-track{animation:none!important}
+}
+</style>
 </head>
 <body>
   
@@ -2525,7 +2601,7 @@ header{background:rgba(244,240,233,.92)!important;border-bottom:1px solid var(--
     <!-- Editorial Art Direction: opening statement -->
     <section class="editorial-intro" aria-label="Amane introduction">
       <div><div class="editorial-kicker">Amane / New Season</div><h2>Wear<br>the<br>moment.</h2></div>
-      <p class="editorial-intro-copy">Pieces for the days you remember. <em>Quiet silhouettes, unexpected details, and a little room to become someone new.</em></p>
+      <p class="editorial-intro-copy">Considered pieces for everyday life. <em>Quiet silhouettes, soft textures and details that stay with you.</em></p>
     </section>
     <div class="editorial-marquee" aria-hidden="true"><div class="editorial-marquee-track"><b>AMANE</b><span>NEW SEASON</span><b>AMANE</b><span>EVERYDAY ELEGANCE</span><b>AMANE</b><span>NEW SEASON</span><b>AMANE</b><span>EVERYDAY ELEGANCE</span></div></div>
 
