@@ -2334,6 +2334,64 @@
   }
 
   </style>
+<style id="amane-editorial-v1">
+:root{--editorial-ink:#161514;--editorial-paper:#f4f0e9;--editorial-line:rgba(22,21,20,.16)}
+body{background:var(--editorial-paper)!important;color:var(--editorial-ink)!important}
+.container{max-width:1320px!important;padding:0 22px!important}
+header{background:rgba(244,240,233,.92)!important;border-bottom:1px solid var(--editorial-line)!important}
+.main-nav{max-width:1320px!important;padding:14px 22px!important}
+.logo{font-family:Georgia,'Times New Roman',serif!important;font-size:27px!important;letter-spacing:-1.2px!important}
+.hero-banner{width:100%!important;margin:0!important;aspect-ratio:16/8.8!important;border-radius:0!important;background:#171615!important}
+.hero-overlay{max-width:none!important;width:100%!important;justify-content:flex-end!important;padding:clamp(24px,5vw,72px)!important;background:linear-gradient(180deg,rgba(0,0,0,.02) 25%,rgba(0,0,0,.66) 100%)!important}
+.hero-title{max-width:820px!important;font-size:clamp(46px,8vw,112px)!important;line-height:.88!important;letter-spacing:-.065em!important;margin:0 0 22px!important}
+.hero-title i{display:inline!important;font-style:normal!important}
+.hero-subtitle{font-size:14px!important;letter-spacing:.08em!important;text-transform:uppercase!important;margin-bottom:20px!important}
+.hero-overlay .btn-primary{border-radius:999px!important;padding:13px 22px!important}
+.slider-arrow{border-radius:0!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.35)!important;backdrop-filter:blur(8px)}
+.features-grid{margin:0 -22px!important;padding:18px 22px!important;border-bottom:1px solid var(--editorial-line)!important;border-top:1px solid var(--editorial-line)!important;background:var(--editorial-paper)!important}
+.feature-item{border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;padding:8px 14px!important}
+.feature-icon{display:none!important}.feature-text h4{font-size:10px!important;letter-spacing:.12em!important;text-transform:uppercase!important}.feature-text p{font-size:10px!important;color:#6f6a63!important}
+.editorial-intro{padding:clamp(70px,10vw,150px) 0 clamp(50px,8vw,110px);display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:clamp(24px,6vw,100px);align-items:end;border-bottom:1px solid var(--editorial-line)}
+.editorial-kicker{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#6f6a63;margin-bottom:20px}
+.editorial-intro h2{font:500 clamp(50px,7vw,104px)/.82 Georgia,'Times New Roman',serif;letter-spacing:-.06em;margin:0}
+.editorial-intro-copy{max-width:510px;font-size:clamp(18px,2.2vw,28px);line-height:1.15;letter-spacing:-.025em}.editorial-intro-copy em{font-family:Georgia,serif}
+.editorial-marquee{overflow:hidden;border-bottom:1px solid var(--editorial-line);white-space:nowrap}
+.editorial-marquee-track{display:inline-flex;gap:40px;min-width:max-content;padding:13px 0;font-size:10px;letter-spacing:.22em;text-transform:uppercase;animation:amaneMarquee 24s linear infinite}
+@keyframes amaneMarquee{to{transform:translateX(-50%)}}
+.editorial-categories{display:grid!important;grid-template-columns:1.35fr .65fr!important;grid-template-rows:repeat(2,minmax(180px,28vw))!important;gap:14px!important;margin:0 0 110px!important}
+.editorial-categories .category-card{position:relative!important;text-align:left!important;overflow:hidden!important}
+.editorial-categories .category-card:first-child{grid-row:1 / span 2}
+.editorial-categories .category-img-wrapper{height:100%!important;aspect-ratio:auto!important;border-radius:0!important;margin:0!important;background:#ded7cd!important}
+.editorial-categories .category-img-wrapper img{transition:transform .8s cubic-bezier(.2,.7,.2,1),filter .8s!important}
+.editorial-categories .category-card:hover img{transform:scale(1.045)!important;filter:saturate(.9)!important}
+.editorial-categories .category-name{position:absolute!important;left:20px!important;bottom:18px!important;color:#fff!important;font:500 clamp(22px,3vw,44px)/.9 Georgia,serif!important;letter-spacing:-.04em!important;text-shadow:0 2px 20px rgba(0,0,0,.35)!important}
+.section-header{align-items:flex-end!important;border-bottom:1px solid var(--editorial-line)!important;padding-bottom:14px!important;margin-bottom:24px!important}
+.section-title{font:500 clamp(38px,5vw,68px)/.9 Georgia,serif!important;letter-spacing:-.055em!important}
+.view-all{font-size:10px!important;letter-spacing:.15em!important;text-transform:uppercase!important}
+.products-grid{grid-template-columns:repeat(12,1fr)!important;gap:34px 14px!important}
+.product-card{grid-column:span 3!important}.product-card:nth-child(1){grid-column:span 6!important}.product-card:nth-child(4n+3){transform:translateY(46px)}
+.product-img-wrapper{border-radius:0!important;background:#ded8cf!important;margin-bottom:12px!important}.product-title{font-size:12px!important}.product-price{font-size:12px!important;font-weight:500!important}
+.wishlist-btn{width:34px!important;height:34px!important;top:12px!important;right:12px!important;background:rgba(244,240,233,.86)!important;backdrop-filter:blur(8px)!important}
+.editorial-manifesto{margin:150px calc(50% - 50vw) 110px;padding:clamp(70px,10vw,150px) max(22px,calc((100vw - 1276px)/2));background:#171615;color:#f4f0e9;position:relative;overflow:hidden}
+.editorial-manifesto .manifesto-kicker{font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.6}
+.editorial-manifesto h2{max-width:1050px;margin:25px 0 0;font:500 clamp(55px,8.5vw,132px)/.84 Georgia,serif;letter-spacing:-.065em}.editorial-manifesto h2 span{color:#c9c0b5;font-style:italic}
+.manifesto-orbit{position:absolute;width:34vw;height:34vw;max-width:440px;max-height:440px;border:1px solid rgba(244,240,233,.18);border-radius:50%;right:-8vw;top:18%;animation:amaneOrbit 14s ease-in-out infinite}
+.manifesto-orbit:after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:#f4f0e9;left:18%;top:13%;box-shadow:0 0 35px 8px rgba(244,240,233,.18)}
+@keyframes amaneOrbit{50%{transform:translateY(-18px) rotate(12deg)}}
+.newsletter-card{background:transparent!important;border-radius:0!important;border-top:1px solid var(--editorial-line)!important;border-bottom:1px solid var(--editorial-line)!important;padding:70px 0!important;margin-bottom:0!important}
+.newsletter-title{font:500 clamp(38px,5vw,64px)/.9 Georgia,serif!important;letter-spacing:-.05em!important}.newsletter-desc{font-size:12px!important;max-width:420px}
+.newsletter-form{border-bottom:1px solid var(--editorial-ink);max-width:470px!important}.newsletter-input{border:0!important;border-radius:0!important;background:transparent!important;padding-left:0!important}.newsletter-btn{background:transparent!important;color:var(--editorial-ink)!important;border:0!important;border-radius:0!important;padding-right:0!important}
+@media(max-width:760px){
+.container{padding:0 16px!important}.main-nav{padding:12px 16px!important}.hero-banner{aspect-ratio:4/5!important}.hero-overlay{padding:22px!important}.hero-title{font-size:clamp(50px,15vw,78px)!important}
+.features-grid{margin:0 -16px!important;overflow:auto;display:flex!important;justify-content:flex-start!important}.feature-item{min-width:155px!important}
+.editorial-intro{grid-template-columns:1fr;gap:35px;padding:70px 0}.editorial-intro h2{font-size:64px}
+.editorial-categories{grid-template-columns:1fr 1fr!important;grid-template-rows:52vw 34vw!important;gap:8px!important;margin-bottom:80px!important}.editorial-categories .category-card:first-child{grid-column:1 / span 2;grid-row:auto}.editorial-categories .category-name{left:12px!important;bottom:12px!important;font-size:27px!important}
+.products-grid{grid-template-columns:repeat(2,1fr)!important;gap:30px 10px!important}.product-card,.product-card:nth-child(1){grid-column:span 1!important}.product-card:nth-child(1),.product-card:nth-child(4n+3){transform:none!important}
+.editorial-manifesto{margin:100px -16px 70px;padding:80px 16px}.editorial-manifesto h2{font-size:64px}.manifesto-orbit{width:60vw;height:60vw;right:-22vw;top:8%}
+.newsletter-card{display:block!important}.newsletter-form{margin-top:35px}
+}
+@media(prefers-reduced-motion:reduce){.editorial-marquee-track,.manifesto-orbit{animation:none!important}.editorial-categories .category-img-wrapper img{transition:none!important}}
+</style>
 </head>
 <body>
   
@@ -2464,6 +2522,13 @@
       </div>
     </section>
 
+    <!-- Editorial Art Direction: opening statement -->
+    <section class="editorial-intro" aria-label="Amane introduction">
+      <div><div class="editorial-kicker">Amane / New Season</div><h2>Wear<br>the<br>moment.</h2></div>
+      <p class="editorial-intro-copy">Pieces for the days you remember. <em>Quiet silhouettes, unexpected details, and a little room to become someone new.</em></p>
+    </section>
+    <div class="editorial-marquee" aria-hidden="true"><div class="editorial-marquee-track"><b>AMANE</b><span>NEW SEASON</span><b>AMANE</b><span>EVERYDAY ELEGANCE</span><b>AMANE</b><span>NEW SEASON</span><b>AMANE</b><span>EVERYDAY ELEGANCE</span></div></div>
+
     <!-- Shop by Category -->
     <section>
       <div class="section-header">
@@ -2471,7 +2536,7 @@
         <a href="#" class="view-all">View All</a>
       </div>
 
-      <div class="categories-grid">
+      <div class="categories-grid editorial-categories">
         <a href="#" class="category-card" data-category="Dresses">
           <div class="category-img-wrapper">
             <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&q=80" alt="Dresses">
@@ -2534,6 +2599,13 @@
         <button class="deck-control-btn" onclick="swipeCurrentCard('left')">✕</button>
         <button class="deck-control-btn" onclick="swipeCurrentCard('right')" style="background:#111;color:#fff;">🛍️</button>
       </div>
+    </section>
+
+    <!-- Editorial manifesto -->
+    <section class="editorial-manifesto" aria-label="Amane manifesto">
+      <div class="manifesto-kicker">A little philosophy</div>
+      <h2>Not made to <span>blend in.</span><br>Made to feel like you.</h2>
+      <div class="manifesto-orbit" aria-hidden="true"></div>
     </section>
 
     <!-- Newsletter Community Card -->
